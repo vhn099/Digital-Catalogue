@@ -1,7 +1,7 @@
-import HomePage from '@/app/(route)/home/page';
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <HomePage />
+    <h2>HELLO</h2>
   );
 }
