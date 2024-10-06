@@ -1,10 +1,24 @@
-import React from 'react';
-import styles from './AppHeader.module.css';
+import React, { useEffect, useState } from 'react';
 import { Menu } from 'antd';
-import Item from 'antd/es/list/Item';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { destroyCookie } from 'nookies';
+import { Header } from 'antd/es/layout/layout';
 
-const AppHeader = async () => {
+// interface AppHeaderProps {
+//     email?: any,
+//     logout?: () => {}
+// };
+
+interface AppHeaderProps {
+    user: boolean
+}
+
+const AppHeader = ({ user }: AppHeaderProps) => {
+    const router = useRouter();
+
     const headerItems = [
         {
             key: 1,
@@ -21,18 +35,29 @@ const AppHeader = async () => {
         },
         {
             key: 3,
+            label: "LOGOUT",
+            onClick: async () => {
+                await signOut(auth);
+                destroyCookie(null, 'digital_user_cookies', {
+                    path: '/'
+                });
+                router.push("/login");
+            }
         }
     ]
 
-    return (
-        <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={['2']}
-            items={headerItems}
-        >
-        </Menu>
-    )
+    return user ? (
+        <Header>
+            <Menu
+                theme="dark"
+                mode="horizontal"
+                defaultSelectedKeys={['2']}
+                items={headerItems}
+            >
+            </Menu>
+        </Header>
+
+    ) : (<></>)
 };
 
 export default AppHeader;

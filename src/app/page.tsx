@@ -1,7 +1,7 @@
-import LoginPage from './(auth)/login/page';
+import HomePage from '@/app/(route)/home/page';
 
-export default function StartingPage() {
+export default function Home() {
   return (
-    <LoginPage />
+    <HomePage />
   );
 }

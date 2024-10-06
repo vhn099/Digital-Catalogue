@@ -1,22 +1,12 @@
-import AppHeader from '@/components/Header/AppHeader';
-import { Header, Content, Footer } from 'antd/es/layout/layout';
-import { Layout } from 'antd';
-import AppFooter from '@/components/Footer/AppFooter';
+"use client"
+import WithAuth from "@/utils/withAuth";
+import { NextPage } from "next";
 
-const Home = () => {
-  return (
-    <div>
-      <Layout>
-        <Header>
-          <AppHeader />
-        </Header>
-        <Content>Content</Content>
-        <Footer style={{ textAlign: 'center' }}>
-          <AppFooter />
-        </Footer>
-      </Layout>
-    </div>
-  );
-}
+const HomePage: NextPage = () => {
+    return (
+       <div>hello</div> 
+    )
+};
 
-export default Home;
+// Check auth for this component if user not authenticated it will redirect to /login
+export default WithAuth(HomePage);
