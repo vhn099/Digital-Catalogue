@@ -9,14 +9,12 @@ import axios from 'axios';
 import { constants } from '@/app/constants';
 import { useRouter } from 'next/navigation';
 import { ScriptProps } from 'next/script';
+import { useAppContext } from '@/app/provider/AuthProvider';
 
-interface AppHeaderProp {
-    user: any,
-    setUser: Dispatch<(prevState: undefined) => undefined>
-}
 
-const AppHeader: React.FC<AppHeaderProp> = ({ user, setUser }: AppHeaderProp) => {
+const AppHeader= () => {
     const router = useRouter();
+    const { user, setUser } = useAppContext();
 
     const headerItems = [
         {

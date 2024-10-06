@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { constants } from "./constants";
 import { useRouter } from "next/navigation";
+import AppProvider from "./provider/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,39 +20,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [user, setUser] = useState(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const getUserSession = async () => {
-      await axios.get(constants.AUTH, {
-        params: {
-          type: 'getSession'
-        }
-      }).then(response => {
-        if (response.data.data) {
-          router.push('/');
-        } else {
-          router.push('/login');
-        }
-        setUser(response.data.data);
-      });
-    };
-    getUserSession();
-  }, [router]);
+  // useEffect(() => {
+  //   const checkUserSession = async () => {
+  //     await axios.get(constants.AUTH, {
+  //       params: {
+  //         type: 'getSession'
+  //       }
+  //     }).then(response => {
+  //       console.log(response.data.data);
+  //       if (!response.data.data) {
+  //         router.push('/login');
+  //       }
+  //     });
+  //   };
+  //   checkUserSession();
+  // }, [router]);
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Layout>
-          <AppHeader user={user} setUser={setUser}></AppHeader>
+        <AppProvider>
+          <Layout>
+            <AppHeader></AppHeader>
 
-          <Content>
-            <AntdRegistry>{children}</AntdRegistry>
-          </Content>
+            <Content>
+              <AntdRegistry>{children}</AntdRegistry>
+            </Content>
 
-          <AppFooter user={user}></AppFooter>
-        </Layout>
+            <AppFooter></AppFooter>
+          </Layout>
+        </AppProvider>
       </body>
     </html>
   );

@@ -1,11 +1,9 @@
+import { useAppContext } from '@/app/provider/AuthProvider';
 import { Footer } from 'antd/es/layout/layout';
 import React from 'react';
 
-interface AppFooterProps {
-    user: any
-}
-
-const AppFooter = ({ user }: AppFooterProps) => {
+const AppFooter = () => {
+    const { user } = useAppContext();
 
     return user ? (
         <Footer>

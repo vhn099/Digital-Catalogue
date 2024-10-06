@@ -8,6 +8,7 @@ import styles from "./login.module.css";
 import { constants } from "@/app/constants";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useAppContext } from "@/app/provider/AuthProvider";
 
 const formatAuthUser = (user: any, loggedIn: boolean) => ({
     uid: user.uid,
@@ -25,6 +26,7 @@ type FieldType = {
 const LoginForm = () => {
     /* REACT HOOKS START */
     const router = useRouter();
+    const { setUser } = useAppContext();
     /* REACT HOOKS END */
 
     const handleFormSubmit: FormProps<FieldType>['onFinish'] = async (values) => {
@@ -37,7 +39,7 @@ const LoginForm = () => {
             }).then(response => {
                 console.log(response);
                 router.push('/');
-                window.location.reload();
+                setUser(formattedUser);
             }).catch(error => {
                 console.log(error);
             });

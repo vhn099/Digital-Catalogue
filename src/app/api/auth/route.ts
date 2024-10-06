@@ -15,7 +15,7 @@ const login = async (user: any) => {
 const logout = () => {
     return new Response('COOKIE DELETED', {
         status: 200,
-        headers: { 'Set-Cookie': `${process.env.AUTH_COOKIE_NAME}=deleted; Max-Age=1` }
+        headers: { 'Set-Cookie': `${process.env.AUTH_COOKIE_NAME}=deleted; Max-Age=0` }
     });
 }
 
