@@ -1,48 +1,42 @@
-import React, { useEffect, useState } from 'react';
+"use client"
+
+import React, { Dispatch } from 'react';
 import { Menu } from 'antd';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { destroyCookie } from 'nookies';
 import { Header } from 'antd/es/layout/layout';
+import axios from 'axios';
+import { constants } from '@/app/constants';
+import { useRouter } from 'next/navigation';
+import { ScriptProps } from 'next/script';
 
-// interface AppHeaderProps {
-//     email?: any,
-//     logout?: () => {}
-// };
-
-interface AppHeaderProps {
-    user: boolean
+interface AppHeaderProp {
+    user: any,
+    setUser: Dispatch<(prevState: undefined) => undefined>
 }
 
-const AppHeader = ({ user }: AppHeaderProps) => {
+const AppHeader: React.FC<AppHeaderProp> = ({ user, setUser }: AppHeaderProp) => {
     const router = useRouter();
 
     const headerItems = [
         {
             key: 1,
-            // icon: <UserOutLined />
             label: 'CATALOG',
-            // className: ""
         },
         {
             key: 2,
-            label: (
-                <Link href="/login">LOGIN</Link>
-            ),
-            className: ""
-        },
-        {
-            key: 3,
             label: "LOGOUT",
             onClick: async () => {
                 await signOut(auth);
-                destroyCookie(null, 'digital_user_cookies', {
-                    path: '/'
+                await axios.post(constants.AUTH, { type: 'logout' }).then(response => {
+                    setUser(null);
+                    router.push('/login');
                 });
-                router.push("/login");
             }
+        },
+        {
+            key: 3,
+            label: ''
         }
     ]
 
@@ -56,7 +50,6 @@ const AppHeader = ({ user }: AppHeaderProps) => {
             >
             </Menu>
         </Header>
-
     ) : (<></>)
 };
 
