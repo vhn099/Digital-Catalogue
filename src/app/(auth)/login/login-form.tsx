@@ -1,26 +1,37 @@
 'use client'
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import styles from './login.module.css';
 import { useRouter } from "next/navigation";
-import { loginFirebase } from "./login";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { setCookie } from "nookies";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
-const { Text, Title, Link } = Typography;
+const { Title } = Typography;
+
+const formatAuthUser = (user: any) => ({
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName
+});
 
 const LoginForm = () => {
     const [form] = Form.useForm();
-    
+
     const fields = [
-        { name: ['email'], value: ''},
+        { name: ['email'], value: '' },
         { name: ['password'], value: '' }
     ];
-    
-    const { token } = useToken();
+
+    /* REACT HOOKS START */
     const router = useRouter();
+    /* REACT HOOKS END */
+
+    const { token } = useToken();
+
     const screens = useBreakpoint();
 
     const styles = {
@@ -50,12 +61,17 @@ const LoginForm = () => {
         }
     };
 
-    const onFinish = async (values: { email: string, password: string }) => {
-        const results = await loginFirebase(values.email, values.password);
-
-        if (results.userModel.login) {
-            router.push('/home');
-            router.refresh();
+    const handleFormSubmit = async (values: { email: string, password: string }) => {
+        try {
+            const currentUser = await signInWithEmailAndPassword(auth, values.email, values.password);
+            const formattedUser = formatAuthUser(currentUser);
+            setCookie(null, 'digital_user_cookies', JSON.stringify(formattedUser), {
+                maxAge: 300, // 300s
+                path: '/'
+            })
+            router.push("/"); // Navigate to the home page
+        } catch (error) {
+            console.error("Error logging in:", error)
         }
     };
 
@@ -94,7 +110,7 @@ const LoginForm = () => {
                     initialValues={{
                         remember: true,
                     }}
-                    onFinish={onFinish}
+                    onFinish={handleFormSubmit}
                     layout="vertical"
                     requiredMark="optional"
                 >
@@ -155,7 +171,6 @@ const LoginForm = () => {
                                 </Button>
                             )
                         }}
-                        
                     </Form.Item>
                 </Form>
             </div>
