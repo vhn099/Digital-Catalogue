@@ -1,74 +1,97 @@
 "use client"
 
-import React, { Dispatch } from 'react';
+import React from 'react';
 import { Menu } from 'antd';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { getAuth, signOut } from 'firebase/auth';
 import { Header } from 'antd/es/layout/layout';
-import axios from 'axios';
-import { constants } from '@/app/constants';
-import { useRouter } from 'next/navigation';
-import { ScriptProps } from 'next/script';
-import { useAppContext } from '@/app/provider/AuthProvider';
+import { useAuthFirebaseContext } from '@/app/provider/AuthFirebaseProvider';
 
 
-const AppHeader= () => {
-    const router = useRouter();
-    const { user, setUser } = useAppContext();
+const AppHeader = () => {
+    const { user, setUser } = useAuthFirebaseContext();
+
+    const styles = {
+        menuItem: {
+            lineHeight: "5",
+        }
+    };
 
     const headerItems = [
         {
-            key: 1,
-            label: 'CATALOG',
-            onClick: () => {
-                router.push('/catalogue-category');
-            }
+            key: "PAGE-ICON",
+            label: (
+                <div style={{
+                    width: "70px",
+                    height: "70px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}>
+                    <a href='/home'><img src='/assets/adm_logo.webp' width="70px" height="70px" /></a>
+                </div>
+            ),
         },
         {
-            key: 2,
-            label: 'ABOUT',
-            onClick: () => {
-                router.push('/about');
-            }
+            key: "CONTACT-US",
+            label: (
+                <a style={styles.menuItem} href="/contact-us">CONTACT US</a>
+            ),
         },
         {
-            key: 3,
-            label: 'CONTACT US',
-            onClick: () => {
-                router.push('/contact-us');
-            }
-        },
-        {
-            key: 4,
-            label: 'ADMIN',
-            onClick: () => {
-                router.push('/admin');
-            }
+            key: 'CATALOUGE-MGMT',
+            label: (
+                user ? <span style={styles.menuItem}>CATALOUGE MGMT</span> : <></>
+            ),
+            children: [
+                { 
+                    key: 1,
+                    label: (
+                        <a style={styles.menuItem} href="/catalogue-category">Category</a>
+                    )
+                },
+                { key: "SUB-CATALOGUE", label: 'Sub Catalouge' },
+                { key: "ITEM", label: 'Item' }
+            ],
         },
         {
             key: 5,
-            label: "LOGOUT",
+            label: user ? <span style={styles.menuItem}>SYSTEM CONFIG</span> : <></>,
+            children: [
+                { key: "USER", label: (
+                    <a href="/admin/user">User</a>
+                ) },
+                { key: "ADMIN", label: "Admin" },
+                { key: "EMAIL", label: "Email" }
+            ],
+        },
+        {
+            key: "LOGOUT",
+            label: user ? (
+                <a style={styles.menuItem} href="/login">LOGOUT</a>
+            ) : <></>,
             onClick: async () => {
-                await signOut(auth);
-                await axios.post(constants.AUTH, { type: 'logout' }).then(response => {
-                    setUser(null);
-                    router.push('/login');
-                });
-            }
+                await signOut(getAuth());
+                setUser(null);
+            },
+            className: styles.menuItem
         },
     ]
-
-    return user ? (
-        <Header>
+    return (
+        <Header style={{ backgroundColor: 'white' }}>
             <Menu
-                theme="dark"
                 mode="horizontal"
-                defaultSelectedKeys={['1']}
                 items={headerItems}
+                color="black"
+                style={{
+                    color: "black",
+                    fontSize: 14,
+                    fontFamily: 'sans-serif',
+                    justifyContent: 'center',
+                }}
             >
             </Menu>
         </Header>
-    ) : (<></>)
+    );
 };
 
 export default AppHeader;
