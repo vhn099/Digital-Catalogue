@@ -20,9 +20,33 @@ const AppHeader= () => {
         {
             key: 1,
             label: 'CATALOG',
+            onClick: () => {
+                router.push('/catalogue-category');
+            }
         },
         {
             key: 2,
+            label: 'ABOUT',
+            onClick: () => {
+                router.push('/about');
+            }
+        },
+        {
+            key: 3,
+            label: 'CONTACT US',
+            onClick: () => {
+                router.push('/contact-us');
+            }
+        },
+        {
+            key: 4,
+            label: 'ADMIN',
+            onClick: () => {
+                router.push('/admin');
+            }
+        },
+        {
+            key: 5,
             label: "LOGOUT",
             onClick: async () => {
                 await signOut(auth);
@@ -32,10 +56,6 @@ const AppHeader= () => {
                 });
             }
         },
-        {
-            key: 3,
-            label: ''
-        }
     ]
 
     return user ? (
@@ -43,7 +63,7 @@ const AppHeader= () => {
             <Menu
                 theme="dark"
                 mode="horizontal"
-                defaultSelectedKeys={['2']}
+                defaultSelectedKeys={['1']}
                 items={headerItems}
             >
             </Menu>

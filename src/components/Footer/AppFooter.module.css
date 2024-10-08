@@ -1,0 +1,10 @@
+.footerStyle {
+    text-align: center;
+    color: '#fff';
+    background-color: '#001529';
+}
+
+.footerStyle > a {
+    padding-left: 10px;
+    padding-right: 10px;
+}
