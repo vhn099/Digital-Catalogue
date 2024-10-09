@@ -1,4 +1,11 @@
 .headerItems {
-    padding: 0px 10px 0px 10px;
-    border-left: 1px solid white
+    line-height: 5;
+}
+.rightMenuItems {
+    float: right;
+    display: block;
+}
+
+.profileItem {
+    line-height: 6;
 }

@@ -35,7 +35,7 @@
     ".next/types/**/*.ts",
     "src/lib/firebase.tsx",
     "dist/types/**/*.ts"
-  ],
+, "src/app/(route)/admin/user/UserPageServer.tsx", "src/app/(route)/admin/user/page.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,13 +1,9 @@
-"use client"
-
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import AppHeader from "@/components/Header/AppHeader";
 import AppFooter from "@/components/Footer/AppFooter";
-import AppProvider from "./provider/AuthProvider";
 import { AuthFirebaseProvider } from "./provider/AuthFirebaseProvider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,7 +20,10 @@ export default function RootLayout({
         <AuthFirebaseProvider>
           <AppHeader></AppHeader>
 
-          <Content>
+          <Content style={{
+            height: "80vh",
+            backgroundColor: 'white'
+          }}>
             <AntdRegistry>{children}</AntdRegistry>
           </Content>
 

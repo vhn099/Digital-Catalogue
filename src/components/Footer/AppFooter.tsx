@@ -1,4 +1,4 @@
-import { useAppContext } from '@/app/provider/AuthProvider';
+// import { useAppContext } from '@/app/provider/AuthProvider';
 import Link from 'next/link';
 import { Footer } from 'antd/es/layout/layout';
 import React from 'react';
@@ -6,7 +6,7 @@ import FooterStyle from './AppFooter.module.css';
 import { useAuthFirebaseContext } from '@/app/provider/AuthFirebaseProvider';
 
 const AppFooter = () => {
-    const { user } = useAuthFirebaseContext();
+    // const { user } = useAuthFirebaseContext();
 
     // return user ? (
     //     <Footer>

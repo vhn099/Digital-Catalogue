@@ -5,12 +5,11 @@ import { Button, Checkbox, Col, Flex, Form, FormProps, Input, Row, Typography } 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import styles from "./login.module.css";
-import { constants } from "@/app/constants";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuthFirebaseContext } from "@/app/provider/AuthFirebaseProvider";
-import Layout, { Content, Footer, Header } from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
+import Layout from "antd/es/layout/layout";
+import bcrypt from 'bcryptjs';
+import LoadingOverlay from "@/components/Loading/LoadingOverLay";
 
 const formatAuthUser = (user: any, loggedIn: boolean) => ({
     uid: user.uid,
@@ -28,7 +27,7 @@ type FieldType = {
 const LoginForm = () => {
     /* REACT HOOKS START */
     const router = useRouter();
-    const { user, setUser } = useAuthFirebaseContext();
+    const { loading, setLoading, user, setUser } = useAuthFirebaseContext(); /* THIS IS WHERE LOADING IS USED AND CALLED */
     /* REACT HOOKS END */
 
     useEffect(() => {
@@ -39,9 +38,11 @@ const LoginForm = () => {
 
     const handleFormSubmit: FormProps<FieldType>['onFinish'] = async (values) => {
         try {
+            setLoading(true);
             const currentUser = await signInWithEmailAndPassword(auth, values.email, values.password);
             const formattedUser = formatAuthUser(currentUser.user, true);
             setUser(formattedUser);
+            setLoading(false);
         } catch (error) {
             console.error("Error logging in:", error)
         }
@@ -53,6 +54,7 @@ const LoginForm = () => {
 
     return (
         <Layout style={{backgroundColor: "white"}}>
+            { loading ? <LoadingOverlay/> : <></> } { /* THIS IS WHERE LOADING IS USED AND CALLED */ }
             <Row justify="space-between" gutter={[8, 8]}>
                 <Col span={4}>
                 </Col>
