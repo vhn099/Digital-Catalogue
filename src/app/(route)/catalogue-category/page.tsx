@@ -2,8 +2,8 @@ import React from 'react';
 import Card from 'antd/es/card';
 import Meta from "antd/es/card/Meta";
 import { collection, getDocs } from 'firebase/firestore';
-import { auth, cate } from "@/lib/firebase";
-import { Col, Row } from 'antd';
+import { auth, db } from "@/lib/firebase";
+import { Col, Image, Row } from 'antd';
 
 interface DataItem {
     ID: string;
@@ -18,7 +18,7 @@ async function getCateFromFirestore(): Promise<DataItem[]> {
         console.error('User is not authenticated');
     }
     try {
-        const querySnapshot = await getDocs(collection(cate, 'category'));
+        const querySnapshot = await getDocs(collection(db, 'category'));
         const data: DataItem[] = querySnapshot.docs.map((doc) => ({
             ID: doc.id,
             ...doc.data(),
@@ -42,7 +42,7 @@ export default async function CatalogueCategoryPage() {
                     <Col key={item.ID} xs={24} sm={12} md={8} lg={6}>
                         <Card
                             hoverable
-                            cover={<img alt={item.Name} src={item.Image} style={{ height: "300px" }} />}
+                            cover={<Image alt={item.Name} src={item.Image} style={{ height: "300px" }} />}
                             style={{ marginBottom: '16px' }}
                         >
                             <Meta title={item.Name} description={item.Name} />

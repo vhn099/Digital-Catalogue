@@ -1,3 +1,7 @@
 export const constants = {
-    AUTH: '/api/auth'
+    API: {
+        AUTH: '/api/auth',
+        USER: '/api/user'
+    },
+    FIREBASE_TOKEN: 'firebase-token'
 }
