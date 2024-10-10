@@ -17,7 +17,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <DefaultNavbar transparent />
+  <!-- <DefaultNavbar transparent /> -->
   <Header>
     <div
       class="page-header align-items-start min-vh-100"
@@ -43,7 +43,7 @@ onMounted(() => {
                   >
                     Sign in
                   </h4>
-                  <div class="row mt-3">
+                  <!-- <div class="row mt-3">
                     <div class="col-2 text-center ms-auto">
                       <a class="btn btn-link px-3" href="javascript:;">
                         <i class="fa fa-facebook text-white text-lg"></i>
@@ -59,7 +59,7 @@ onMounted(() => {
                         <i class="fa fa-google text-white text-lg"></i>
                       </a>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="card-body">
@@ -94,11 +94,11 @@ onMounted(() => {
                     >
                   </div>
                   <p class="mt-4 text-sm text-center">
-                    Don't have an account?
+                    Forgot your password?
                     <a
                       href="#"
                       class="text-success text-gradient font-weight-bold"
-                      >Sign up</a
+                      >Reset</a
                     >
                   </p>
                 </form>
@@ -110,55 +110,55 @@ onMounted(() => {
       <footer class="footer position-absolute bottom-2 py-2 w-100">
         <div class="container">
           <div class="row align-items-center justify-content-lg-between">
-            <div class="col-12 col-md-6 my-auto">
+            <div class="col-12 col-md-4 my-auto">
               <div
                 class="copyright text-center text-sm text-white text-lg-start"
               >
-                © {{ new Date().getFullYear() }}, made with
-                <i class="fa fa-heart" aria-hidden="true"></i> by
-                <a
-                  href="https://www.creative-tim.com"
-                  class="font-weight-bold text-white"
-                  target="_blank"
-                  >Creative Tim</a
-                >
-                for a better web.
+                Power By Adm GROUP
               </div>
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-8">
               <ul
                 class="nav nav-footer justify-content-center justify-content-lg-end"
               >
                 <li class="nav-item">
                   <a
-                    href="https://www.creative-tim.com"
+                    href="https://www.admgroup.com/cookie-policy"
                     class="nav-link text-white"
                     target="_blank"
-                    >Creative Tim</a
+                    >Cookie Policy</a
                   >
                 </li>
                 <li class="nav-item">
                   <a
-                    href="https://www.creative-tim.com/presentation"
+                    href="https://www.admgroup.com/cookie-policy"
                     class="nav-link text-white"
                     target="_blank"
-                    >About Us</a
+                    >Accessibility Statement</a
                   >
                 </li>
                 <li class="nav-item">
                   <a
-                    href="https://www.creative-tim.com/blog"
+                    href="https://www.admgroup.com/website-terms-of-use"
                     class="nav-link text-white"
                     target="_blank"
-                    >Blog</a
+                    >Terms of Use</a
                   >
                 </li>
                 <li class="nav-item">
                   <a
-                    href="https://www.creative-tim.com/license"
+                    href="https://www.admgroup.com/website-privacy-policy"
                     class="nav-link pe-0 text-white"
                     target="_blank"
-                    >License</a
+                    >Privacy Policy</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    href="https://www.admgroup.com/data-security-policy"
+                    class="nav-link pe-0 text-white"
+                    target="_blank"
+                    >Data Security Policy</a
                   >
                 </li>
               </ul>
