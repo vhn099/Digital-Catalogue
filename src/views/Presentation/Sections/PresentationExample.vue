@@ -1,5 +1,5 @@
 <script setup>
-import ExampleCard from "../Components/ExampleCard.vue";
+import ExampleCard from "../Components/Card.vue";
 import MaterialBadge from "../../../components/MaterialBadge.vue";
 
 defineProps({

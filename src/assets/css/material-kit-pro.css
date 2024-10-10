@@ -19060,6 +19060,11 @@ label,
   max-width: 2rem;
 }
 
+.bg-gradient-primary-blue {
+  /* background-image: linear-gradient(195deg, #409EFF 5%, #409EFF 50%); */
+  background-image: linear-gradient(100deg, #409EFF 100%, #409EFF 0%);
+}
+
 .bg-gradient-primary {
   background-image: linear-gradient(195deg, #EC407A 0%, #D81B60 100%);
 }

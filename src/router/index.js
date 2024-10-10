@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import PresentationView from "../views/Presentation/PresentationView.vue";
 import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
-import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
+import ContactUs from "../views/ContactUs/ContactUs.vue";
 import AuthorView from "../views/LandingPages/Author/AuthorView.vue";
-import SignInBasicView from "../views/LandingPages/SignIn/BasicView.vue";
+import SignIn from "../views/SignIn.vue";
 import PageHeaders from "../layouts/sections/page-sections/page-headers/HeadersView.vue";
 import PageFeatures from "../layouts/sections/page-sections/features/FeaturesView.vue";
 import NavigationNavbars from "../layouts/sections/navigation/navbars/NavbarsView.vue";
@@ -23,13 +23,24 @@ import ElDropdowns from "../layouts/sections/elements/dropdowns/DropdownsView.vu
 import ElProgressBars from "../layouts/sections/elements/progress-bars/ProgressBarsView.vue";
 import ElToggles from "../layouts/sections/elements/toggles/TogglesView.vue";
 import ElTypography from "../layouts/sections/elements/typography/TypographyView.vue";
+import { getAuth } from "firebase/auth";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  linkActiveClass: 'is-active',
+  linkExactActiveClass: 'is-exact-active',
   routes: [
     {
-      path: "/",
+      path: "/home",
       name: "presentation",
       component: PresentationView,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Home'
+      }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/sign-in'
     },
     {
       path: "/pages/landing-pages/about-us",
@@ -37,9 +48,13 @@ const router = createRouter({
       component: AboutView,
     },
     {
-      path: "/pages/landing-pages/contact-us",
+      path: "/pages/contact-us",
       name: "contactus",
-      component: ContactView,
+      component: ContactUs,
+      // meta: {
+      //   requireAuth: true,
+      //   pageTitle: 'Contact Us'
+      // }
     },
     {
       path: "/pages/landing-pages/author",
@@ -47,9 +62,10 @@ const router = createRouter({
       component: AuthorView,
     },
     {
-      path: "/pages/landing-pages/basic",
-      name: "signin-basic",
-      component: SignInBasicView,
+      // path: "/pages/landing-pages/basic",
+      path: "/sign-in",
+      name: "sign-in",
+      component: SignIn,
     },
     {
       path: "/sections/page-sections/page-headers",
@@ -147,6 +163,19 @@ const router = createRouter({
       component: ElTypography,
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const currentUser = getAuth().currentUser;
+  const requireAuth = to.matched.some(record => record.meta.requireAuth);
+  console.log(currentUser, "CURRENT USER");
+  if (requireAuth && !currentUser) {
+    next('/sign-in');
+  } else if (!requireAuth && currentUser) {
+    next('/home');
+  } else {
+    next();
+  }
 });
 
 export default router;

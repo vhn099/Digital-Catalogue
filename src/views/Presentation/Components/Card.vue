@@ -55,6 +55,8 @@ export default {
         :src="image"
         :alt="title"
         loading="lazy"
+        height="200"
+        style="object-fit: cover;"
       />
       <svg
         v-if="pro"
