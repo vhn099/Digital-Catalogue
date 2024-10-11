@@ -2,22 +2,22 @@
 import { onMounted } from "vue";
 
 //example components
-import DefaultNavbar from "@/layouts/navbars/NavbarDefault.vue";
-import DefaultFooter from "@/examples/footers/FooterDefault.vue";
+import DefaultNavbar from "../Layouts/NavbarDefault.vue";
+import DefaultFooter from "../Layouts/FooterDefault.vue";
 
 //image
 import image from "@/assets/img/illustrations/illustration-signin.jpg";
 
 //material components
-import MaterialInput from "@/components/MaterialInput.vue";
-import MaterialTextArea from "@/components/MaterialTextArea.vue";
-import MaterialButton from "@/components/MaterialButton.vue";
+// import MaterialInput from "@/components/MaterialInput.vue";
+// import MaterialTextArea from "@/components/MaterialTextArea.vue";
+// import MaterialButton from "@/components/MaterialButton.vue";
 
 // material-input
-import setMaterialInput from "@/assets/js/material-input";
-onMounted(() => {
-  setMaterialInput();
-});
+// import setMaterialInput from "@/assets/js/material-input";
+// onMounted(() => {
+//   setMaterialInput();
+// });
 </script>
 <template>
   <DefaultNavbar light />

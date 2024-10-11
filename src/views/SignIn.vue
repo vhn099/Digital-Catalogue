@@ -2,7 +2,8 @@
 import { onMounted } from "vue";
 
 // example components
-import Header from "@/layouts/Header/Header.vue";
+// import Header from ".//Header/Header.vue";
+import Header from "./Layouts/Header.vue";
 
 //Vue Material Kit 2 components
 // import MaterialInput from "@/components/MaterialInput.vue";
