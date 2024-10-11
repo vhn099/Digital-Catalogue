@@ -1,3 +1,26 @@
+/* ALCOHOLIC BEVERAGES */
+import imgBeer from "@/assets/img/alcoholic_beverages/beer.png";
+import imgWine from "@/assets/img/alcoholic_beverages/wine.png";
+import imgLiquor from "@/assets/img/alcoholic_beverages/liquor.png";
+import imgCocktails from "@/assets/img/alcoholic_beverages/cocktails.png";
+
+/* HOT BEVERAGES */
+import imgCoffee from "@/assets/img/hot_beverages/coffee.png";
+import imgTea from "@/assets/img/hot_beverages/tea.png";
+import imgHotChocolate from "@/assets/img/hot_beverages/hot_chocolate.png";
+
+/* Functional Drinks */
+import imgEnergyDrinks from "@/assets/img/functional_drinks/energy_drinks.png";
+import imgSportDrinks from "@/assets/img/functional_drinks/sport_drinks.png";
+import imgProteinShakes from "@/assets/img/functional_drinks/protein_shakes.png";
+import imgInfusion from '@/assets/img/functional_drinks/infusion_drink.png'
+
+/* Fermented Beverages */
+import imgKombucha from "@/assets/img/fermental_beverages/kombucha.png";
+import imgKefir from "@/assets/img/fermental_beverages/kefir.png";
+import imgKvass from '@/assets/img/fermental_beverages/kvass.png';
+import imgSmoothies from '@/assets/img/fermental_beverages/smoothies.png'
+
 export default [
   {
     heading: "Alcoholic Beverages",
@@ -6,7 +29,7 @@ export default [
     items: [
       {
         // image: `${imagesPrefix}/headers.jpg`,
-        image: "../Sections/Data/Images/alcoholic_beverages/beer.png",
+        image: imgBeer,
         title: "Beer",
         subtitle: "10 Items",
         route: "page-headers",
@@ -14,7 +37,7 @@ export default [
       },
       {
         // image: imgFeatures,
-        image: "src/views/Presentation/Sections/Data/Images/alcoholic_beverages/wine.png",
+        image: imgWine,
         title: "Wine",
         subtitle: "14 Items",
         route: "page-features",
@@ -22,7 +45,7 @@ export default [
       },
       {
         // image: imgPricing,
-        image: "src/views/Presentation/Sections/Data/Images/alcoholic_beverages/liquor.png",
+        image: imgLiquor,
         title: "Spirits/Liquor",
         subtitle: "8 Items",
         route: "presentation",
@@ -30,7 +53,7 @@ export default [
       },
       {
         // image: `${imagesPrefix}/faq.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/alcoholic_beverages/cocktails.png`,
+        image: imgCocktails,
         title: "Cocktails",
         subtitle: "1 Example",
         route: "presentation",
@@ -44,7 +67,7 @@ export default [
     items: [
       {
         // image: `${imagesPrefix}/navbars.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/hot_beverages/coffee.png`,
+        image: imgCoffee,
         title: "Coffee",
         subtitle: "4 Items",
         route: "navigation-navbars",
@@ -52,7 +75,7 @@ export default [
       },
       {
         // image: `${imagesPrefix}/nav-tabs.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/hot_beverages/tea.png`,
+        image: imgTea,
         title: "Tea",
         subtitle: "2 Nav Tabs",
         route: "navigation-navtabs",
@@ -60,7 +83,7 @@ export default [
       },
       {
         // image: imgPagination,
-        image: `src/views/Presentation/Sections/Data/Images/hot_beverages/hot_chocolate.png`,
+        image: imgHotChocolate,
         title: "Hot Chocolate",
         subtitle: "3 Items",
         route: "navigation-pagination",
@@ -75,7 +98,7 @@ export default [
     items: [
       {
         // image: `${imagesPrefix}/newsletters.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/functional_drinks/energy_drinks.png`,
+        image: imgEnergyDrinks,
         title: "Energy Drinks",
         subtitle: "6 Items",
         route: "presentation",
@@ -83,7 +106,7 @@ export default [
       },
       {
         // image: `${imagesPrefix}/contact-sections.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/functional_drinks/sport_drinks.png`,
+        image: imgSportDrinks,
         title: "Sports Drinks",
         subtitle: "8 Items",
         route: "presentation",
@@ -91,7 +114,7 @@ export default [
       },
       {
         // image: `${imagesPrefix}/forms.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/functional_drinks/protein_shakes.png`,
+        image: imgProteinShakes,
         title: "Protein Shakes",
         subtitle: "3 Items",
         route: "inputareas-forms",
@@ -99,7 +122,7 @@ export default [
       },
       {
         // image: `${imagesPrefix}/inputs.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/functional_drinks/infusion_drink.png`,
+        image: imgInfusion,
         title: "Infusions",
         subtitle: "6 Items",
         route: "inputareas-inputs",
@@ -114,7 +137,7 @@ export default [
     items: [
       {
         // image: imgAlert,
-        image: `src/views/Presentation/Sections/Data/Images/fermental_beverages/kombucha.png`,
+        image: imgKombucha,
         title: "Kombucha",
         subtitle: "4 Items",
         route: "ac-alerts",
@@ -122,7 +145,7 @@ export default [
       },
       {
         // image: `${imagesPrefix}/toasts.jpg`,
-        image: `src/views/Presentation/Sections/Data/Images/fermental_beverages/kefir.png`,
+        image: imgKefir,
         title: "Kefir",
         subtitle: "3 Items",
         route: "presentation",
@@ -130,7 +153,7 @@ export default [
       },
       {
         // image: imgPopover,
-        image: `src/views/Presentation/Sections/Data/Images/fermental_beverages/kvass.png`,
+        image: imgKvass,
         title: "Kvass",
         subtitle: "2 Items",
         route: "ac-tooltips-popovers",
@@ -138,7 +161,7 @@ export default [
       },
       {
         // image: imgModal,
-        image: `src/views/Presentation/Sections/Data/Images/fermental_beverages/smoothies.png`,
+        image: imgSmoothies,
         title: "Smoothies",
         subtitle: "5 Items",
         route: "ac-modals",

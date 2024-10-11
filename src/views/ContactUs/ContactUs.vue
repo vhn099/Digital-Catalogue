@@ -20,21 +20,20 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="container position-sticky z-index-sticky top-0">
+  <div class="container z-index-sticky top-0">
     <div class="row">
       <div class="col-12">
-        <DefaultNavbar :sticky="true" :action="{
-          route: 'https://www.creative-tim.com/product/vue-material-kit-pro',
-          color: 'bg-gradient-success',
-          label: 'Buy Now',
-        }" />
+        <DefaultNavbar light />
       </div>
     </div>
   </div>
   <section>
-    <div class="page-header min-vh-100">
-      <div class="container">
-        <div class="row">
+    <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
+      <div class="container border-bottom">
+
+      </div>
+      <div class="tab-content tab-space">
+        <div class="">
           <div
             class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
             <div class="position-relative h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center"
@@ -62,7 +61,8 @@ onMounted(() => {
                     <div class="row">
                       <div class="col-md-6">
                         <el-form-item class="input-label" prop="full_name">
-                          <el-input class="input-group-static mb-4" v-model="dynamicValidateForm.full_name" autocomplete="off" placeholder="Full Name"/>
+                          <el-input class="input-group-static mb-4" v-model="dynamicValidateForm.full_name"
+                            autocomplete="off" placeholder="Full Name" />
                         </el-form-item>
                       </div>
                       <div class="col-md-6 ps-md-2">
@@ -73,13 +73,16 @@ onMounted(() => {
                             trigger: ['blur', 'change'],
                           }
                         ]">
-                          <el-input class="input-group-static mb-4" placeholder="admin@gmail.com" v-model="dynamicValidateForm.email" autocomplete="off" />
+                          <el-input class="input-group-static mb-4" placeholder="admin@gmail.com"
+                            v-model="dynamicValidateForm.email" autocomplete="off" />
                         </el-form-item>
                       </div>
                     </div>
                     <div class="form-group mb-0 mt-md-0 mt-4">
                       <el-form-item class="input-label" prop="detailed_description">
-                        <el-input :rows="6" type="textarea" minLength="250" class="input-group-static mb-4" placeholder="How can we help you ? Describe your problem in at least 250 characters" v-model="dynamicValidateForm.detail_description" autocomplete="off" />
+                        <el-input :rows="6" type="textarea" minLength="250" class="input-group-static mb-4"
+                          placeholder="How can we help you ? Describe your problem in at least 250 characters"
+                          v-model="dynamicValidateForm.detail_description" autocomplete="off" />
                       </el-form-item>
                     </div>
                     <div class="row">
@@ -108,6 +111,7 @@ import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import router from "@/router";
+import BaseLayout from "@/layouts/sections/components/BaseLayout.vue";
 
 const formRef = ref<FormInstance>()
 
