@@ -103,7 +103,6 @@ import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import router from "@/router";
-import BaseLayout from "@/layouts/sections/components/BaseLayout.vue";
 
 const formRef = ref<FormInstance>()
 

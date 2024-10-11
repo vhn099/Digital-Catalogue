@@ -14,7 +14,7 @@ import Header from "../Layouts/Header.vue";
 
 // sections
 // import PresentationCounter from "./Sections/PresentationCounter.vue";
-import PresentationExample from "./Sections/PresentationExample.vue";
+import Presentation from "./Sections/Presentation.vue";
 import data from "./Sections/Data/designBlocksData";
 // import BuiltByDevelopers from "./Components/BuiltByDevelopers.vue";
 // import PresentationTestimonials from "./Sections/PresentationTestimonials.vue";
@@ -64,7 +64,7 @@ onUnmounted(() => {
   </Header>
 
   <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
-    <PresentationExample :data="data" />
+    <Presentation :data="data" />
   </div>
   <DefaultFooter />
 </template>
