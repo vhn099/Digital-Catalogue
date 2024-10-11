@@ -4,6 +4,7 @@ import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
 import ContactUs from "../views/ContactUs/ContactUs.vue";
 import AuthorView from "../views/LandingPages/Author/AuthorView.vue";
 import SignIn from "../views/SignIn.vue";
+import Users from "../views/Settings/User.vue";
 import PageHeaders from "../layouts/sections/page-sections/page-headers/HeadersView.vue";
 import PageFeatures from "../layouts/sections/page-sections/features/FeaturesView.vue";
 import NavigationNavbars from "../layouts/sections/navigation/navbars/NavbarsView.vue";
@@ -167,6 +168,14 @@ const router = createRouter({
       path: '/admin/users',
       name: 'admin-user',
       component: User
+    }, {
+      path: '/setting/users',
+      name: 'setting-user',
+      component: Users,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Users'
+      }
     }
   ],
 });

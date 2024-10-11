@@ -20,13 +20,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="container z-index-sticky top-0">
-    <div class="row">
-      <div class="col-12">
-        <DefaultNavbar light />
-      </div>
-    </div>
-  </div>
+  <DefaultNavbar light />
   <section>
     <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
       <div class="container border-bottom">
