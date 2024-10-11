@@ -32,7 +32,7 @@ export default [
         image: imgBeer,
         title: "Beer",
         subtitle: "10 Items",
-        route: "page-headers",
+        // route: "page-headers",
         pro: false
       },
       {
@@ -40,7 +40,7 @@ export default [
         image: imgWine,
         title: "Wine",
         subtitle: "14 Items",
-        route: "page-features",
+        // route: "page-features",
         pro: false
       },
       {
@@ -48,7 +48,7 @@ export default [
         image: imgLiquor,
         title: "Spirits/Liquor",
         subtitle: "8 Items",
-        route: "presentation",
+        // route: "presentation",
         pro: false
       },
       {
@@ -56,7 +56,7 @@ export default [
         image: imgCocktails,
         title: "Cocktails",
         subtitle: "1 Example",
-        route: "presentation",
+        // route: "presentation",
         pro: false
       }
     ]
@@ -70,7 +70,7 @@ export default [
         image: imgCoffee,
         title: "Coffee",
         subtitle: "4 Items",
-        route: "navigation-navbars",
+        // route: "navigation-navbars",
         pro: false
       },
       {
@@ -78,7 +78,7 @@ export default [
         image: imgTea,
         title: "Tea",
         subtitle: "2 Nav Tabs",
-        route: "navigation-navtabs",
+        // route: "navigation-navtabs",
         pro: false
       },
       {
@@ -86,7 +86,7 @@ export default [
         image: imgHotChocolate,
         title: "Hot Chocolate",
         subtitle: "3 Items",
-        route: "navigation-pagination",
+        // route: "navigation-pagination",
         pro: false
       }
     ]
@@ -101,7 +101,7 @@ export default [
         image: imgEnergyDrinks,
         title: "Energy Drinks",
         subtitle: "6 Items",
-        route: "presentation",
+        // route: "presentation",
         pro: false
       },
       {
@@ -109,7 +109,7 @@ export default [
         image: imgSportDrinks,
         title: "Sports Drinks",
         subtitle: "8 Items",
-        route: "presentation",
+        // route: "presentation",
         pro: false
       },
       {
@@ -117,7 +117,7 @@ export default [
         image: imgProteinShakes,
         title: "Protein Shakes",
         subtitle: "3 Items",
-        route: "inputareas-forms",
+        // route: "inputareas-forms",
         pro: false
       },
       {
@@ -125,7 +125,7 @@ export default [
         image: imgInfusion,
         title: "Infusions",
         subtitle: "6 Items",
-        route: "inputareas-inputs",
+        // route: "inputareas-inputs",
         pro: false
       }
     ]
@@ -140,7 +140,7 @@ export default [
         image: imgKombucha,
         title: "Kombucha",
         subtitle: "4 Items",
-        route: "ac-alerts",
+        // route: "ac-alerts",
         pro: false
       },
       {
@@ -148,7 +148,7 @@ export default [
         image: imgKefir,
         title: "Kefir",
         subtitle: "3 Items",
-        route: "presentation",
+        // route: "presentation",
         pro: false
       },
       {
@@ -156,7 +156,7 @@ export default [
         image: imgKvass,
         title: "Kvass",
         subtitle: "2 Items",
-        route: "ac-tooltips-popovers",
+        // route: "ac-tooltips-popovers",
         pro: false
       },
       {
@@ -164,7 +164,7 @@ export default [
         image: imgSmoothies,
         title: "Smoothies",
         subtitle: "5 Items",
-        route: "ac-modals",
+        // route: "ac-modals",
         pro: false
       }
     ]
