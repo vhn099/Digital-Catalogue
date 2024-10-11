@@ -199,7 +199,7 @@ watch(
                 :class="getTextColor()"
                 >view_day</i
               >
-              Sections
+              Settings
               <img
                 :src="getArrowColor()"
                 alt="down-arrow"
@@ -232,9 +232,9 @@ watch(
                             <h6
                               class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
                             >
-                              Page Sections
+                              User Config
                             </h6>
-                            <span class="text-sm">See all sections</span>
+                            <span class="text-sm">See all configures</span>
                           </div>
                           <img
                             :src="downArrow"
@@ -247,9 +247,9 @@ watch(
                     <div class="dropdown-menu mt-0 py-3 px-2 mt-3">
                       <RouterLink
                         class="dropdown-item ps-3 border-radius-md mb-1"
-                        :to="{ name: 'page-headers' }"
+                        :to="{ name: 'setting-user' }"
                       >
-                        Page Headers
+                        Users
                       </RouterLink>
                       <RouterLink
                         class="dropdown-item ps-3 border-radius-md mb-1"
@@ -307,7 +307,7 @@ watch(
                 :class="getTextColor()"
                 >article</i
               >
-              Docs
+              Catelogy
               <img
                 :src="getArrowColor()"
                 alt="down-arrow"
