@@ -22,10 +22,8 @@ onMounted(() => {
 <template>
   <DefaultNavbar light />
   <section>
-    <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
-      <div class="container border-bottom">
-
-      </div>
+    <div class="position-relative border-radius-xl overflow-hidden shadow-lg">
+   
       <div class="tab-content tab-space">
         <div class="">
           <div
@@ -36,7 +34,7 @@ onMounted(() => {
                 backgroundSize: 'cover',
               }" loading="lazy"></div>
           </div>
-          <div class="mt-8 col-xl-5 col-lg-6 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
+          <div class="mt-3 col-xl-5 col-lg-6 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
             <div class="card d-flex blur justify-content-center shadow-lg my-sm-0 my-sm-6 mt-8 mb-5">
               <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                 <div class="bg-gradient-success shadow-success border-radius-lg p-3">
