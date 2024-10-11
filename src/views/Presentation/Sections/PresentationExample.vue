@@ -1,5 +1,5 @@
 <script setup>
-import ExampleCard from "../Components/Card.vue";
+import Card from "../Components/Card.vue";
 import MaterialBadge from "../../../components/MaterialBadge.vue";
 
 defineProps({
@@ -72,7 +72,7 @@ export default {
               v-for="{ image, title, subtitle, route, pro } in items"
               :key="title"
             >
-              <ExampleCard
+              <Card
                 class="min-height-160 shadow-lg mt-4"
                 :image="image"
                 :title="title"
