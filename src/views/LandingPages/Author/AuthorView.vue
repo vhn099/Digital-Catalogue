@@ -1,7 +1,7 @@
 <script setup>
 // example components
-import DefaultNavbar from "../../../examples/navbars/NavbarDefault.vue";
-import Header from "../../../examples/Header.vue";
+import DefaultNavbar from "@/layouts/navbars/NavbarDefault.vue";
+import Header from "@/layouts/Header/Header.vue";
 
 // sections
 import Footer from "./Sections/AuthorFooter.vue";

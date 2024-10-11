@@ -24,6 +24,7 @@ import ElProgressBars from "../layouts/sections/elements/progress-bars/ProgressB
 import ElToggles from "../layouts/sections/elements/toggles/TogglesView.vue";
 import ElTypography from "../layouts/sections/elements/typography/TypographyView.vue";
 import { getAuth } from "firebase/auth";
+import User from "@/views/Admin/User/User.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   linkActiveClass: 'is-active',
@@ -48,13 +49,13 @@ const router = createRouter({
       component: AboutView,
     },
     {
-      path: "/pages/contact-us",
+      path: "/contact-us",
       name: "contactus",
       component: ContactUs,
-      // meta: {
-      //   requireAuth: true,
-      //   pageTitle: 'Contact Us'
-      // }
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Contact Us'
+      }
     },
     {
       path: "/pages/landing-pages/author",
@@ -162,13 +163,17 @@ const router = createRouter({
       name: "el-typography",
       component: ElTypography,
     },
+    {
+      path: '/admin/users',
+      name: 'admin-user',
+      component: User
+    }
   ],
 });
 
 router.beforeEach((to, from, next) => {
   const currentUser = getAuth().currentUser;
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
-  console.log(currentUser, "CURRENT USER");
   if (requireAuth && !currentUser) {
     next('/sign-in');
   } else if (!requireAuth && currentUser) {

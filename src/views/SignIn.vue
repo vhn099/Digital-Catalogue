@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 
 // example components
-import Header from "@/examples/Header.vue";
+import Header from "@/layouts/Header/Header.vue";
 
 //Vue Material Kit 2 components
 // import MaterialInput from "@/components/MaterialInput.vue";
@@ -64,7 +64,7 @@ onMounted(() => {
                     <el-input v-model="dynamicValidateForm.email" autocomplete="off"  />
                   </el-form-item>
                   <el-form-item class="input-label" label="Password" prop="password">
-                    <el-input v-model="dynamicValidateForm.password" autocomplete="off" type="password"/>
+                    <el-input minlength="6" v-model="dynamicValidateForm.password" autocomplete="off" type="password"/>
                   </el-form-item>
 
                   <el-form-item prop="remember">

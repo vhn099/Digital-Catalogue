@@ -2,9 +2,9 @@
 import { onMounted, onUnmounted } from "vue";
 
 //example components
-import NavbarDefault from "../..//examples/navbars/NavbarDefault.vue";
+import NavbarDefault from "@/layouts/navbars/NavbarDefault.vue";
 import DefaultFooter from "../../examples/footers/FooterDefault.vue";
-import Header from "../../examples/Header.vue";
+import Header from "@/layouts/Header/Header.vue";
 import FilledInfoCard from "../../examples/cards/infoCards/FilledInfoCard.vue";
 
 //Vue Material Kit 2 components
@@ -21,13 +21,6 @@ import PresentationInformation from "./Sections/PresentationInformation.vue";
 //images
 // import vueMkHeader from "@/assets/img/vue-mk-header.jpg";
 import vueMkHeader from "@/assets/img/bg9.jpg";
-import wavesWhite from "@/assets/img/waves-white.svg";
-import logoBootstrap from "@/assets/img/logos/bootstrap5.jpg";
-import logoTailwind from "@/assets/img/logos/icon-tailwind.jpg";
-import logoVue from "@/assets/img/logos/vue.jpg";
-import logoAngular from "@/assets/img/logos/angular.jpg";
-import logoReact from "@/assets/img/logos/react.jpg";
-import logoSketch from "@/assets/img/logos/sketch.jpg";
 
 //hooks
 const body = document.getElementsByTagName("body")[0];

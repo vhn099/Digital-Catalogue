@@ -7,6 +7,7 @@ import { useWindowsWidth } from "../../assets/js/useWindowsWidth";
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
 import downArrow from "@/assets/img/down-arrow.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
+import { signOut } from "firebase/auth";
 
 const props = defineProps({
   action: {
@@ -163,7 +164,7 @@ watch(
         <ul class="navbar-nav navbar-nav-hover ms-auto">
           <li class="nav-item dropdown dropdown-hover mx-2">
             <a
-              href="/pages/contact-us"
+              href="/contact-us"
               class="nav-link ps-2 d-flex cursor-pointer align-items-center"
             >
               <!-- <svg
@@ -444,7 +445,66 @@ watch(
               </div>
             </div>
           </li>
-          
+
+          <!-- USER PROFILE -->
+          <li class="nav-item dropdown dropdown-hover mx-2">
+            <a
+              role="button"
+              class="nav-link ps-2 d-flex cursor-pointer align-items-center"
+              :class="getTextColor()"
+              id="dropdownMenuUser"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <el-icon class="material-icons opacity-6 text-md" style="padding-top: 2px">
+                <User />
+              </el-icon>
+              <img
+                :src="getArrowColor()"
+                alt="down-arrow"
+                class="arrow ms-2 d-lg-block d-none"
+              />
+              <img
+                :src="getArrowColor()"
+                alt="down-arrow"
+                class="arrow ms-1 d-lg-none d-block ms-auto"
+              />
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md mt-0 mt-lg-3 p-3 border-radius-lg"
+              aria-labelledby="dropdownMenuDocs"
+            >
+              <div class="d-none d-lg-block">
+                <ul class="list-group">
+                  <li class="nav-item list-group-item border-0 p-0">
+                    <a
+                      class="dropdown-item py-2 ps-3 border-radius-md"
+                      href=" https://www.creative-tim.com/learning-lab/vue/overview/material-kit/"
+                    >
+                      <h6
+                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
+                      >
+                        Profile
+                      </h6>
+                    </a>
+                  </li>
+                  <li class="nav-item list-group-item border-0 p-0">
+                    <a
+                      class="dropdown-item py-2 ps-3 border-radius-md"
+                      href="#"
+                    >
+                      <h6
+                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
+                        @click="logout"
+                      >
+                        Logout
+                      </h6>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
         <!-- <ul class="navbar-nav d-lg-block d-none">
           <li class="nav-item">
@@ -462,3 +522,8 @@ watch(
   </nav>
   <!-- End Navbar -->
 </template>
+<script>
+async function logout() {
+  await signOut();
+}
+</script>
