@@ -292,43 +292,77 @@ watch(
             </div>
           </li>
 
-          <!-- USER PROFILE -->
+          <!-- USER PROFILE START -->
           <li class="nav-item dropdown dropdown-hover mx-2">
             <a role="button" class="nav-link ps-2 d-flex cursor-pointer align-items-center" :class="getTextColor()"
-              id="dropdownMenuUser" data-bs-toggle="dropdown" aria-expanded="false">
-              <el-icon class="material-icons opacity-6 text-md" style="padding-top: 2px">
+              id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+              <el-icon>
                 <User />
               </el-icon>
               <img :src="getArrowColor()" alt="down-arrow" class="arrow ms-2 d-lg-block d-none" />
               <img :src="getArrowColor()" alt="down-arrow" class="arrow ms-1 d-lg-none d-block ms-auto" />
             </a>
             <div
-              class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md mt-0 mt-lg-3 p-3 border-radius-lg"
-              aria-labelledby="dropdownMenuDocs">
+              class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive p-3 border-radius-lg mt-0 mt-lg-3"
+              aria-labelledby="dropdownMenuBlocks">
               <div class="d-none d-lg-block">
                 <ul class="list-group">
-                  <li class="nav-item list-group-item border-0 p-0">
-                    <a class="dropdown-item py-2 ps-3 border-radius-md"
-                      href=" https://www.creative-tim.com/learning-lab/vue/overview/material-kit/">
-                      <h6
-                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">
-                        Profile
-                      </h6>
-                    </a>
-                  </li>
-                  <li class="nav-item list-group-item border-0 p-0">
-                    <RouterLink :to="{ name: 'sign-in' }" class="dropdown-item py-2 ps-3 border-radius-md">
-                      <h6
-                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                        @click="logout">
-                        Logout
-                      </h6>
+                  <li class="nav-item dropdown dropdown-hover dropdown-subitem list-group-item border-0 p-0">
+                    <RouterLink :to="{ name: 'home' }" class="dropdown-item py-2 ps-3 border-radius-md">
+                      <div class="d-flex">
+                        <div class="w-100 d-flex align-items-center justify-content-between">
+                          <div>
+                            <h6
+                              class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">
+                              Profile
+                            </h6>
+                          </div>
+                        </div>
+                      </div>
                     </RouterLink>
                   </li>
+                  
+                  <RouterLink :to="{ name: 'sign-in' }">
+                  <li class="nav-item dropdown dropdown-hover dropdown-subitem list-group-item border-0 p-0">
+                    <a class="dropdown-item py-2 ps-3 border-radius-md" @click="logout">
+                      <div class="d-flex">
+                        <div class="w-100 d-flex align-items-center justify-content-between">
+                          <div>
+                            <h6
+                              class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">
+                              Logout
+                            </h6>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                </RouterLink>
                 </ul>
+              </div>
+              <div class="row d-lg-none">
+                <div class="col-md-12">
+                  <div class="d-flex mb-2">
+                    <div class="w-100 d-flex align-items-center justify-content-between">
+                      <div>
+                        <h6
+                          class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">
+                          Page Sections
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                  <RouterLink class="dropdown-item ps-3 border-radius-md mb-1" :to="{ name: 'home' }">
+                    Profile
+                  </RouterLink>
+                  <RouterLink class="dropdown-item ps-3 border-radius-md mb-1" :to="{ name: 'sign-in' }">
+                    Logout
+                  </RouterLink>
+                </div>
               </div>
             </div>
           </li>
+          <!-- USER PROFILE END -->
         </ul>
         <!-- <ul class="navbar-nav d-lg-block d-none">
           <li class="nav-item">

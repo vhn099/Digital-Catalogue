@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home/Home.vue";
 import ContactUs from "../views/ContactUs/ContactUs.vue";
-import SignIn from "../views/SignIn.vue";
+import SignIn from "../views/SignIn/SignIn.vue";
 import Users from "../views/Settings/User.vue";
 
 import { getAuth } from "firebase/auth";

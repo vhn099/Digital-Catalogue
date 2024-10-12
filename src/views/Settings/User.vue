@@ -1,27 +1,22 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, onActivated, onMounted, reactive, ref } from "vue";
 import { ElMessageBox } from 'element-plus'
-import type { DrawerProps } from 'element-plus'
+import type { DrawerProps, FormInstance } from 'element-plus'
 
 // Sections components
 import DefaultNavbar from "../Layouts/NavbarDefault.vue";
 import DefaultFooter from "../Layouts/FooterDefault.vue";
-
+import { UserFirestore } from "@/firestore/User";
 
 interface User {
-  date: string
-  name: string
-  address: string
-}
+  email: string,
+  full_name: any
+  created: any,
+  created_by: any,
+  updated: any,
+  updated_by: any,
+};
 
-const search = ref('')
-const filterTableData = computed(() =>
-  tableData.filter(
-    (data) =>
-      !search.value ||
-      data.name.toLowerCase().includes(search.value.toLowerCase())
-  )
-)
 const handleEdit = (index: number, row: User) => {
   console.log(index, row)
 }
@@ -29,30 +24,34 @@ const handleDelete = (index: number, row: User) => {
   console.log(index, row)
 }
 
-const tableData: User[] = [
+const tableColumns = [
   {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
+    label: 'Email',
+    prop: 'email',
   },
   {
-    date: '2016-05-02',
-    name: 'John',
-    address: 'No. 189, Grove St, Los Angeles',
+    label: 'Full Name',
+    prop: 'full_name'
   },
   {
-    date: '2016-05-04',
-    name: 'Morgan',
-    address: 'No. 189, Grove St, Los Angeles',
+    label: 'Created On',
+    prop: 'created'
   },
   {
-    date: '2016-05-01',
-    name: 'Jessy',
-    address: 'No. 189, Grove St, Los Angeles',
+    label: 'Created By',
+    prop: 'created_by'
   },
-]
+  {
+    label: 'Updated On',
+    prop: 'updated',
+  },
+  {
+    label: 'Updated By',
+    prop: 'updated_by'
+  }
+];
 
-const drawer2 = ref(false)
+const drawer2 = ref(false);
 const direction = ref<DrawerProps['direction']>('rtl')
 const radio1 = ref('Option 1')
 const handleClose = (done: () => void) => {
@@ -76,61 +75,78 @@ function confirmClick() {
       // catch error
     })
 }
+
+function openDrawer() {
+  drawer2.value = true;
+}
+
 </script>
+
 <template>
   <DefaultNavbar light />
-
-  <!-- <BaseLayout
-    title="Page Headers"
-    :breadcrumb="[
-      { label: 'Page Sections', route: '/sections/page-sections/page-headers' },
-      { label: 'Page Headers' },
-    ]"
-  >
-    <View title="Header 1" :code="header1Code" id="header-1">
-      <HeaderOne />
-    </View>
-  </BaseLayout> -->
   <div class="container">
-    <el-row>
-          <el-table :data="filterTableData" style="width: 100%">
-    <el-table-column label="Date" prop="date" />
-    <el-table-column label="Name" prop="name" />
-    <el-table-column align="right">
-      <template #header>
-        <el-input v-model="search" size="small" placeholder="Type to search" />
-      </template>
-      <template #default="scope">
-        <el-button size="small" @click="drawer2 = true">
-          Edit
-        </el-button>
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
-        >
-          Delete
-        </el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-        
-      </el-row>
+    <div class="mt-4">
+      <el-button type="primary" @click="openDrawer()">Add User</el-button>
     </div>
+    <el-row>
+      <el-table :data="filterTableData" style="width: 100%">
+        <el-table-column v-for="column in tableColumns" :prop="column.prop" :label="column.label">
+        </el-table-column>
+        <el-table-column align="right">
+          <template #header>
+            <el-input v-model="search" size="small" placeholder="Type to search" />
+          </template>
+          <template #default="scope">
+            <el-button size="small" @click="drawer2 = true">
+              Edit
+            </el-button>
+            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
+              Delete
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+    </el-row>
+  </div>
   <DefaultFooter />
 
-  <el-drawer v-model="drawer2" size="70%" :direction="direction">
+  <el-drawer v-model="drawer2" size="30%" :direction="direction">
     <template #header>
-      <h4>set title by slot</h4>
+      <h4>USER FORM</h4>
     </template>
     <template #default>
       <div>
-        <el-radio v-model="radio1" value="Option 1" size="large">
-          Option 1
-        </el-radio>
-        <el-radio v-model="radio1" value="Option 2" size="large">
-          Option 2
-        </el-radio>
+        <el-form ref="formRef" :label-position="labelPosition" :model="dynamicValidateForm">
+          <el-form-item>
+            <el-form-item class="input-label" label="Email" prop="email" :rules="[
+              {
+                type: 'email',
+                message: 'Please input correct email address',
+                trigger: ['blur', 'change'],
+              },
+            ]">
+              <el-input v-model="dynamicValidateForm.email" autocomplete="off" />
+            </el-form-item>
+
+            <el-form-item class="input-label" label="Full Name" prop="full_name">
+              <el-input v-model="dynamicValidateForm.full_name" autocomplete="off" />
+            </el-form-item>
+
+            <el-form-item class="input-label" label="Password" prop="password">
+              <el-input v-model="dynamicValidateForm.password" autocomplete="off" />
+            </el-form-item>
+
+            <el-form-item class="input-label" label="Confirm Password" prop="password_confirm">
+              <el-input v-model="dynamicValidateForm.password_confirm" autocomplete="off" />
+            </el-form-item>
+
+            <el-form-item>
+              <el-button class="my-2 mb-2 sign-in-button text-center" type="primary"
+                @click="submitForm(formRef)">Submit</el-button>
+            </el-form-item>
+          </el-form-item>
+        </el-form>
       </div>
     </template>
     <template #footer>
@@ -147,9 +163,11 @@ function confirmClick() {
   margin-bottom: 20px;
   margin-top: 20px;
 }
+
 .el-row:last-child {
   margin-bottom: 0;
 }
+
 .el-col {
   border-radius: 4px;
 }
@@ -159,3 +177,69 @@ function confirmClick() {
   min-height: 36px;
 }
 </style>
+
+<script lang="ts">
+import type { FormProps } from "element-plus";
+
+const getUsers = async () => {
+  const userList = [];
+  (await UserFirestore.getUsers()).forEach(user => {
+    const data = user.data();
+    const object = {
+      email: data.email,
+      full_name: data.full_name || '',
+      created: data.created || '',
+      created_by: data.created_by || '',
+      updated: data.updated || '',
+      updated_by: data.updated_by || ''
+    };
+    userList.push(object);
+  });
+  return userList;
+};
+
+interface UserForm {
+
+}
+
+const search = ref('');
+const formRef = ref<FormInstance>();
+
+const dynamicValidateForm = reactive<{
+  email: string,
+  full_name: string,
+  password: string,
+  password_confirm: string,
+}>({
+  email: '',
+  full_name: '',
+  password: '',
+  password_confirm: ''
+});
+
+export default {
+  data() {
+    return {
+      tableData: [],
+      labelPosition: ref<FormProps['labelPosition']>('top'),
+    }
+  },
+  methods: {
+
+  },
+
+  async created() {
+    this.tableData = await getUsers();
+  },
+
+  computed: {
+    filterTableData() {
+      return this.tableData.filter(
+        (data: any) =>
+          !search.value ||
+          data.email.toLowerCase().includes(search.value.toLowerCase())
+      );
+    }
+  },
+}
+</script>

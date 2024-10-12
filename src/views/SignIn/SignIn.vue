@@ -3,7 +3,7 @@ import { onMounted } from "vue";
 
 // example components
 // import Header from ".//Header/Header.vue";
-import Header from "./Layouts/Header.vue";
+import Header from "../Layouts/Header.vue";
 
 //Vue Material Kit 2 components
 // import MaterialInput from "@/components/MaterialInput.vue";
@@ -166,7 +166,7 @@ import type { FormInstance } from 'element-plus'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import router from "@/router";
 
-const formRef = ref<FormInstance>()
+const formRef = ref<FormInstance>();
 
 const dynamicValidateForm = reactive<{
   password: string
@@ -176,14 +176,14 @@ const dynamicValidateForm = reactive<{
   email: '',
   password: '',
   remember: true
-})
+});
 
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
       await signInWithEmailAndPassword(getAuth(), dynamicValidateForm.email, dynamicValidateForm.password).then(response =>{
-        router.push("/home");
+        router.replace("/home");
       });
 
     } else {
