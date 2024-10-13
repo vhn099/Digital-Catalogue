@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { computed, onActivated, onMounted, reactive, ref } from "vue";
-import { ElMessageBox } from 'element-plus'
-import type { DrawerProps, FormInstance } from 'element-plus'
+import { reactive, ref } from "vue";
+import { ElMessageBox, ElMessage } from 'element-plus'
+import type { DrawerProps, FormInstance, FormRules } from 'element-plus'
 
 // Sections components
 import DefaultNavbar from "../Layouts/NavbarDefault.vue";
 import DefaultFooter from "../Layouts/FooterDefault.vue";
-import { UserFirestore } from "@/firestore/User";
+import { UserFirestore } from "@/lib/User";
 
 interface User {
   email: string,
@@ -16,13 +16,6 @@ interface User {
   updated: any,
   updated_by: any,
 };
-
-const handleEdit = (index: number, row: User) => {
-  console.log(index, row)
-}
-const handleDelete = (index: number, row: User) => {
-  console.log(index, row)
-}
 
 const tableColumns = [
   {
@@ -51,42 +44,13 @@ const tableColumns = [
   }
 ];
 
-const drawer2 = ref(false);
-const direction = ref<DrawerProps['direction']>('rtl')
-const radio1 = ref('Option 1')
-const handleClose = (done: () => void) => {
-  ElMessageBox.confirm('Are you sure you want to close this?')
-    .then(() => {
-      done()
-    })
-    .catch(() => {
-      // catch error
-    })
-}
-function cancelClick() {
-  drawer2.value = false
-}
-function confirmClick() {
-  ElMessageBox.confirm(`Are you confirm to chose ${radio1.value} ?`)
-    .then(() => {
-      drawer2.value = false
-    })
-    .catch(() => {
-      // catch error
-    })
-}
-
-function openDrawer() {
-  drawer2.value = true;
-}
-
 </script>
 
 <template>
   <DefaultNavbar light />
   <div class="container">
     <div class="mt-4">
-      <el-button type="primary" @click="openDrawer()">Add User</el-button>
+      <el-button type="primary" @click="openDrawer">Add User</el-button>
     </div>
     <el-row>
       <el-table :data="filterTableData" style="width: 100%">
@@ -97,10 +61,10 @@ function openDrawer() {
             <el-input v-model="search" size="small" placeholder="Type to search" />
           </template>
           <template #default="scope">
-            <el-button size="small" @click="drawer2 = true">
+            <el-button size="small" @click="openDrawerEdit(scope.row)">
               Edit
             </el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
+            <el-button size="small" type="danger" @click="handleDelete(scope.row)">
               Delete
             </el-button>
           </template>
@@ -111,49 +75,53 @@ function openDrawer() {
   </div>
   <DefaultFooter />
 
-  <el-drawer v-model="drawer2" size="30%" :direction="direction">
+  <el-drawer v-model="drawer" size="50%" :direction="direction">
+    <!-- DRAWER HEADER -->
     <template #header>
       <h4>USER FORM</h4>
     </template>
+
+    <!-- DRAWER BODY -->
     <template #default>
       <div>
-        <el-form ref="formRef" :label-position="labelPosition" :model="dynamicValidateForm">
-          <el-form-item>
-            <el-form-item class="input-label" label="Email" prop="email" :rules="[
-              {
-                type: 'email',
-                message: 'Please input correct email address',
-                trigger: ['blur', 'change'],
-              },
-            ]">
-              <el-input v-model="dynamicValidateForm.email" autocomplete="off" />
-            </el-form-item>
-
-            <el-form-item class="input-label" label="Full Name" prop="full_name">
-              <el-input v-model="dynamicValidateForm.full_name" autocomplete="off" />
-            </el-form-item>
-
-            <el-form-item class="input-label" label="Password" prop="password">
-              <el-input v-model="dynamicValidateForm.password" autocomplete="off" />
-            </el-form-item>
-
-            <el-form-item class="input-label" label="Confirm Password" prop="password_confirm">
-              <el-input v-model="dynamicValidateForm.password_confirm" autocomplete="off" />
-            </el-form-item>
-
-            <el-form-item>
-              <el-button class="my-2 mb-2 sign-in-button text-center" type="primary"
-                @click="submitForm(formRef)">Submit</el-button>
-            </el-form-item>
+        <el-form :rules="formRules" ref="formRef" :label-position="labelPosition" :model="dynamicValidateForm">
+          <el-form-item class="input-label" label="ID" prop="id" v-if="edit">
+            <el-input v-model="dynamicValidateForm.id" autocomplete="off" disabled />
           </el-form-item>
+
+          <el-form-item class="input-label" label="Email" prop="email_form">
+            <el-input v-model="dynamicValidateForm.email_form" autocomplete="off" :disabled="edit"/>
+          </el-form-item>
+
+          <el-form-item class="input-label" label="Full Name" prop="full_name">
+            <el-input v-model="dynamicValidateForm.full_name" autocomplete="off" />
+          </el-form-item>
+
+          <el-form-item class="input-label" label="Password" prop="password" v-if="!edit">
+            <el-input minlength="6" v-model="dynamicValidateForm.password" autocomplete="off" :show-password="true" />
+          </el-form-item>
+
+          <el-form-item class="input-label" label="Confirm Password" prop="password_confirm" v-if="!edit">
+            <el-input minlength="6" v-model="dynamicValidateForm.password_confirm" autocomplete="off"
+              :show-password="true" />
+          </el-form-item>
+
+          <el-form-item prop="isAdmin">
+            <el-checkbox v-model="dynamicValidateForm.isAdmin" label="Is Admin ?" />
+          </el-form-item>
+
+          <div style="flex: auto; float: right">
+            <el-form-item>
+              <el-button @click="cancelClick">Cancel</el-button>
+              <el-button type="primary" @click="confirmClick(formRef)">Confirm</el-button>
+            </el-form-item>
+          </div>
         </el-form>
       </div>
     </template>
+    <!-- DRAWER FOOTER -->
     <template #footer>
-      <div style="flex: auto">
-        <el-button @click="cancelClick">cancel</el-button>
-        <el-button type="primary" @click="confirmClick">confirm</el-button>
-      </div>
+
     </template>
   </el-drawer>
 </template>
@@ -180,14 +148,76 @@ function openDrawer() {
 
 <script lang="ts">
 import type { FormProps } from "element-plus";
+import { getAuth } from 'firebase/auth';
+import { Timestamp } from "firebase/firestore";
+
+interface FormFields {
+  id: string,
+  email_form: string,
+  full_name: string,
+  password: string,
+  password_confirm: string,
+  isAdmin: boolean,
+};
+
+const direction = ref<DrawerProps['direction']>('rtl');
+/* REF DEFINITION START */
+const tableData = ref([]);
+const search = ref('');
+const drawer = ref(false);
+const edit = ref(false);
+const formRef = ref<FormInstance>();
+/* REF DEFINITION END */
+
+const formRules = reactive<FormRules<FormFields>>({
+  email_form: [
+    { required: true, message: "Please input email", trigger: ['blur', 'change'] },
+    { type: 'email', message: "Please input with email", trigger: ['blur', 'change'] }
+  ],
+  password: [
+    { required: true, message: "Please input user's password", trigger: ['blur', 'change'] },
+    { min: 6, message: "Password's length must be over 6", trigger: ['blur', 'change'] }
+  ],
+  password_confirm: [
+    { required: true, message: "Please input confirm password", trigger: ['blur', 'change'] },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== dynamicValidateForm.password) {
+          callback(new Error("Password and confirm password must be the same"));
+        } else {
+          callback();
+        }
+      },
+      trigger: ['blur', 'change']
+    }
+  ]
+});
+
+const dynamicValidateForm = reactive<{
+  id: string,
+  email_form: string,
+  full_name: string,
+  password: string,
+  password_confirm: string,
+  isAdmin: boolean,
+}>({
+  id: '',
+  email_form: '',
+  full_name: '',
+  password: '',
+  password_confirm: '',
+  isAdmin: false,
+});
 
 const getUsers = async () => {
   const userList = [];
   (await UserFirestore.getUsers()).forEach(user => {
     const data = user.data();
     const object = {
+      id: user.id,
       email: data.email,
       full_name: data.full_name || '',
+      isAdmin: data.isAdmin,
       created: data.created || '',
       created_by: data.created_by || '',
       updated: data.updated || '',
@@ -198,43 +228,128 @@ const getUsers = async () => {
   return userList;
 };
 
-interface UserForm {
+const getUserFormData = () => {
+  const userForm = {} as any;
+  for (const key in dynamicValidateForm) {
+    userForm[key] = dynamicValidateForm[key];
+  }
+  userForm.updated = Timestamp.now().toDate();
+  userForm.updated_by = getAuth().currentUser.email;
+  if (!edit.value) {
+    userForm.created = Timestamp.now().toDate();
+    userForm.created_by = getAuth().currentUser.email;
+  }
 
+  return userForm;
+};
+
+const createUsers = async () => {
+  const userForm = getUserFormData();
+  const result = await UserFirestore.createUsers(userForm) as any;
+  ElMessage({
+    message: result.message,
+    type: result.status,
+    showClose: true
+  });
+  if (result.status === 'success') {
+    drawer.value = false;
+  }
 }
 
-const search = ref('');
-const formRef = ref<FormInstance>();
+const updateUser = async () => {
+  const userForm = getUserFormData();
+  const result = await UserFirestore.updateUser(userForm) as any;
+  ElMessage({
+    message: result.message,
+    type: result.status,
+    showClose: true
+  });
+  if (result.status === 'success') {
+    drawer.value = false;
+  }
+};
 
-const dynamicValidateForm = reactive<{
-  email: string,
-  full_name: string,
-  password: string,
-  password_confirm: string,
-}>({
-  email: '',
-  full_name: '',
-  password: '',
-  password_confirm: ''
-});
+const deleteUser = async (userID, email, updated, updated_by) => {
+  const result = await UserFirestore.deleteUser(userID, email, updated, updated_by) as any;
+  if (result.status === 'success') {
+    tableData.value = await getUsers();
+  }
+  ElMessage({
+    message: result.message,
+    type: result.status,
+    showClose: true
+  });
+}
 
 export default {
   data() {
     return {
-      tableData: [],
       labelPosition: ref<FormProps['labelPosition']>('top'),
-    }
+    };
   },
   methods: {
+    handleDelete: (scope) => {
+      ElMessageBox.confirm(`Are you confirm to delete this user ?`)
+        .then(async () => {
+          await deleteUser(scope.id, scope.email, scope.updated, scope.updated_by);
+          tableData.value = await getUsers();
+        })
+        .catch(() => {
 
+        });
+    },
+    openDrawerEdit: (scope) => {
+      dynamicValidateForm.id = scope.id;
+      dynamicValidateForm.email_form = scope.email;
+      dynamicValidateForm.full_name = scope.full_name;
+      dynamicValidateForm.isAdmin = scope.isAdmin;
+      drawer.value = true;
+      edit.value = true;
+    },
+    openDrawer: () => {
+      drawer.value = true;
+    },
+    cancelClick: () => {
+      /* Reset form values when cancel is clicked */
+      dynamicValidateForm.id = '';
+      dynamicValidateForm.email_form = '';
+      dynamicValidateForm.full_name = '';
+      dynamicValidateForm.password = '';
+      dynamicValidateForm.password_confirm = '';
+      dynamicValidateForm.isAdmin = false;
+      drawer.value = false;
+      edit.value = false;
+    },
+    confirmClick: (formEl: FormInstance | undefined) => {
+      if (!formEl) return;
+      formEl.validate(async (valid) => {
+        if (valid) {
+          ElMessageBox.confirm(`Are you confirm to save with these changes ?`)
+            .then(async () => {
+              if (!edit.value) {
+                await createUsers();
+              } else {
+                await updateUser();
+              }
+              tableData.value = await getUsers();
+            })
+            .catch(() => {
+
+            });
+        } else {
+          console.log('error submit!');
+        }
+      });
+    },
   },
 
   async created() {
-    this.tableData = await getUsers();
+    tableData.value = await getUsers();
   },
 
   computed: {
     filterTableData() {
-      return this.tableData.filter(
+      return tableData.value.filter(
         (data: any) =>
           !search.value ||
           data.email.toLowerCase().includes(search.value.toLowerCase())

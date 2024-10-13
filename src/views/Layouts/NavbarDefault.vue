@@ -69,7 +69,7 @@ const getTextColor = () => {
 };
 
 const logout = async () => {
-  await signOut(getAuth()).then();
+  await signOut(getAuth());
 }
 
 // set nav color on mobile && desktop

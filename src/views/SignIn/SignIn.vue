@@ -30,8 +30,9 @@ onMounted(() => {
           <div class="col-lg-4 col-md-8 col-12 mx-auto">
             <div class="card z-index-0 fadeIn3 fadeInBottom">
               <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1" style="background-color: aqua !important;">
-                  <h4 class="text-white font-weight-bolder text-center mt-2 mb-0" >
+                <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1"
+                  style="background-color: aqua !important;">
+                  <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">
                     Sign in
                   </h4>
                   <!-- <div class="row mt-3">
@@ -56,16 +57,18 @@ onMounted(() => {
               <div class="card-body">
                 <el-form ref="formRef" style="width: auto" :model="dynamicValidateForm" label-width="auto">
                   <el-form-item class="input-label" label="Email" prop="email" :rules="[
-                      {
-                        type: 'email',
-                        message: 'Please input correct email address',
-                        trigger: ['blur', 'change'],
-                      },
-                    ]">
-                    <el-input v-model="dynamicValidateForm.email" autocomplete="off"  />
+                    {
+                      type: 'email',
+                      message: 'Please input correct email address',
+                      trigger: ['blur', 'change'],
+                    },
+                  ]">
+                    <el-input @keyup.enter.native="submitForm(formRef)" v-model="dynamicValidateForm.email"
+                      autocomplete="off" />
                   </el-form-item>
                   <el-form-item class="input-label" label="Password" prop="password">
-                    <el-input minlength="6" v-model="dynamicValidateForm.password" autocomplete="off" type="password"/>
+                    <el-input @keyup.enter.native="submitForm(formRef)" minlength="6"
+                      v-model="dynamicValidateForm.password" autocomplete="off" type="password" />
                   </el-form-item>
 
                   <el-form-item prop="remember">
@@ -162,7 +165,7 @@ onMounted(() => {
 
 <script lang="ts">
 import { reactive, ref } from 'vue'
-import type { FormInstance } from 'element-plus'
+import { ElMessage, type FormInstance } from 'element-plus'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import router from "@/router";
 
@@ -171,25 +174,42 @@ const formRef = ref<FormInstance>();
 const dynamicValidateForm = reactive<{
   password: string
   email: string,
-  remember: boolean
+  remember: boolean,
 }>({
   email: '',
   password: '',
   remember: true
 });
 
-const submitForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate(async (valid) => {
-    if (valid) {
-      await signInWithEmailAndPassword(getAuth(), dynamicValidateForm.email, dynamicValidateForm.password).then(response =>{
-        router.replace("/home");
-      });
+export default {
+  data() {
+    return {
 
-    } else {
-      console.log('error submit!');
+    };
+  },
+  methods: {
+    submitForm: (formEl: FormInstance | undefined) => {
+      if (!formEl) return;
+      formEl.validate(async (valid) => {
+        if (valid) {
+          await signInWithEmailAndPassword(getAuth(), dynamicValidateForm.email, dynamicValidateForm.password).then(response =>{
+            router.replace("/home");
+          }).catch(error => {
+            let message = error.message;
+            if (error.code == 'auth/invalid-credential') {
+              message = "Invalid credentials. Please try again !";
+            } else {
+              message = error.message;
+            }
+            ElMessage({
+              type: 'error',
+              message: message
+            });
+          });
+        } else {}
+      })
     }
-  })
+  }
 }
 
 </script>

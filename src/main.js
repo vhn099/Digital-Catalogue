@@ -29,7 +29,6 @@ const auth = getAuth();
 
 // Card: views/Presentation/Components/Card
 // Card data: views/Presentation/Sections/Data
-
 onAuthStateChanged(auth, (currentUser) => {
     if (!app) {
         app = createApp(App);
@@ -46,4 +45,3 @@ onAuthStateChanged(auth, (currentUser) => {
         app.mount("#app");
     }
 });
-
