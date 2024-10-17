@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="grid elements-container">
         <div class="col-2">
             
@@ -47,4 +47,24 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
 }
+</style> -->
+
+<template>
+    <div class="login-panel">
+        <div class="inner">
+            <div class="form"></div>
+            <div class="image"></div>
+        </div>
+    </div>
+</template>
+<style scoped>
+.login-panel {
+    height: 80%;
+    width: 70%;
+    background-color: aqua;
+}
 </style>
+
+<script setup>
+
+</script>

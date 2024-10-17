@@ -26,7 +26,7 @@ function toggleDarkMode() {
   <HeaderItem></HeaderItem>
   <CarouselItem></CarouselItem>
 
-  <div class="grid">
+  <div class="flex">
     <div class="col-1">
 
     </div>
