@@ -2,6 +2,21 @@
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
+import { reactive } from 'vue';
+import { useVuelidate } from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+
+const formFields = reactive({
+    username: { label: 'Username', type: 'text', value: '' },
+    password: { label: 'Password', type: 'password', value: '' },
+});
+
+const rules = {
+    username: { required },
+    password: { required: false }
+};
+
+const v$ = useVuelidate(rules, formFields);
 </script>
 
 <template>
@@ -28,30 +43,8 @@ import Button from 'primevue/button';
 <style scoped></style>
 
 <script>
-import { reactive } from 'vue';
-import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
-
 /* IMAGE DEFINITION */
-
 export default {
-    setup() {
-        const formFields = reactive({
-            username: { label: 'Username', type: 'text', value: '' },
-            password: { label: 'Password', type: 'password', value: '' },
-        });
-
-        const rules = {
-            username: { required },
-            password: { required: false }
-        };
-
-        const v$ = useVuelidate(rules, formFields);
-        return {
-            formFields,
-            v$,
-        }
-    },
     data() {
         return {
             AdmLogo: () => import('@/assets/img/adm_logo.png')
@@ -72,5 +65,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
