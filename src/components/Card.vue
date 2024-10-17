@@ -1,8 +1,10 @@
 
 <template>
+    <div class="col">
     <div class="my-card-deck">
-
+        ABC
     </div>
+</div>
 </template>
 
 <script setup>
@@ -15,6 +17,10 @@ import Tag from 'primevue/tag';
 
 <style scoped>
 .my-card-deck {
-    padding: auto;
+    height: 365px;
+    width: inherit;
+    background-color: bisque;
 }
+
+
 </style>
