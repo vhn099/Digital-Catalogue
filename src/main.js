@@ -6,7 +6,9 @@ import router from './router';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
-const app = createApp(App)
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+
 const MyPreset = definePreset(Aura, {
     semantic: {
         transitionDuration: '0.2s',
@@ -397,6 +399,7 @@ const MyPreset = definePreset(Aura, {
     //     }
     // }
 });
+const app = createApp(App);
 app.use(router);
 app.use(PrimeVue, {
     theme: {
