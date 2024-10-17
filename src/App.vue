@@ -62,6 +62,6 @@ function toggleDarkMode() {
 
 </template>
 
-<style>
+<style scoped>
 
 </style>
