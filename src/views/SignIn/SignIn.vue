@@ -1,9 +1,14 @@
 <template>
     <div class="grid elements-container">
-        <div class="col-4">
+        <div class="col-2">
+            
+        </div>
+        <div class="col-2">
             <SignInForm />
         </div>
-        <div class="col-8 image-container">
+        <div class="col-6 image-container">
+        </div>
+        <div class="col-2">
         </div>
     </div>
 </template>
@@ -38,7 +43,7 @@ body {
 }
 
 .image-container {
-    /* background-image: url("../../assets/img/login/mask-group.png"); */
+    background-image: url("../../assets/img/login/mask-group.png");
     background-size: contain;
     background-repeat: no-repeat;
 }
