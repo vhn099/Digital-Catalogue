@@ -1,15 +1,37 @@
+<script setup>
+
+
+defineProps({
+    icon: {
+        type: String,
+    },
+    icon_text: {
+        type: String,
+    },
+    line2: {
+        type: String
+    },
+    line3: {
+        type: String
+    },
+    line4: {
+        type: Object
+    }
+});
+</script>
+
 <template>
     <div class="flex gap-1 mt-1 pt-4">
         <!-- <i class="pi pi-cog"></i> -->
-         <img src="..\assets\img\homepage\supply-chain.png" width="25">
-        <span>Category</span>
+         <img :src="icon" width="25">
+        <span>{{ icon_text }}</span>
     </div>
-    <span class="my-second-line">Discover Decks by Category</span>
+    <span class="my-second-line" v-if="line2">Discover Decks by Category</span>
+    <span class="my-second-line" v-if="line3" style="font-size: 32px;">Get in touch with us to get the ball rolling</span>
+    <span class="my-second-line" v-if="line4">{{line4.title}}: {{ line4.deck }}</span>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-</script>
+
 <style scoped>
 .my-second-line {
     font-weight: 500;
