@@ -18,7 +18,6 @@
                 </template>
 </ToggleSwitch> -->
             <Menubar :model="items" class="admin-menu" />
-
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <i class="pi pi-heart" style="font-size: 43px; color: white;"></i>
 
