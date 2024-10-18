@@ -22,6 +22,13 @@ const value4 = ref(null);
 function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark');
 }
+
+const sectionIcon = "src/assets/img/homepage/support.png";
+const sectionText = "Contact us";
+const line4 = {
+  title: 'Selected',
+  deck: 'Glassware Design'
+}
 </script>
 
 <template>
@@ -35,7 +42,8 @@ function toggleDarkMode() {
       <div class="flex">
         <div class="col-8">
           <div class="flex flex-column">
-            <SectionItem></SectionItem>
+            <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
+            <!-- <SectionItem :icon="sectionIcon" :icon_text="sectionText" :line4="line4"></SectionItem> -->
             <span>Please fill con cặc nè. đĩ mẹ mầy</span>
             <div class="flex">
               <div class="flex-1">
