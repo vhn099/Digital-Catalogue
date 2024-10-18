@@ -1,6 +1,7 @@
 <script setup>
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
+import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 
 
@@ -11,9 +12,11 @@ import CarouselItem from '../../components/Carousel.vue'
 import HorizontalCatelogItem from '../../components/HorizontalCatelog.vue'
 import SectionItem from '../../components/Section.vue'
 import FooterItem from '../../components/Footer.vue'
-import CardItem from '../../components/Card.vue'
 import { ref } from 'vue';
+const value1 = ref(null);
 const value2 = ref(null);
+const value3 = ref(null);
+const value4 = ref(null);
 
 
 function toggleDarkMode() {
@@ -25,43 +28,64 @@ function toggleDarkMode() {
   <DockItem></DockItem>
   <HeaderItem></HeaderItem>
   <div class="flex">
-    <div class="col-1 disable-margin">
+    <div class="col-1">
 
     </div>
-    <div class="col-11 disable-margin">
+    <div class="col-11">
       <div class="flex">
         <div class="col-8">
           <div class="flex flex-column">
             <SectionItem></SectionItem>
             <span>Please fill con cặc nè. đĩ mẹ mầy</span>
-            <FloatLabel variant="on">
-              <IconField>
-                <InputIcon class="pi pi-search" />
-                <InputText id="on_label" v-model="value3" autocomplete="off" />
-              </IconField>
-              <!-- <label for="on_label">On Label</label> -->
-            </FloatLabel>
-            <!-- <div class="card grid pb-0.5 grid-cols-1 md:grid-cols-2 gap-4">
-              <FloatLabel variant="in">
-                <InputText id="in_label" v-model="value1" autocomplete="off" />
-                <label for="in_label">In Label</label>
-              </FloatLabel>
-              <FloatLabel variant="in">
-                <InputText id="in_label" v-model="value1" autocomplete="off" />
-                <label for="in_label">In Label</label>
-              </FloatLabel>
+            <div class="flex">
+              <div class="flex-1">
+                <FloatLabel variant="in">
+                  <InputText id="in_label" fluid="true" v-model="value1" autocomplete="off" />
+                  <label for="in_label">First Name</label>
+                </FloatLabel>
+              </div>
+              <div class="flex-1">
+                <FloatLabel variant="in">
+                  <InputText id="in_label" fluid="true" v-model="value2" autocomplete="off" />
+                  <label for="in_label">Last Name</label>
+                </FloatLabel>
+              </div>
             </div>
-            <div class="card grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FloatLabel variant="in">
-              <InputText id="in_label" v-model="value1" autocomplete="off" />
+            <div class="flex">
+              <div class="flex-1">
+                <FloatLabel variant="in">
+                  <InputText id="in_label" fluid="true" v-model="value3" autocomplete="off" />
+                  <label for="in_label">Email</label>
+                </FloatLabel>
+              </div>
+              <div class="flex-1">
+
+              </div>
+            </div>
+            <!-- <div class="flex"> -->
+            <FloatLabel variant="in">
+              <Textarea id="over_label" autoResize="false" fluid="true" v-model="value4" rows="5" />
               <label for="in_label">In Label</label>
             </FloatLabel>
+            <!-- </div> -->
+            <span>admgroup.com is committed to protecting and respecting your privacy, and we’ll only use your personal
+              information to administer your account and to provide the products and services you requested from us.
+              From time to time, we would like to contact you about our products and services, as well as other content
+              that may be of interest to you. By clicking submit below, you consent to allow admgroup.com to store and
+              process the personal information submitted above to provide you the content requested</span>
+
+            <div class="flex">
+              <div class="flex-1">
+                <Button label="Primary" fluid="true" raised />
+              </div>
+              <div class="flex-1">
+
+              </div>
             </div>
-            -->
           </div>
 
         </div>
-        <div class="col-4" style="background-color: black;">
+        <div class="col-4 contract-image">
 
         </div>
       </div>
@@ -77,21 +101,10 @@ function toggleDarkMode() {
   padding: 0;
 }
 
-.t-con {
-  height: 10px;
-  width: 100%;
-  display: flex;
-}
-
-.t-left {
-  width: 60%;
-  height: 100%;
-  background-color: antiquewhite;
-}
-
-.t-right {
-  width: 40%;
-  height: 100%;
-  background-color: blue;
+.contract-image {
+  background-image: url("../../assets/img/contactus/adm-brand-look-book_final-36_1.png");
+    /* background-image: url('https://via.placeholder.com/450'); */
+    background-size: cover;
+    background-position: top;
 }
 </style>
