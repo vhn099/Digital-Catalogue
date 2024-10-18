@@ -44,15 +44,15 @@ const line4 = {
           <div class="flex flex-column">
             <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
             <!-- <SectionItem :icon="sectionIcon" :icon_text="sectionText" :line4="line4"></SectionItem> -->
-            <span>Please fill con cặc nè. đĩ mẹ mầy</span>
+            <span>Please fill in a form and we get back to you</span>
             <div class="flex">
-              <div class="flex-1">
+              <div class="flex-1 p-2">
                 <FloatLabel variant="in">
                   <InputText id="in_label" fluid="true" v-model="value1" autocomplete="off" />
                   <label for="in_label">First Name</label>
                 </FloatLabel>
               </div>
-              <div class="flex-1">
+              <div class="flex-1 p-2">
                 <FloatLabel variant="in">
                   <InputText id="in_label" fluid="true" v-model="value2" autocomplete="off" />
                   <label for="in_label">Last Name</label>
@@ -60,33 +60,33 @@ const line4 = {
               </div>
             </div>
             <div class="flex">
-              <div class="flex-1">
+              <div class="flex-1 p-2">
                 <FloatLabel variant="in">
                   <InputText id="in_label" fluid="true" v-model="value3" autocomplete="off" />
                   <label for="in_label">Email</label>
                 </FloatLabel>
               </div>
-              <div class="flex-1">
+              <div class="flex-1 p-2">
 
               </div>
             </div>
-            <!-- <div class="flex"> -->
+            <div class="p-2">
             <FloatLabel variant="in">
-              <Textarea id="over_label" autoResize="false" fluid="true" v-model="value4" rows="5" />
-              <label for="in_label">In Label</label>
+              <Textarea id="over_label" autoResize="false" fluid="true" v-model="value4" rows="10" />
+              <label for="in_label">Message here</label>
             </FloatLabel>
-            <!-- </div> -->
-            <span>admgroup.com is committed to protecting and respecting your privacy, and we’ll only use your personal
+            </div>
+            <span class="p-2 span-text">admgroup.com is committed to protecting and respecting your privacy, and we’ll only use your personal
               information to administer your account and to provide the products and services you requested from us.
               From time to time, we would like to contact you about our products and services, as well as other content
               that may be of interest to you. By clicking submit below, you consent to allow admgroup.com to store and
               process the personal information submitted above to provide you the content requested</span>
 
             <div class="flex">
-              <div class="flex-1">
-                <Button label="Primary" fluid="true" raised />
+              <div class="flex-1 p-2">
+                <Button label="Submit" fluid="true" raised />
               </div>
-              <div class="flex-1">
+              <div class="flex-1 p-2">
 
               </div>
             </div>
@@ -109,10 +109,21 @@ const line4 = {
   padding: 0;
 }
 
+.span-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .contract-image {
   background-image: url("../../assets/img/contactus/adm-brand-look-book_final-36_1.png");
     /* background-image: url('https://via.placeholder.com/450'); */
     background-size: cover;
     background-position: top;
+}
+
+@media (max-width: 768px) {
+    .contract-image {
+        display: none;
+    }
 }
 </style>
