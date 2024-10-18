@@ -59,10 +59,12 @@ body {
                 <!-- <span>Sign in to your account</span> -->
                 <input type="text" placeholder="Username" required>
                 <input type="password" placeholder="Password" required>
+                <div class="form-captcha" id="recaptcha_element"></div>
+
                 <button type="submit">Login</button>
             </div>
 
-            <!-- Right side - Image --> 
+            <!-- Right side - Image -->
             <div class="image-container"></div>
         </div>
     </div>
@@ -134,6 +136,10 @@ body {
     display: none;
 }
 
+.form-captcha {
+    margin: 0 auto 10px;
+}
+
 /* Responsive design */
 @media (min-width: 768px) {
     .image-container {
@@ -154,5 +160,61 @@ body {
 </style>
 
 <script setup>
+
+</script>
+<script>
+export default {
+    data() {
+        return {
+            siteKey: '6Lea3WMqAAAAAB8InVXkbFEjCkXPkf_IJ6nNlaKT',
+        };
+    },
+    methods: {
+        onReCaptchaLoad() {
+            grecaptcha.render('recaptcha_element', {
+                'sitekey': this.siteKey
+            });
+        },
+
+        // submitForm: (formEl: FormInstance | undefined) => {
+        //     if (!formEl) return;
+        //     formEl.validate(async (valid) => {
+        //         if (valid) {
+        //             if (typeof window.grecaptcha === 'undefined') {
+        //                 alert('reCAPTCHA is not loaded');
+        //                 return;
+        //             }
+        //             const captchaResponse = grecaptcha.getResponse();
+        //             if (!captchaResponse) {
+        //                 alert('Please complete the reCAPTCHA');
+        //                 return;
+        //             }
+        //             await signInWithEmailAndPassword(getAuth(), dynamicValidateForm.email, dynamicValidateForm.password).then(response => {
+        //                 router.replace("/home");
+        //             }).catch(error => {
+        //                 let message = error.message;
+        //                 if (error.code == 'auth/invalid-credential') {
+        //                     message = "Invalid credentials. Please try again !";
+        //                 } else {
+        //                     message = error.message;
+        //                 }
+        //                 ElMessage({
+        //                     type: 'error',
+        //                     message: message
+        //                 });
+        //             });
+        //         } else { }
+        //     })
+        // }
+    },
+    mounted() {
+        console.log('Site Key:', this.siteKey); // Kiểm tra giá trị siteKey
+        globalThis.onReCaptchaLoad = this.onReCaptchaLoad;
+        const script = document.createElement('script');
+        script.src = `https://www.google.com/recaptcha/api.js?onload=onReCaptchaLoad`;
+        script.async = true;
+        document.body.appendChild(script);
+    }
+}
 
 </script>

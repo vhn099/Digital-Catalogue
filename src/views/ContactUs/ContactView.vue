@@ -34,7 +34,14 @@ function toggleDarkMode() {
           <div class="flex flex-column">
             <SectionItem></SectionItem>
             <span>Please fill con cặc nè. đĩ mẹ mầy</span>
-            <div class="card grid pb-0.5 grid-cols-1 md:grid-cols-2 gap-4">
+            <FloatLabel variant="on">
+              <IconField>
+                <InputIcon class="pi pi-search" />
+                <InputText id="on_label" v-model="value3" autocomplete="off" />
+              </IconField>
+              <!-- <label for="on_label">On Label</label> -->
+            </FloatLabel>
+            <!-- <div class="card grid pb-0.5 grid-cols-1 md:grid-cols-2 gap-4">
               <FloatLabel variant="in">
                 <InputText id="in_label" v-model="value1" autocomplete="off" />
                 <label for="in_label">In Label</label>
@@ -50,7 +57,7 @@ function toggleDarkMode() {
               <label for="in_label">In Label</label>
             </FloatLabel>
             </div>
-           
+            -->
           </div>
 
         </div>
