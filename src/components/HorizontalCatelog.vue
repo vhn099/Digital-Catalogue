@@ -135,6 +135,7 @@ export default {
   border-radius: 25px;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 :deep(.p-button-icon-only.p-button-rounded){

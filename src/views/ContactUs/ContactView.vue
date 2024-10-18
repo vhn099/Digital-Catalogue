@@ -11,7 +11,6 @@ import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
 import HorizontalCatelogItem from '../../components/HorizontalCatelog.vue'
 import SectionItem from '../../components/Section.vue'
-import FooterItem from '../../components/Footer.vue'
 import { ref } from 'vue';
 const value1 = ref(null);
 const value2 = ref(null);
@@ -33,7 +32,6 @@ const line4 = {
 
 <template>
   <DockItem></DockItem>
-  <HeaderItem></HeaderItem>
   <div class="flex">
     <div class="col-1">
 
@@ -100,8 +98,6 @@ const line4 = {
 
     </div>
   </div>
-
-  <FooterItem></FooterItem>
 </template>
 <style scoped>
 .disable-margin {

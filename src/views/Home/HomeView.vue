@@ -10,7 +10,6 @@ import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
 import HorizontalCatelogItem from '../../components/HorizontalCatelog.vue'
 import SectionItem from '../../components/Section.vue'
-import FooterItem from '../../components/Footer.vue'
 import CardItem from '../../components/Card.vue'
 import { ref } from 'vue';
 const value2 = ref(null);
@@ -23,7 +22,6 @@ function toggleDarkMode() {
 
 <template>
   <DockItem></DockItem>
-  <HeaderItem></HeaderItem>
   <CarouselItem></CarouselItem>
 
   <div class="flex">
@@ -58,5 +56,4 @@ function toggleDarkMode() {
 
   </div>
 
-  <FooterItem></FooterItem>
 </template>
