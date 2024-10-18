@@ -63,11 +63,11 @@ const position = 'left';
 }
 
 :deep(.p-dock-list li) {
-    margin-bottom: 30px;
+    margin-bottom: 13px;
 }
 
 :deep(.p-dock-list li:last-child) {
-    margin: 200px 0 0 0;
+    margin: 100px 0 0 0;
 }
 
 :deep(.p-dock-item-link) {
