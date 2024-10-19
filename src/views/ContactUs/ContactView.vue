@@ -76,6 +76,16 @@ const line4 = {
   title: 'Selected',
   deck: 'Glassware Design'
 }
+
+const messagePageIconCSS = {
+  fontSize: "62px",
+  color: "#58DA67",
+  fontWeight: "bold"
+};
+
+const messagePageBody = 'contact';
+
+const isSuccess = true;
 </script>
 
 <template>
@@ -87,9 +97,8 @@ const line4 = {
     <div class="col-11">
       <div class="flex">
         <div class="col-8">
-          <div class="flex flex-column">
-            <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
-            <!-- <SectionItem :icon="sectionIcon" :icon_text="sectionText" :line4="line4"></SectionItem> -->
+          <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
+          <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
             <div class="flex">
               <div class="flex-1 p-2">
@@ -141,8 +150,12 @@ const line4 = {
               </div>
             </div>
           </div>
-
+          <div v-if="isSuccess">
+            <MessagePage :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
+          </div>
+          
         </div>
+
         <div class="col-4 contract-image">
 
         </div>
