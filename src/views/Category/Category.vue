@@ -1,23 +1,16 @@
 <script setup>
-import InputText from 'primevue/inputtext';
-import FloatLabel from 'primevue/floatlabel';
-import Button from 'primevue/button';
-
+// import
 
 // components
 import DockItem from '../../components/Dock.vue';
-import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
-import CateHorizonItem from '../../components/CateHorizon.vue'
+import CateCardItem from '../../components/CateCard.vue'
 import SectionItem from '../../components/Section.vue'
-import CardItem from '../../components/DeckCard.vue'
 import { ref } from 'vue';
-const value2 = ref(null);
 
+const sectionIcon = "src/assets/img/icon/supply-chain.png";
+const sectionText = "Category";
 
-function toggleDarkMode() {
-    document.documentElement.classList.toggle('my-app-dark');
-}
 </script>
 
 <template>
@@ -26,26 +19,37 @@ function toggleDarkMode() {
 
   <div class="flex">
     <div class="col-1">
-
     </div>
     <div class="col-11">
 
+        <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
+
+
       <SectionItem></SectionItem>
 
-      <CateHorizonItem></CateHorizonItem>
+      <div class="card-container">
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
+        <CateCardItem></CateCardItem>
 
-      <SectionItem></SectionItem>
-      <div class="flex">
-        
-      </div>
-      <div class="flex">
-        <CardItem></CardItem>
-        <CardItem></CardItem>
-        <CardItem></CardItem>
       </div>
     </div>
-
-
   </div>
-
 </template>
+
+<style scoped>
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+</style>
