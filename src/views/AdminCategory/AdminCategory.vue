@@ -3,9 +3,9 @@
 </script>
 
 <template>
-    <h1>ADMIN CATEGORY</h1>
+    <h1>ADMIN DECK</h1>
 </template>
 
-<style>
+<style scoped>
 
 </style>
