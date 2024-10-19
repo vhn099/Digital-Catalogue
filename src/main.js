@@ -9,6 +9,14 @@ import { definePreset } from '@primevue/themes';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
+/* FIREBASE START */
+import environment from '../firebase-config.json';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+const initial = initializeApp(environment.FIREBASE_INFO);
+/* FIREBASE END */
+
 const MyPreset = definePreset(Aura, {
     semantic: {
         transitionDuration: '0.2s',
@@ -399,7 +407,8 @@ const MyPreset = definePreset(Aura, {
     //     }
     // }
 });
-const app = createApp(App);
+let app = '';
+app = createApp(App);
 app.use(router);
 app.use(PrimeVue, {
     theme: {
@@ -409,5 +418,22 @@ app.use(PrimeVue, {
         }
     }
 });
+app.mount('#app');
 
-app.mount('#app')
+
+// const auth = getAuth();
+// onAuthStateChanged(auth, currentUser => {
+//     if (!app) {
+//         app = createApp(App);
+//         app.use(router);
+//         app.use(PrimeVue, {
+//             theme: {
+//                 preset: Aura, //MyPreset,
+//                 options: {
+//                     darkModeSelector: '.my-app-dark'
+//                 }
+//             }
+//         });
+//         app.mount('#app');
+//     }
+// });

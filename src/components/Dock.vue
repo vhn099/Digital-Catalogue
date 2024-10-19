@@ -23,12 +23,12 @@ const items = ref([
     {
         label: 'Category',
         icon: 'src/assets/img/homepage/supply-chain.png',
-        route: 'home'
+        route: 'category'
     },
     {
         label: 'Desks',
         icon: 'src/assets/img/homepage/deck.png',
-        route: 'home'
+        route: 'desks'
     },
     {
         label: 'Contact Us',
