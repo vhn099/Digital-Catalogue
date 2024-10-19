@@ -10,7 +10,7 @@ import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
 import CateHorizonItem from '../../components/CateHorizon.vue'
 import SectionItem from '../../components/Section.vue'
-import CardItem from '../../components/Card.vue'
+import CardItem from '../../components/DeckCard.vue'
 import { ref } from 'vue';
 const value2 = ref(null);
 
