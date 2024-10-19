@@ -16,7 +16,7 @@
                 <template #handle="{ checked }">
                     <i :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
                 </template>
-</ToggleSwitch> -->
+            </ToggleSwitch> -->
             <Menubar :model="items" class="admin-menu" />
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <i class="pi pi-heart" style="font-size: 43px; color: white;"></i>
@@ -37,6 +37,7 @@ import Button from 'primevue/button';
 import Menubar from 'primevue/menubar';
 
 import { ref } from "vue";
+import router from '@/router';
 const checked = ref(false);
 
 const items = ref([
@@ -46,7 +47,12 @@ const items = ref([
         items: [
             {
                 label: 'Users',
-                icon: 'pi pi-user'
+                icon: 'pi pi-user',
+                command: () => {
+                    router.push({
+                        name: 'users'
+                    });
+                }
             },
             {
                 label: 'Categories',

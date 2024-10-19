@@ -1,5 +1,22 @@
 <script setup>
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
+import Button from 'primevue/button';
+import { reactive } from 'vue';
+import { useVuelidate } from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 
+const formFields = reactive({
+    username: { label: 'Username', type: 'text', value: '' },
+    password: { label: 'Password', type: 'password', value: '' },
+});
+
+const rules = {
+    username: { required },
+    password: { required: false }
+};
+
+const v$ = useVuelidate(rules, formFields);
 </script>
 
 <template>
@@ -9,11 +26,12 @@
             <div class="form-container">
                 <img style="object-fit: contain;" width="125" height="125px" src="../../assets/img/adm_logo.png" />
                 <!-- <span>Sign in to your account</span> -->
-                <input type="text" placeholder="Username" required>
-                <input type="password" placeholder="Password" required>
-                <div class="form-captcha" id="recaptcha_element"></div>
-
-                <button type="submit">Login</button>
+                <form @submit.prevent="handleSubmit(v$)">
+                    <InputText fluid="true" class="input" placeholder="Username" id="username" v-model="v$.username.$model.value" :class="{ 'p-invalid': v$.username.$error }" />
+                    <Password fluid="true" class="input" placeholder="Password" id="password" v-model="v$.password.$model.value" />
+                    <div class="form-captcha" id="recaptcha_element"></div>
+                    <Button fluid="true" type="submit" label="Login" />
+                </form>
             </div>
 
             <!-- Right side - Image -->
@@ -57,7 +75,7 @@
     color: #333;
 }
 
-.form-container input {
+:deep(.form-container .p-inputtext) {
     margin-bottom: 15px;
     padding: 10px;
     font-size: 16px;
@@ -123,6 +141,10 @@ export default {
             grecaptcha.render('recaptcha_element', {
                 'sitekey': this.siteKey
             });
+        },
+
+        handleSubmit: (v$) => {
+
         },
 
         // submitForm: (formEl: FormInstance | undefined) => {

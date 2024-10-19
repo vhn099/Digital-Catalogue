@@ -2,5 +2,5 @@
 
 </script>
 <template>
-    <h1>USER VIEW</h1>
+    <h1>USER</h1>
 </template>

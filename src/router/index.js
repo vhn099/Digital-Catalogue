@@ -33,8 +33,8 @@ const router = createRouter({
       component: ContactView
     },
     {
-      path: '/user',
-      name: 'user',
+      path: '/users',
+      name: 'users',
       component: UserView
     },
     {
