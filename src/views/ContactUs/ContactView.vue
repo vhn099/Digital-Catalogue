@@ -9,7 +9,7 @@ import Button from 'primevue/button';
 import DockItem from '../../components/Dock.vue';
 import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
-import HorizontalCatelogItem from '../../components/HorizontalCatelog.vue'
+import CateHorizonItem from '../../components/CateHorizon.vue'
 import SectionItem from '../../components/Section.vue'
 import { ref } from 'vue';
 // import MessagePage from '@/components/MessagePage.vue';
