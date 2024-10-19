@@ -46,17 +46,27 @@ const items = ref([
                 icon: 'pi pi-user',
                 command: () => {
                     router.push({
-                        name: 'users'
+                        name: 'adminusers'
                     });
                 }
             },
             {
                 label: 'Categories',
-                icon: 'pi pi-th-large'
+                icon: 'pi pi-th-large',
+                command: () => {
+                    router.push({
+                        name: 'admincategory'
+                    });
+                }
             },
             {
                 label: 'Decks',
-                icon: 'pi pi-clipboard'
+                icon: 'pi pi-clipboard',
+                command: () => {
+                    router.push({
+                        name: 'admindeck'
+                    });
+                }
             },
             {
                 label: 'Emails',

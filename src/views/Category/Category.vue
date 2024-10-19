@@ -10,6 +10,7 @@ import { ref } from 'vue';
 
 const sectionIcon = "src/assets/img/icon/supply-chain.png";
 const sectionText = "Category";
+const sectionTitle = "Browse by Category:";
 
 </script>
 
@@ -22,7 +23,7 @@ const sectionText = "Category";
     </div>
     <div class="col-11">
 
-        <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
+        <SectionItem :title="sectionTitle" :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
 
 
       <SectionItem></SectionItem>

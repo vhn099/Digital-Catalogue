@@ -1,5 +1,13 @@
-<script setup>
-
+<script setup lang="ts">
+import Breadcrumb from "primevue/breadcrumb";
+import { ref } from "vue";
+const items = ref([
+    { label: 'Electronics' }, 
+    { label: 'Computer' }, 
+    { label: 'Accessories' }, 
+    { label: 'Keyboard' }, 
+    { label: 'Wireless' }
+]);
 
 defineProps({
     icon: {
@@ -8,10 +16,10 @@ defineProps({
     icon_text: {
         type: String,
     },
-    line2: {
+    title: {
         type: String
     },
-    line3: {
+    breadcrumb: {
         type: String
     },
     line4: {
@@ -26,9 +34,9 @@ defineProps({
          <img :src="icon" width="25">
         <span>{{ icon_text }}</span>
     </div>
-    <span class="my-second-line" v-if="line2">Discover Decks by Category</span>
-    <span class="my-second-line" v-if="line3" style="font-size: 32px;">Get in touch with us to get the ball rolling</span>
-    <span class="my-second-line" v-if="line4">{{line4.title}}: {{ line4.deck }}</span>
+    <span class="my-second-line" v-if="title">
+        {{ title }}
+    </span>
 </template>
 
 
