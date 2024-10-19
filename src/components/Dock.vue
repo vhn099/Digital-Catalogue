@@ -1,15 +1,15 @@
 <template>
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
-            <RouterLink class="menu-items" :to="{ name: item.route }">
-                <img class="icon-image" :alt="item.label" :src="item.icon" />
-                <span> {{ item.label }}</span>
-            </RouterLink>
+            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" />
+            <span> {{ item.label }}</span>
         </template>
     </Dock>
 </template>
 
 <script setup>
+import router from '@/router';
+import { getAuth, signOut } from 'firebase/auth';
 import Dock from 'primevue/dock';
 
 import { ref } from "vue";
@@ -18,27 +18,48 @@ const items = ref([
     {
         label: 'Home',
         icon: 'src/assets/img/homepage/home.png',
-        route: 'home'
+        eventHandler: () => {
+            router.push({
+                name: 'home'
+            });
+        }
     },
     {
         label: 'Category',
         icon: 'src/assets/img/homepage/supply-chain.png',
-        route: 'category'
+        eventHandler: () => {
+            router.push({
+                name: 'category'
+            });
+        }
     },
     {
         label: 'Desks',
         icon: 'src/assets/img/homepage/deck.png',
-        route: 'desks'
+        eventHandler: () => {
+            router.push({
+                name: 'desks'
+            });
+        }
     },
     {
         label: 'Contact Us',
         icon: 'src/assets/img/homepage/support.png',
-        route: 'contactus'
+        eventHandler: () => {
+            router.push({
+                name: 'contactus'
+            });
+        }
     },
     {
         label: 'Logout',
         icon: 'src/assets/img/homepage/logout.png',
-        route: 'signin'
+        eventHandler: async () => {
+            await signOut(getAuth());
+            router.push({
+                name: 'signin'
+            });
+        }
     }
 ]);
 const position = 'left';
@@ -46,7 +67,7 @@ const position = 'left';
 </script>
 
 <style scoped>
-.myDock{
+.myDock {
     z-index: 99999;
 }
 
@@ -74,6 +95,7 @@ const position = 'left';
     width: 60px;
     height: 75px;
     justify-content: unset;
+    cursor: pointer;
 }
 
 :deep(.p-dock-item-link) img {
@@ -84,13 +106,5 @@ const position = 'left';
     font-size: 10px;
     font-weight: 700;
 
-}
-
-.menu-items {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    text-decoration: none;
 }
 </style>

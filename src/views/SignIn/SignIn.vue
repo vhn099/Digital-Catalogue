@@ -30,10 +30,10 @@ const v$ = useVuelidate(rules, formFields);
                 <!-- <span>Sign in to your account</span> -->
                 <InputText :fluid="true" class="input" placeholder="Username" id="username"
                     v-model="v$.username.$model.value" :class="{ 'p-invalid': v$.username.$error }" />
-                <Password :fluid="true" class="input" placeholder="Password" id="password"
+                <Password :feedback="false" :fluid="true" class="input" placeholder="Password" id="password"
                     v-model="v$.password.$model.value" />
                 <div class="form-captcha" id="recaptcha_element"></div>
-                <Button :fluid="true" @onClick="handleSubmit(v$)" label="Login" />
+                <Button :fluid="true" @click="handleSubmit(v$)" label="Login" />
             </div>
 
             <!-- Right side - Image -->

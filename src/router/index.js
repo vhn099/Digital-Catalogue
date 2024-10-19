@@ -21,7 +21,12 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Home',
+        adminSite: true
+      }
     },
     {
       path: '/sign-in',
@@ -31,42 +36,58 @@ const router = createRouter({
     {
       path: '/contact-us',
       name: 'contactus',
-      component: ContactView
+      component: ContactView,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Contact Us',
+        adminSite: true
+      }
     },
     {
       path: '/users',
       name: 'users',
-      component: UserView
+      component: UserView,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Users',
+        adminSite: true
+      }
     },
     {
       path: '/desks',
       name: 'desks',
-      component: Desks
+      component: Desks,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Desks',
+        adminSite: true
+      }
     },
     {
       path: '/category',
       name: 'category',
-      component: Category
+      component: Category,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Category',
+        adminSite: true
+      }
     }
   ]
 });
 
 router.beforeEach(async (to, from, next) => {
-  // const currentUser = await UserFirestore.getCurrentUser(); // Check custom authen of users.
-  // const requireAuth = to.matched.some(record => record.meta.requireAuth);
+  const currentUser = await UserFirestore.getCurrentUser(); // Check custom authen of users.
+  const requireAuth = to.matched.some(record => record.meta.requireAuth);
 
-  // if (requireAuth && currentUser.status !== 'success') {
-  //   next('/sign-in');
-  //   // ElMessage({
-  //   //   type: currentUser.status,
-  //   //   message: currentUser.message
-  //   // });
-  // } else if (!requireAuth && currentUser.status == 'success') {
-  //   next('/home');
-  // } else {
-  //   next();
-  // }
-  next();
+  if (requireAuth && currentUser.status !== 'success') {
+    next('/sign-in');
+  } else if (!requireAuth && currentUser.status == 'success') {
+    next('/home');
+  } else {
+    next();
+  }
+  // next();
 });
 
 export default router

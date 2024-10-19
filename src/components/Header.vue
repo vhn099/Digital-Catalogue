@@ -38,6 +38,7 @@ import Menubar from 'primevue/menubar';
 
 import { ref } from "vue";
 import router from '@/router';
+import { getAuth, signOut } from 'firebase/auth';
 const checked = ref(false);
 
 const items = ref([
