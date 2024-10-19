@@ -16,7 +16,11 @@
                 </div>
                 <div class="deck-info-like">
                     <div class="button-like">
-                        <Button label="Favourite" severity="secondary" icon="pi pi-heart" iconPos="top" />
+                        <Button severity="secondary" label="Favourite">
+                            <img width="40" height="40" fill="none" src="../assets/img/icon/favorite_black.png" />
+                            <label>Favourite</label>
+                        </Button>
+                        <!-- <Button label="Favourite" icon="pi pi-heart" iconPos="top" /> -->
                     </div>
                 </div>
             </div>
@@ -91,13 +95,24 @@ import Tag from 'primevue/tag';
 /* .button-like {
     align-items: end;
 } */
-:deep(.button-like .p-button-icon) {
+ 
+/* :deep(.button-like .p-button-icon) {
     font-size: 50px;
 }
 
 :deep(.button-like .p-button-label) {
     font-size: 10px;
     font-weight: 700;
+} */
+
+:deep(.button-like .p-button) {
+    /* font-size: 50px; */
+    display: flex;
+    flex-direction: column;
+    width: 90px;
 }
-/* p-button-icon */
+:deep(.button-like .p-button) {
+    font-size: 10px;
+    font-weight: 700;
+}
 </style>

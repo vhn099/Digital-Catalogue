@@ -12,7 +12,7 @@ import CarouselItem from '../../components/Carousel.vue'
 import HorizontalCatelogItem from '../../components/HorizontalCatelog.vue'
 import SectionItem from '../../components/Section.vue'
 import { ref } from 'vue';
-import MessagePage from '@/components/MessagePage.vue';
+// import MessagePage from '@/components/MessagePage.vue';
 const value1 = ref(null);
 const value2 = ref(null);
 const value3 = ref(null);
@@ -53,7 +53,7 @@ const messagePageBody = 'contact';
       <div class="flex">
         <div class="col-8">
           <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
-          <!-- <div class="flex flex-column">
+          <div class="flex flex-column">
             <span>Please fill in a form and we get back to you</span>
             <div class="flex">
               <div class="flex-1 p-2">
@@ -101,15 +101,15 @@ const messagePageBody = 'contact';
 
               </div>
             </div>
-          </div> -->
-          <MessagePage :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
+          </div>
+          <!-- <MessagePage :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/> -->
         </div>
-        
+
         <div class="col-4 contract-image">
 
         </div>
       </div>
-      
+
     </div>
   </div>
 </template>
