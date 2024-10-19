@@ -71,6 +71,12 @@ const position = 'left';
     z-index: 99999;
 }
 
+:deep(.p-dock-left){
+    left: 0;
+    top: 0;
+    height: initial;
+}
+
 :deep(.p-dock-list-container) {
     background-color: white;
     padding: 30px 5px;
