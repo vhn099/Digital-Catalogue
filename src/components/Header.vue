@@ -3,7 +3,7 @@
     <div class="flex myNav">
         <div class="flex-1 flex align-items-center m-2 px-5 py-1">
             <div class="my-logo">
-                <img alt="logo" src="../assets/img/logo.png" />
+                <img style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo" src="../assets/img/logo.png" />
             </div>
         </div>
 
@@ -30,15 +30,10 @@
 <script setup>
 import InputText from 'primevue/inputtext';
 import Avatar from 'primevue/avatar';
-import Image from 'primevue/image';
-import ToggleSwitch from 'primevue/toggleswitch';
-
-import Button from 'primevue/button';
 import Menubar from 'primevue/menubar';
 
 import { ref } from "vue";
 import router from '@/router';
-import { getAuth, signOut } from 'firebase/auth';
 const checked = ref(false);
 
 const items = ref([
@@ -51,17 +46,27 @@ const items = ref([
                 icon: 'pi pi-user',
                 command: () => {
                     router.push({
-                        name: 'users'
+                        name: 'adminusers'
                     });
                 }
             },
             {
                 label: 'Categories',
-                icon: 'pi pi-th-large'
+                icon: 'pi pi-th-large',
+                command: () => {
+                    router.push({
+                        name: 'admincategory'
+                    });
+                }
             },
             {
                 label: 'Decks',
-                icon: 'pi pi-clipboard'
+                icon: 'pi pi-clipboard',
+                command: () => {
+                    router.push({
+                        name: 'admindeck'
+                    });
+                }
             },
             {
                 label: 'Emails',

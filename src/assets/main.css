@@ -41,3 +41,11 @@ body,html {
 /* .p-inputtext.p-component {
   width: 100%;
 } */
+
+.top-line {
+  display: flex;
+}
+.normal-line {
+  display: flex;
+  flex-wrap: wrap;
+}

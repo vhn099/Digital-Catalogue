@@ -59,6 +59,7 @@ import Tag from 'primevue/tag';
 
 .my-card-deck {
     height: 365px;
+    min-width: 365px;
     background-color: bisque;
     border-radius: 10px;
     background-image: url("../assets/img/demo/peroni.png");

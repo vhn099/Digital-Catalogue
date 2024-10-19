@@ -6,6 +6,9 @@ defineProps({
     title: {
         type: String
     },
+    iconName: {
+        type: String
+    },
     iconStyle: {
         type: Object
     },
@@ -18,7 +21,7 @@ defineProps({
 <template>
     <div class="message-container">
         <p class="page-title">{{ title }}</p>
-        <i class="pi pi-check-circle" :style="{ ...iconStyle }"></i>
+        <i :class="iconName" :style="{ ...iconStyle }"></i>
         <div class="page-body-container" v-if="pageBody === 'contact'">
             <ContactUsSuccessPage />
         </div>

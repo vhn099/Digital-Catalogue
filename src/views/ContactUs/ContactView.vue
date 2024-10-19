@@ -35,12 +35,12 @@ const line4 = {
   deck: 'Glassware Design'
 };
 
+const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
   fontSize: "62px",
   color: "#58DA67",
   fontWeight: "bold"
 };
-
 const messagePageBody = 'contact';
 
 function toggleDarkMode() {
@@ -147,7 +147,7 @@ async function submitForm() {
             </div>
           </div>
           <div v-if="isSuccess">
-            <MessagePage :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
+            <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
           </div>
           
         </div>

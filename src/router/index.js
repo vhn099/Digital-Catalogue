@@ -6,6 +6,8 @@ import UserView from '../views/User/UserView.vue'
 import Desks from '../views/Desks/Desks.vue'
 import Category from '../views/Category/Category.vue'
 import { UserFirestore } from '@/lib/User'
+import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
+import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,7 +27,7 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         pageTitle: 'Home',
-        adminSite: true
+        adminSite: false
       }
     },
     {
@@ -40,12 +42,12 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         pageTitle: 'Contact Us',
-        adminSite: true
+        adminSite: false
       }
     },
     {
-      path: '/users',
-      name: 'users',
+      path: '/admin/users',
+      name: 'adminusers',
       component: UserView,
       meta: {
         requireAuth: true,
@@ -60,7 +62,7 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         pageTitle: 'Desks',
-        adminSite: true
+        adminSite: false
       }
     },
     {
@@ -70,6 +72,26 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         pageTitle: 'Category',
+        adminSite: false
+      }
+    },
+    {
+      path: '/admin/category',
+      name: 'admincategory',
+      component: AdminCategory,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Category Management',
+        adminSite: true
+      }
+    },
+    {
+      path: '/admin/deck',
+      name: 'admindeck',
+      component: AdminDeck,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Desk Management',
         adminSite: true
       }
     }
