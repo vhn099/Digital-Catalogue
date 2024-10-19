@@ -10,7 +10,7 @@ import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
 import CateHorizonItem from '../../components/CateHorizon.vue'
 import SectionItem from '../../components/Section.vue'
-import CardItem from '../../components/DeckCard.vue'
+import DeckItem from '../../components/DeckCard.vue'
 import { ref } from 'vue';
 const value2 = ref(null);
 
@@ -36,15 +36,15 @@ function toggleDarkMode() {
 
       <SectionItem></SectionItem>
       <div class="flex">
-        <CardItem></CardItem>
-        <CardItem></CardItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
       </div>
       <div class="flex">
-        <CardItem></CardItem>
-        <CardItem></CardItem>
-        <CardItem></CardItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
       </div>
-      <!-- <CardItem></CardItem> -->
+      <!-- <DeckItem></DeckItem> -->
 
       <!-- <FloatLabel variant="in">
           <InputText id="in_label" v-model="value2" variant="filled" />
