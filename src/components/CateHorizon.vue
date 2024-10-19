@@ -133,11 +133,11 @@ export default {
 :deep(.p-button-icon-only.p-button-rounded span) {
   font-size: 50px;
 }
-
+/* 
 .slide-horizontal {
-  /* height: 300px; */
-  /* padding-right: 20px; */
-}
+  height: 300px;
+  padding-right: 20px;
+} */
 
 .carousel {
   /* width: 170px; */
