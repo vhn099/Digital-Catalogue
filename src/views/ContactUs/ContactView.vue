@@ -17,6 +17,7 @@ const lastName = ref(null);
 const userEmail = ref(null);
 const message = ref(null);
 const emails = ref([]);
+const isSuccess = ref(false);
 
 const bodyReq = ref({
   to: [],
@@ -86,7 +87,6 @@ const messagePageIconCSS = {
 
 const messagePageBody = 'contact';
 
-const isSuccess = false;
 </script>
 
 <template>
