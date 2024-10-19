@@ -16,7 +16,8 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 const initial = initializeApp(environment.FIREBASE_INFO);
 /* FIREBASE END */
-
+const db = getFirestore(initial);
+export { db };
 const MyPreset = definePreset(Aura, {
     semantic: {
         transitionDuration: '0.2s',
