@@ -3,9 +3,8 @@
     <div class="col">
     <div class="my-card-deck">
         <div class="second-layout">
-
+            <div class="deck-date">Oct 2024</div>
         </div>
-        ABC
     </div>
 </div>
 </template>
@@ -21,10 +20,11 @@ import Tag from 'primevue/tag';
 <style scoped>
 .my-card-deck {
     height: 365px;
-    width: inherit;
+    /* width: inherit; */
     background-color: bisque;
     border-radius: 10px;
-    border: 1px solid #000000
+    border: 1px solid #000000;
+    background-image: url("../assets/img/login/mask-group.png");
 }
 
 .second-layout {

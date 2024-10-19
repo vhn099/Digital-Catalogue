@@ -22,6 +22,10 @@ function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark');
 }
 
+function dimeho() {
+  console.log(value1);
+}
+
 const sectionIcon = "src/assets/img/homepage/support.png";
 const sectionText = "Contact us";
 const line4 = {
@@ -46,13 +50,13 @@ const line4 = {
             <div class="flex">
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
-                  <InputText id="in_label" fluid="true" v-model="value1" autocomplete="off" />
+                  <InputText id="in_label" :fluid="true" v-model="value1" autocomplete="off" />
                   <label for="in_label">First Name</label>
                 </FloatLabel>
               </div>
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
-                  <InputText id="in_label" fluid="true" v-model="value2" autocomplete="off" />
+                  <InputText id="in_label" :fluid="true" v-model="value2" autocomplete="off" />
                   <label for="in_label">Last Name</label>
                 </FloatLabel>
               </div>
@@ -60,7 +64,7 @@ const line4 = {
             <div class="flex">
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
-                  <InputText id="in_label" fluid="true" v-model="value3" autocomplete="off" />
+                  <InputText id="in_label" :fluid="true" v-model="value3" autocomplete="off" />
                   <label for="in_label">Email</label>
                 </FloatLabel>
               </div>
@@ -70,7 +74,7 @@ const line4 = {
             </div>
             <div class="p-2">
             <FloatLabel variant="in">
-              <Textarea id="over_label" autoResize="false" fluid="true" v-model="value4" rows="10" />
+              <Textarea id="over_label" autoResize="false" :fluid="true" v-model="value4" rows="10" />
               <label for="in_label">Message here</label>
             </FloatLabel>
             </div>
@@ -82,7 +86,7 @@ const line4 = {
 
             <div class="flex">
               <div class="flex-1 p-2">
-                <Button label="Submit" fluid="true" raised />
+                <Button label="Submit" :fluid="true" @click="dimeho()" raised />
               </div>
               <div class="flex-1 p-2">
 
