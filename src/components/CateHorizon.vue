@@ -1,18 +1,5 @@
 <script setup>
 import Button from 'primevue/button';
-
-const cards = [
-        {
-          icon:".../../src/assets/img/icon/tshirt.png",
-          name:"Apparel"
-        },{
-          icon:"../../src/assets/img/icon/christmas-ball.png",
-          name:"Christmas"
-        },{
-          icon:"../../src/assets/img/icon/shopping.png",
-          name:"Shopper Marketing"
-        }]
-
 </script>
 <template>
   <div class="flex slide-horizontal">
@@ -41,9 +28,21 @@ const cards = [
 </template>
 
 <script>
+const cards = [
+  {
+    icon: ".../../src/assets/img/icon/tshirt.png",
+    name: "Apparel"
+  }, {
+    icon: "../../src/assets/img/icon/christmas-ball.png",
+    name: "Christmas"
+  }, {
+    icon: "../../src/assets/img/icon/shopping.png",
+    name: "Shopper Marketing"
+  }];
 export default {
   data() {
     return {
+      cards: cards,
       innerStyles: {},
       step: '',
       transitioning: false
@@ -57,8 +56,8 @@ export default {
 
   methods: {
     setStep() {
-      const innerWidth = this.$refs.inner.scrollWidth
-      const totalCards = this.cards.length
+      const innerWidth = this.$refs.inner.scrollWidth;
+      const totalCards = cards.length;
       this.step = `${innerWidth / totalCards}px`
     },
 
@@ -133,6 +132,7 @@ export default {
 :deep(.p-button-icon-only.p-button-rounded span) {
   font-size: 50px;
 }
+
 /* 
 .slide-horizontal {
   height: 300px;
@@ -190,8 +190,10 @@ export default {
   /* Full height of the outer container */
   /* border: 1px solid black; */
   /* Optional: to see the outer container */
-  word-wrap: break-word; /* Ensures long words wrap inside the box */
-  overflow-wrap: break-word; /* Alternative for word wrapping */
+  word-wrap: break-word;
+  /* Ensures long words wrap inside the box */
+  overflow-wrap: break-word;
+  /* Alternative for word wrapping */
   text-align: center;
   white-space: normal !important;
   font-size: 15px;
