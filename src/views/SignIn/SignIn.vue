@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 
@@ -26,12 +26,12 @@ const v$ = useVuelidate(rules, formFields);
             <div class="form-container">
                 <img style="object-fit: contain;" width="125" height="125px" src="../../assets/img/adm_logo.png" />
                 <!-- <span>Sign in to your account</span> -->
-                <form @submit.prevent="handleSubmit(v$)">
-                    <InputText fluid="true" class="input" placeholder="Username" id="username" v-model="v$.username.$model.value" :class="{ 'p-invalid': v$.username.$error }" />
-                    <Password fluid="true" class="input" placeholder="Password" id="password" v-model="v$.password.$model.value" />
-                    <div class="form-captcha" id="recaptcha_element"></div>
-                    <Button fluid="true" type="submit" label="Login" />
-                </form>
+                <InputText :fluid="true" class="input" placeholder="Username" id="username"
+                    v-model="v$.username.$model.value" :class="{ 'p-invalid': v$.username.$error }" />
+                <Password :fluid="true" class="input" placeholder="Password" id="password"
+                    v-model="v$.password.$model.value" />
+                <div class="form-captcha" id="recaptcha_element"></div>
+                <Button :fluid="true" @onClick="handleSubmit(v$)" label="Login" />
             </div>
 
             <!-- Right side - Image -->
@@ -99,9 +99,8 @@ const v$ = useVuelidate(rules, formFields);
 /* Right side - image */
 .image-container {
     flex: 4;
-    background-image: url("../../assets/img/login/mask-group.png");
-    /* background-image: url('https://via.placeholder.com/450'); */
     background-size: cover;
+    background-image: url('../../assets/img/login/mask-group.png');
     background-position: center;
     display: none;
 }
@@ -110,7 +109,7 @@ const v$ = useVuelidate(rules, formFields);
     margin: 0 auto 10px;
 }
 
-/* Responsive design */
+/* Responsidesign */
 @media (min-width: 768px) {
     .image-container {
         display: block;
@@ -134,6 +133,7 @@ export default {
     data() {
         return {
             siteKey: '6Lea3WMqAAAAAB8InVXkbFEjCkXPkf_IJ6nNlaKT',
+            picture: '../../assets/img/login/mask-group.png'
         };
     },
     methods: {
@@ -143,11 +143,18 @@ export default {
             });
         },
 
-        handleSubmit: (v$) => {
-
+        handleSubmit: async (v$) => {
+            const isValid = await v$.$validate();
+            console.log(isValid);
+            if (isValid) {
+                // Login logic here
+                console.log('Login successful!');
+            } else {
+                console.log('Invalid form');
+            }
         },
 
-        // submitForm: (formEl: FormInstance | undefined) => {
+        // submitFve orm: (formEl: FormInstance | undefined) => {
         //     if (!formEl) return;
         //     formEl.validate(async (valid) => {
         //         if (valid) {
@@ -185,7 +192,7 @@ export default {
         script.src = `https://www.google.com/recaptcha/api.js?onload=onReCaptchaLoad`;
         script.async = true;
         document.body.appendChild(script);
-    }
+    },
 }
 
 </script>

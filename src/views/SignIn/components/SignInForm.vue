@@ -4,7 +4,7 @@ import Password from 'primevue/password';
 import Button from 'primevue/button';
 import { reactive } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, minLength } from '@vuelidate/validators';
 
 const formFields = reactive({
     username: { label: 'Username', type: 'text', value: '' },
@@ -13,7 +13,7 @@ const formFields = reactive({
 
 const rules = {
     username: { required },
-    password: { required: false }
+    password: { required }
 };
 
 const v$ = useVuelidate(rules, formFields);

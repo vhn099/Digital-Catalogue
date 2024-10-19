@@ -41,6 +41,8 @@ const messagePageIconCSS = {
 };
 
 const messagePageBody = 'contact';
+
+const isSuccess = true;
 </script>
 
 <template>
@@ -53,7 +55,7 @@ const messagePageBody = 'contact';
       <div class="flex">
         <div class="col-8">
           <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
-          <!-- <div class="flex flex-column">
+          <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
             <div class="flex">
               <div class="flex-1 p-2">
@@ -101,8 +103,11 @@ const messagePageBody = 'contact';
 
               </div>
             </div>
-          </div> -->
-          <MessagePage :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
+          </div>
+          <div v-if="isSuccess">
+            <MessagePage :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
+          </div>
+          
         </div>
         
         <div class="col-4 contract-image">
