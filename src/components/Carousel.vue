@@ -4,7 +4,12 @@
         :showIndicators="true" :circular="true" :autoPlay="true" :transitionInterval="3000"
         :showIndicatorsOnItem="inside" :indicatorsPosition="position">
         <template #item="slotProps">
-            <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
+            <div class="slideshow-canva">
+            <div class="slideshow-text"></div>
+            <div class="slideshow-image"></div>
+
+            </div>
+            <!-- <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" /> -->
         </template>
         <!-- <template #caption="slotProps">
             <div class="text-xl mb-2 font-bold">{{ slotProps.item.title }}</div>
@@ -66,5 +71,9 @@ const inside = ref(true);
     border-radius: 0;
 }
 
-
+.slideshow-canva {
+    width: 100%;
+    height: 100%;
+    background-color: aliceblue;
+}
 </style>

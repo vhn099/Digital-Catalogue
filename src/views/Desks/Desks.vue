@@ -20,26 +20,20 @@ const sectionText = "Decks";
       <!-- <SectionItem></SectionItem> -->
       <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
 
-      <div class="flex">
+      <div class="top-line">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
       </div>
-      <div class="flex">
+      <div class="normal-line">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
-      </div>
-      <div class="flex">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
-      </div>
-      <div class="flex">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
-      </div>
-      <div class="flex">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
@@ -50,3 +44,7 @@ const sectionText = "Decks";
   </div>
 
 </template>
+
+<style scoped>
+
+</style>
