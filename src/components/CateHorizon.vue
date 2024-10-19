@@ -9,7 +9,15 @@ import Button from 'primevue/button';
     <div class="carousel">
       <div class="inner" ref="inner" :style="innerStyles">
         <div class="card" v-for="card in cards" :key="card">
-          {{ card }}
+          <!-- {{ card }} -->
+            <div class="cate-item">
+                <div class="cate-logo">
+                  <img width="52" height="52" fill="none" src="../assets/img/icon/favorite_black.png" />
+                </div>
+                <div class="cate-name">
+                  <label>Shopper</label>
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -108,7 +116,7 @@ export default {
 <style scoped>
 .slide-horizontal {
   /* height: 300px; */
-  padding-right: 20px;
+  /* padding-right: 20px; */
 }
 
 .carousel {
@@ -119,23 +127,25 @@ export default {
 .inner {
   transition: transform 0.2s;
   white-space: nowrap;
-  margin: 10px;
+  /* margin: 10px; */
 }
 
 .card {
   width: 124px;
-  margin-right: 25px;
+  height: 124px;
   display: inline-flex;
   box-shadow: 0px 4px 4px 0px #00000040;
-
+  margin: 10px;
   /* optional */
-  height: 124px;
   background-color: white;
   color: black;
   border-radius: 25px;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center; */
+  /* justify-content: center; */
   cursor: pointer;
+/* 
+  display: flex;
+  flex-direction: column; */
 }
 
 :deep(.p-button-icon-only.p-button-rounded){
@@ -146,9 +156,19 @@ export default {
   font-size: 50px;
 }
 
-/* optional */
-/* button {
-  margin-right: 5px;
-  margin-top: 10px;
-} */
+.cate-item {
+  /* display: flex;
+  flex-direction: column;
+  width: inherit; */
+}
+
+.cate-logo {
+  /* align-content: center; */
+  margin: 0 auto;
+}
+
+.cate-name {
+  word-wrap: break-word; 
+  overflow-wrap: break-word;
+}
 </style>

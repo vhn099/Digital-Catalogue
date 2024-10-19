@@ -45,7 +45,6 @@
 }
 
 .email-us {
-    padding-top: 5%;
     border-radius: 5px;
     background-color: #C1C1C1;
     width: 45%;

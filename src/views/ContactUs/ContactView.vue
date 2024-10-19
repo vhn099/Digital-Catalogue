@@ -17,7 +17,6 @@ const lastName = ref(null);
 const userEmail = ref(null);
 const message = ref(null);
 const emails = ref([]);
-
 const bodyReq = ref({
   to: [],
   message: {
@@ -28,6 +27,21 @@ const bodyReq = ref({
     email: '',
   },
 });
+const isSuccess = ref(false);
+const sectionIcon = "src/assets/img/homepage/support.png";
+const sectionText = "Contact us";
+const line4 = {
+  title: 'Selected',
+  deck: 'Glassware Design'
+};
+
+const messagePageIconCSS = {
+  fontSize: "62px",
+  color: "#58DA67",
+  fontWeight: "bold"
+};
+
+const messagePageBody = 'contact';
 
 function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark');
@@ -64,29 +78,13 @@ async function submitForm() {
     bodyReq.value.message.firstName = '';
     bodyReq.value.message.lastName = '';
     bodyReq.value.message.email = '';
-    // router.push({name: 'home'});
+    //show SuccessPage
+    isSuccess.value = true;
   } catch (error) {
     console.error('Error adding feedback: ', error);
     alert('Error sending feedback: ' + error.message);
   }
 }
-
-const sectionIcon = "src/assets/img/homepage/support.png";
-const sectionText = "Contact us";
-const line4 = {
-  title: 'Selected',
-  deck: 'Glassware Design'
-}
-
-const messagePageIconCSS = {
-  fontSize: "62px",
-  color: "#58DA67",
-  fontWeight: "bold"
-};
-
-const messagePageBody = 'contact';
-
-const isSuccess = false;
 </script>
 
 <template>
@@ -142,9 +140,6 @@ const isSuccess = false;
             <div class="flex">
               <div class="flex-1 p-2">
                 <Button label="Submit" :fluid="true" @click="submitForm()" raised />
-                <!-- <RouterLink :to="{ name: thanks }">
-                  <span>Test route</span>
-                </RouterLink> -->
               </div>
               <div class="flex-1 p-2">
 
