@@ -30,15 +30,10 @@
 <script setup>
 import InputText from 'primevue/inputtext';
 import Avatar from 'primevue/avatar';
-import Image from 'primevue/image';
-import ToggleSwitch from 'primevue/toggleswitch';
-
-import Button from 'primevue/button';
 import Menubar from 'primevue/menubar';
 
 import { ref } from "vue";
 import router from '@/router';
-import { getAuth, signOut } from 'firebase/auth';
 const checked = ref(false);
 
 const items = ref([
