@@ -5,6 +5,8 @@ import Button from 'primevue/button';
 import { reactive, ref } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import router from '@/router';
 
 const formFields = reactive({
     username: { label: 'Username', type: 'text', value: '' },
@@ -148,7 +150,13 @@ export default {
             console.log(isValid);
             if (isValid) {
                 // Login logic here
-                console.log('Login successful!');
+                const username = v$.username.$model.value;
+                const password = v$.password.$model.value;
+                await signInWithEmailAndPassword(getAuth(), username, password).then(response => {
+                    router.push({
+                        name: 'home'
+                    });
+                });
             } else {
                 console.log('Invalid form');
             }

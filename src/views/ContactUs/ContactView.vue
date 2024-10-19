@@ -11,6 +11,7 @@ import SectionItem from '../../components/Section.vue'
 import { ref } from 'vue';
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/main";
+import MessagePage from '@/components/MessagePage.vue';
 const firstName = ref(null);
 const lastName = ref(null);
 const userEmail = ref(null);
@@ -85,7 +86,7 @@ const messagePageIconCSS = {
 
 const messagePageBody = 'contact';
 
-const isSuccess = true;
+const isSuccess = false;
 </script>
 
 <template>

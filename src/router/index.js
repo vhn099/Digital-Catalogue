@@ -5,6 +5,7 @@ import ContactView from '../views/ContactUs/ContactView.vue'
 import UserView from '../views/User/UserView.vue'
 import Desks from '../views/Desks/Desks.vue'
 import Category from '../views/Category/Category.vue'
+import { UserFirestore } from '@/lib/User'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,10 +57,10 @@ router.beforeEach(async (to, from, next) => {
 
   // if (requireAuth && currentUser.status !== 'success') {
   //   next('/sign-in');
-  //   ElMessage({
-  //     type: currentUser.status,
-  //     message: currentUser.message
-  //   });
+  //   // ElMessage({
+  //   //   type: currentUser.status,
+  //   //   message: currentUser.message
+  //   // });
   // } else if (!requireAuth && currentUser.status == 'success') {
   //   next('/home');
   // } else {

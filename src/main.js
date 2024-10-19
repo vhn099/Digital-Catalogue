@@ -6,6 +6,7 @@ import router from './router';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
+import { createPinia } from "pinia";
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
@@ -409,32 +410,20 @@ const MyPreset = definePreset(Aura, {
     // }
 });
 let app = '';
-app = createApp(App);
-app.use(router);
-app.use(PrimeVue, {
-    theme: {
-        preset: Aura, //MyPreset,
-        options: {
-            darkModeSelector: '.my-app-dark'
-        }
+const auth = getAuth();
+onAuthStateChanged(auth, currentUser => {
+    if (!app) {
+        app = createApp(App);
+        app.use(createPinia());
+        app.use(router);
+        app.use(PrimeVue, {
+            theme: {
+                preset: Aura, //MyPreset,
+                options: {
+                    darkModeSelector: '.my-app-dark'
+                }
+            }
+        });
+        app.mount('#app');
     }
 });
-app.mount('#app');
-
-
-// const auth = getAuth();
-// onAuthStateChanged(auth, currentUser => {
-//     if (!app) {
-//         app = createApp(App);
-//         app.use(router);
-//         app.use(PrimeVue, {
-//             theme: {
-//                 preset: Aura, //MyPreset,
-//                 options: {
-//                     darkModeSelector: '.my-app-dark'
-//                 }
-//             }
-//         });
-//         app.mount('#app');
-//     }
-// });
