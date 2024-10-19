@@ -1,5 +1,18 @@
 <script setup>
 import Button from 'primevue/button';
+
+const cards = [
+        {
+          icon:".../../src/assets/img/icon/tshirt.png",
+          name:"Apparel"
+        },{
+          icon:"../../src/assets/img/icon/christmas-ball.png",
+          name:"Christmas"
+        },{
+          icon:"../../src/assets/img/icon/shopping.png",
+          name:"Shopper Marketing"
+        }]
+
 </script>
 <template>
   <div class="flex slide-horizontal">
@@ -10,14 +23,14 @@ import Button from 'primevue/button';
       <div class="inner" ref="inner" :style="innerStyles">
         <div class="card" v-for="card in cards" :key="card">
           <!-- {{ card }} -->
-            <div class="cate-item">
-                <div class="cate-logo">
-                  <img width="52" height="52" fill="none" src="../assets/img/icon/favorite_black.png" />
-                </div>
-                <div class="cate-name">
-                  <label>Shopper</label>
-                </div>
+          <div class="cate-item">
+            <div class="cate-logo">
+              <img width="52" height="52" fill="none" :src="card.icon" />
             </div>
+            <div class="cate-name">
+              {{ card.name }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -31,7 +44,6 @@ import Button from 'primevue/button';
 export default {
   data() {
     return {
-      cards: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
       innerStyles: {},
       step: '',
       transitioning: false
@@ -114,10 +126,18 @@ export default {
 
 
 <style scoped>
-.slide-horizontal {
-  /* height: 300px; */
-  /* padding-right: 20px; */
+:deep(.p-button-icon-only.p-button-rounded) {
+  height: inherit;
 }
+
+:deep(.p-button-icon-only.p-button-rounded span) {
+  font-size: 50px;
+}
+/* 
+.slide-horizontal {
+  height: 300px;
+  padding-right: 20px;
+} */
 
 .carousel {
   /* width: 170px; */
@@ -140,35 +160,41 @@ export default {
   background-color: white;
   color: black;
   border-radius: 25px;
-  /* align-items: center; */
-  /* justify-content: center; */
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-/* 
+  /* 
   display: flex;
   flex-direction: column; */
 }
 
-:deep(.p-button-icon-only.p-button-rounded){
-  height: inherit;
-}
-
-:deep(.p-button-icon-only.p-button-rounded span){
-  font-size: 50px;
-}
 
 .cate-item {
-  /* display: flex;
-  flex-direction: column;
-  width: inherit; */
+  width: 100%;
+  height: 100%;
+  padding: 20px 10px 10px 10px;
 }
 
 .cate-logo {
-  /* align-content: center; */
-  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  height: 60%;
 }
 
 .cate-name {
-  word-wrap: break-word; 
-  overflow-wrap: break-word;
+  /* display: grid;
+  place-items: center; */
+  /* Centers both vertically and horizontally */
+  height: 40%;
+  width: 100%;
+  /* Full height of the outer container */
+  /* border: 1px solid black; */
+  /* Optional: to see the outer container */
+  word-wrap: break-word; /* Ensures long words wrap inside the box */
+  overflow-wrap: break-word; /* Alternative for word wrapping */
+  text-align: center;
+  white-space: normal !important;
+  font-size: 15px;
+  font-weight: 600;
 }
 </style>
