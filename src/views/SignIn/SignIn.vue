@@ -149,7 +149,15 @@ export default {
             const isValid = await v$.$validate();
             console.log(isValid);
             if (isValid) {
-                // Login logic here
+                if (typeof window.grecaptcha === 'undefined') {
+                    alert('reCAPTCHA is not loaded');
+                    return;
+                }
+                const captchaResponse = grecaptcha.getResponse();
+                if (!captchaResponse) {
+                    alert('Please complete the reCAPTCHA');
+                    return;
+                }
                 const username = v$.username.$model.value;
                 const password = v$.password.$model.value;
                 await signInWithEmailAndPassword(getAuth(), username, password).then(response => {
