@@ -8,6 +8,7 @@ import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 import { createPinia } from "pinia";
 import ToastService from 'primevue/toastservice';
+import PDFObjectPlugin from 'pdfobject-vue';
 
 /* FIREBASE START */
 import environment from '../firebase-config.json';
@@ -55,6 +56,7 @@ onAuthStateChanged(auth, currentUser => {
             }
         });
         app.use(ToastService); // Alert Service
+        app.use(PDFObjectPlugin); //PDFObject Lib
         app.mount('#app');
     }
 });
