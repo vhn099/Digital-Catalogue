@@ -152,7 +152,8 @@ const getUsers = async () => {
         const object = {
             id: user.id,
             email: data.email,
-            full_name: data.full_name || '',
+            firstname: data.firstname || '',
+            lastname: data.firstname || '',
             isAdmin: data.isAdmin,
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
@@ -344,9 +345,6 @@ const editRow = (data) => {
 
 .error-messages {
     margin-bottom: 16px;
-}
-
-.error-messages {
     color: red;
     font-size: 12px;
     margin-bottom: 4px;

@@ -2,31 +2,41 @@
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
-import { watch, reactive, ref } from 'vue';
+import { watch, reactive, ref, onMounted, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { required, email } from '@vuelidate/validators';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
 import router from '@/router';
 import { auth } from '@/main';
-const siteKey = '6Lea3WMqAAAAAB8InVXkbFEjCkXPkf_IJ6nNlaKT';
+import Checkbox from 'primevue/checkbox';
 
+
+/* PAGE VARIABLES START */
 const formFields = reactive({
-    username: { label: 'Username', type: 'text', value: '' },
-    password: { label: 'Password', type: 'password', value: '' },
+    username: '',
+    password: '',
+    rememberMe: '',
 });
-
-const rules = {
-    username: { required },
-    password: { required: false }
-};
-
-const v$ = useVuelidate(rules, formFields);
-
-const email = ref(null);
+const emailInput = ref(null);
 const isSignIn = ref(true);
 const isForgotPassword = ref(false);
 const isSendLink = ref(false);
+const siteKey = '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu';
+/* PAGE VARIABLES END */
 
+/* VALIDATION DEFINITION START */
+const rules = computed(() => {
+    return {
+        username: {
+            required,
+            email
+        },
+    };
+});
+const v$ = useVuelidate(rules, formFields);
+/* VALIDATION DEFINITION END */
+
+/* FUNCTION START */
 function forgotPassWord() {
 
     isForgotPassword.value = true;
@@ -55,9 +65,8 @@ async function sendLink() {
             url: 'http://localhost:3000/home',
             handleCodeInApp: true,
         };
-        console.log(email.value);
 
-        const x = await sendPasswordResetEmail(auth, email.value, actionCodeSettings);
+        const x = await sendPasswordResetEmail(auth, emailInput.value, actionCodeSettings);
         console.log('Email reset password be sent!');
     } catch (error) {
         console.log('Error: ' + error.message);
@@ -66,8 +75,63 @@ async function sendLink() {
     isSendLink.value = true;
     isSignIn.value = false;
     isForgotPassword.value = false;
+};
+const onReCaptchaLoad = () => {
+    grecaptcha.render('recaptcha_element', {
+        'sitekey': siteKey,
+        'callback': clickReCaptcha,
+    });
 }
+const clickReCaptcha = () => {
+    document.getElementById("error_recaptcha").innerHTML = '';
+};
 
+const handleSubmit = async () => {
+    const isValid = await v$.value.$validate();
+    if (isValid) {
+        if (typeof window.grecaptcha === 'undefined') {
+            alert('reCAPTCHA is not loaded');
+            return;
+        }
+        const captchaResponse = grecaptcha.getResponse();
+
+        if (!captchaResponse) {
+            document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
+            return;
+
+        }
+        const username = formFields.username;
+        const password = formFields.password;
+        const rememberMe = formFields.rememberMe;
+        let persistence = browserSessionPersistence;
+
+        if (rememberMe) {
+            persistence = browserSessionPersistence;
+        }
+
+        await setPersistence(getAuth(), persistence).then(async () => {
+            await signInWithEmailAndPassword(getAuth(), username, password).then(response => {
+                router.push({
+                    name: 'home'
+                });
+            });
+        });
+    } else {
+        console.log('Invalid form');
+    }
+};
+/* FUNCTION END */
+
+
+onMounted(async () => {
+    // console.log('Site Key:', siteKey); // Checking sitekey value
+    globalThis.onReCaptchaLoad = onReCaptchaLoad;
+    globalThis.clickReCaptcha = clickReCaptcha;
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?onload=onReCaptchaLoad`; // import lib for grecaptcha function
+    script.async = true;
+    document.body.appendChild(script);
+});
 </script>
 
 <template>
@@ -78,14 +142,34 @@ async function sendLink() {
                 <img style="object-fit: contain;" width="125" height="125px" src="../../assets/img/adm_logo.png" />
                 <div v-if="isSignIn && !isForgotPassword && !isSendLink">
                     <span>Sign in to your account</span>
-                    <InputText :fluid="true" class="input" placeholder="Username" id="username"
-                        v-model="v$.username.$model.value" :class="{ 'p-invalid': v$.username.$error }" />
-                    <Password :feedback="false" :fluid="true" class="input" placeholder="Password" id="password"
-                        v-model="v$.password.$model.value" />
-                    <div class="form-captcha" id="recaptcha_element"></div>
-                    <div id="error_recaptcha"></div>
-                    <Button type="link" label="Forgotten username/password?" :fluid="true" @click="forgotPassWord()" />
-                    <Button :fluid="true" @click="handleSubmit(v$)" label="Login" />
+                    <div class="flex flex-col">
+                        <InputText :fluid="true" placeholder="Username" id="username" v-model="formFields.username"
+                            :invalid="v$.username.$errors.length > 0" />
+                        <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
+                            v$.username.$errors[0].$message }}</small>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <Password :feedback="false" :fluid="true" class="input" placeholder="Password"
+                            v-model="formFields.password" />
+                    </div>
+
+                    <div class="flex items-center" style="margin-top: 5px;">
+                        <Checkbox v-model="formFields.rememberMe" inputId="rememberMe" name="rememberMe"
+                            value="rememberMe" />
+                        <label class="ml-2">Remember Me</label>
+                    </div>
+
+                    <div class="flex flex-col mt-3">
+                        <div class="form-captcha" id="recaptcha_element"></div>
+                        <div id="error_recaptcha"></div>
+                    </div>
+
+                    <div class="flex flex-col button-container">
+                        <Button type="link" label="Forgotten username/password?" :fluid="true"
+                            @click="forgotPassWord()" />
+                        <Button :fluid="true" @click="handleSubmit(v$)" label="Login" />
+                    </div>
                 </div>
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink">
 
@@ -107,6 +191,27 @@ async function sendLink() {
 
 </template>
 <style scoped>
+/* MAIN FORM INPUT START */
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.error-messages {
+    margin-bottom: 16px;
+    color: red;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+:deep(.p-button) {
+    margin-bottom: 10px;
+}
+
+/* MAIN FORM INPUT END */
 .center-container {
     display: flex;
     justify-content: center;
@@ -142,11 +247,11 @@ async function sendLink() {
 }
 
 :deep(.form-container .p-inputtext) {
-    margin-bottom: 15px;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    margin-top: 10px;
 }
 
 .form-container button {
@@ -159,7 +264,9 @@ async function sendLink() {
 }
 
 .form-container button:hover {
-    background-color: #218838;
+    /* background-color: #218838; */
+    background-color: white;
+    color: black;
 }
 
 /* Right side - image */
@@ -193,63 +300,3 @@ async function sendLink() {
     }
 }
 </style>
-
-<script>
-export default {
-    data() {
-        return {
-            siteKey: '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu',
-            picture: '../../assets/img/login/mask-group.png'
-        };
-    },
-    methods: {
-        onReCaptchaLoad() {
-            grecaptcha.render('recaptcha_element', {
-                'sitekey': this.siteKey,
-                'callback' : clickReCaptcha,
-            });
-        },
-        clickReCaptcha(){
-            document.getElementById("error_recaptcha").innerHTML = '';
-        },
-
-        handleSubmit: async (v$) => {
-            const isValid = await v$.$validate();
-            console.log(isValid);
-            if (isValid) {
-                if (typeof window.grecaptcha === 'undefined') {
-                    alert('reCAPTCHA is not loaded');
-                    return;
-                }
-                const captchaResponse = grecaptcha.getResponse();
-                
-                if (!captchaResponse) {
-                    document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
-                    return;
-
-                }
-                const username = v$.username.$model.value;
-                const password = v$.password.$model.value;
-                await signInWithEmailAndPassword(getAuth(), username, password).then(response => {
-                    router.push({
-                        name: 'home'
-                    });
-                });
-            } else {
-                console.log('Invalid form');
-            }
-        },
-
-    },
-    mounted() {
-        console.log('Site Key:', this.siteKey); // Kiểm tra giá trị siteKey
-        globalThis.onReCaptchaLoad = this.onReCaptchaLoad;
-        globalThis.clickReCaptcha = this.clickReCaptcha;
-        const script = document.createElement('script');
-        script.src = `https://www.google.com/recaptcha/api.js?onload=onReCaptchaLoad`;
-        script.async = true;
-        document.body.appendChild(script);
-    },
-}
-
-</script>
