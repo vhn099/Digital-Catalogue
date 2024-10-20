@@ -74,30 +74,30 @@ const tableColumns = [
         field: 'created',
         label: 'Created On',
         styles: {
-
+            width: "10%"
         }
     },
     {
         field: 'created_by',
         label: 'Created By',
         styles: {
-
+            width: "10%"
         }
     },
     {
         field: 'updated',
         label: 'Updated On',
         styles: {
-
+            width: "10%"
         }
     },
     {
         field: 'updated_by',
         label: 'Updated By',
         styles: {
-
+            width: "10%"
         }
-    },
+    }
 ]
 const v$ = useVuelidate(rules, formFields);
 const toast = useToast();
@@ -203,8 +203,8 @@ const editRow = (data) => {
 
 </script>
 <template>
-    <div class="card flex justify-center">
-        <Toast />
+    <Toast />
+    <div class="">
         <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
             <div class="form-container">
                 <form>
@@ -286,9 +286,8 @@ const editRow = (data) => {
                         </div>
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
-                        :style="{ ...column.styles }">
-                    </Column>
-                    <Column class="w-24 !text-end">
+                        :style="{ ...column.styles }"></Column>
+                    <Column class="actions">
                         <template #body="{ data }">
                             <Button class="table-button" severity="secondary" icon="pi pi-trash"
                                 @click="deleteRow(data)" rounded></Button>
@@ -345,5 +344,9 @@ const editRow = (data) => {
 
 .table-button {
     margin-right: 10px;
+}
+
+:deep(.actions) {
+    display: flex;
 }
 </style>
