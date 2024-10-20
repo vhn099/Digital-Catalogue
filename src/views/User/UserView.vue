@@ -6,6 +6,7 @@ import { getAuth } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import Button from "primevue/button";
 import Checkbox from "primevue/checkbox";
+import ToggleSwitch from "primevue/toggleSwitch";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
 import Drawer from "primevue/drawer";
@@ -210,8 +211,7 @@ const editRow = (data) => {
                 <form>
                     <div class="flex flex-col" v-if="edit">
                         <label class="form-label" for="id">ID</label>
-                        <InputText :readonly="edit" :fluid="true" id="id"
-                            v-model="formFields.id" />
+                        <InputText :readonly="edit" :fluid="true" id="id" v-model="formFields.id" />
                     </div>
 
                     <div class="flex flex-col">
@@ -251,48 +251,64 @@ const editRow = (data) => {
                     </div>
 
                     <div class="flex items-center mt-3">
-                        <Checkbox v-model="formFields.isAdmin" inputId="isAdmin" name="isAdmin" value="Admin" />
-                        <label for="isAdmin" class="ml-2"> Admin </label>
+                        <ToggleSwitch v-model="formFields.isAdmin">
+                            <template #handle="">
+                                <i :class="['!text-xs pi', { 'pi-check': formFields.isAdmin, 'pi-times': !formFields.isAdmin }]" />
+                            </template>
+                        </ToggleSwitch>
+
+                        <!-- <Checkbox v-model="" inputId="isAdmin" name="isAdmin" value="Admin" /> -->
+                        <label for="isAdmin" class="ml-2"> Admin? </label>
                     </div>
                 </form>
 
-                <div>
-                    <Button @click="submitForm">Submit</Button>
-                    <Button severity="secondary" @click="closeDrawer">Cancel</Button>
+                <div class="flex items-center mt-3 gap-2">
+                    <Button type="button" label="Save" icon="pi pi-save" @click="submitForm" />
+                    <Button type="button" label="Cancel" severity="warn" icon="pi pi-times" @click="closeDrawer" />
                 </div>
 
             </div>
         </Drawer>
         <div class="flex flex-col table-section">
-            <Button class="add-user" @click="openDrawer">Add User</Button>
+            <!-- <Button class="add-user" @click="openDrawer">Add User</Button> -->
             <div class="card">
-                <DataTable datakey="id" :value="users" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+                <DataTable datakey="id" :value="users" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
                     tableStyle="width: 100%"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="{first} to {last} of {totalRecords}"
-                    ref="datatable"
-                    :filters="filters"
-                    :paginator="true"
-                >
+                    currentPageReportTemplate="{first} to {last} of {totalRecords}" ref="datatable" :filters="filters"
+                    :paginator="true">
                     <template #header>
-                        <div class="flex flex-wrap gap-2 items-center justify-between">
-                            <h4 class="m-1">Manage Users</h4>
-                            <IconField>
-                                <InputIcon>
-                                    <i class="pi pi-search" />
-                                </InputIcon>
-                                <InputText v-model="filters['global'].value" placeholder="Search..." />
-                            </IconField>
+                        <div class="header-table">
+                            <span class="table-title">Manage Users</span>
+                            <div class="table-actions gap-2">
+                                <div>
+                                    <Button type="button" label="Add" icon="pi pi-plus" @click="openDrawer" />
+                                </div>
+                                <div>
+                                    <IconField>
+                                        <InputIcon>
+                                            <i class="pi pi-search" />
+                                        </InputIcon>
+                                        <InputText v-model="filters['global'].value" placeholder="Search..." />
+                                    </IconField>
+                                </div>
+
+                            </div>
                         </div>
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
-                        :style="{ ...column.styles }"></Column>
+                        :style="{ ...column.styles }">
+                    </Column>
                     <Column class="actions">
                         <template #body="{ data }">
-                            <Button class="table-button" severity="secondary" icon="pi pi-trash"
+                            <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
+                                severity="warn" />
+                            <Button icon="pi pi-pencil" aria-label="Update" @click="editRow(data)" rounded />
+
+                            <!-- <Button class="table-button" severity="secondary" icon="pi pi-trash"
                                 @click="deleteRow(data)" rounded></Button>
                             <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary"
-                                rounded></Button>
+                                rounded></Button> -->
                         </template>
                     </Column>
                 </DataTable>
@@ -332,21 +348,44 @@ const editRow = (data) => {
     border-radius: 5px;
 }
 
+/* 
 .add-user {
     width: 100px;
     height: 40px;
     margin-bottom: 20px;
-}
+} */
 
 .table-section {
     padding: 20px;
 }
 
+/* 
 .table-button {
     margin-right: 10px;
-}
+} */
 
 :deep(.actions) {
     display: flex;
+}
+
+:deep(.actions button) {
+    /* display: flex; */
+    text-align: center;
+    margin: 5px;
+}
+
+.header-table {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-title {
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.table-actions {
+    display: flex;
+    justify-content: center;
 }
 </style>
