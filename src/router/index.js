@@ -99,8 +99,8 @@ const router = createRouter({
       }
     },
     {
-      path: '/admin/contactemail',
-      name: 'contactemail',
+      path: '/admin/otherconfig',
+      name: 'otherconfig',
       component: AdminContactEmail,
       meta: {
         requireAuth: true,
@@ -109,8 +109,8 @@ const router = createRouter({
       }
     },
     {
-      path: '/admin/emailreceived',
-      name: 'emailreceived',
+      path: '/admin/receivedemail',
+      name: 'receivedemail',
       component: AdminEmailReceived,
       meta: {
         requireAuth: true,

@@ -70,11 +70,11 @@ const items = ref([
                 }
             },
             {
-                label: 'Emails received',
+                label: 'Received emails',
                 icon: 'pi pi-inbox',
                 command: () => {
                     router.push({
-                        name: 'emailreceived'
+                        name: 'receivedemail'
                     });
                 }
             },
@@ -95,21 +95,11 @@ const items = ref([
             {
                 label: 'Other config',
                 icon: 'pi pi-cog',
-                items: [
-                    {
-                        label: 'Banner',
-                        icon: 'pi pi-heart',
-                    },
-                    {
-                        label: 'Contact emails',
-                        icon: 'pi pi-address-book',
-                        command: () => {
-                            router.push({
-                                name: 'contactemail'
-                            });
-                        }
-                    }
-                ]
+                command: () => {
+                    router.push({
+                        name: 'otherconfig'
+                    });
+                }
             }
         ]
     }
