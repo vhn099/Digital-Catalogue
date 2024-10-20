@@ -12,16 +12,10 @@
             <span class="my-nav-text">Innovation Portal</span>
         </div>
         <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1">
-
-            <!-- <ToggleSwitch v-model="checked" class="myHeaderToggle">
-                <template #handle="{ checked }">
-                    <i :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
-                </template>
-</ToggleSwitch> -->
             <Menubar :model="items" class="admin-menu" />
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
-            <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i>
-
+            <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
+            <img width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
             <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
         </div>
     </div>
