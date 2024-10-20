@@ -1,14 +1,78 @@
-<script setup>
+<script setup lang="ts">
 import { CategoryFirestore } from '@/lib/Category';
 import Button from 'primevue/button';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
+/* REF DEFINE START */
 const cards = ref();
+let innerStyles = ref({});
+const step = ref('');
+const transitioning = ref(false);
+const inner = ref(null);
+/* REF DEFINE END */
 
-onMounted(async () => {
-  cards.value = await getCategories();
-});
+/* FUNCTIONS START */
+const resetTranslate = () => {
+  innerStyles.value = {
+    transition: 'none',
+    transform: `translateX(-${step.value})`
+  }
+};
 
+const prev = () => {
+  if (transitioning.value) return;
+
+  transitioning.value = true
+
+  moveRight();
+
+  afterTransition(() => {
+    const card = cards.value.pop()
+    cards.value.unshift(card)
+    resetTranslate();
+    transitioning.value = false
+  })
+};
+
+const moveLeft = () => {
+  innerStyles.value = {
+    transform: `translateX(-${step.value})
+                    translateX(-${step.value})`
+  }
+};
+
+const moveRight = () => {
+  innerStyles.value = {
+    transform: `translateX(${step.value})
+                    translateX(-${step.value})`
+  }
+};
+const next = () => {
+  if (transitioning.value) return;
+
+  transitioning.value = true
+
+  moveLeft();
+
+  afterTransition(() => {
+    const card = cards.value.shift();
+    cards.value.push(card);
+    resetTranslate();
+    transitioning.value = false;
+  })
+};
+const afterTransition = (callback) => {
+  const listener = () => {
+    callback();
+    inner.value.removeEventListener('transitionend', listener);
+  }
+  inner.value.addEventListener('transitionend', listener);
+};
+const setStep = () => {
+  const innerWidth = inner.value.scrollWidth;
+  const totalCards = cards.value.length;
+  step.value = `${innerWidth / totalCards}px`;
+};
 const getCategories = async () => {
   const categoryList = [];
   (await CategoryFirestore.getCategories()).forEach(category => {
@@ -25,6 +89,13 @@ const getCategories = async () => {
   console.log('categoryList', categoryList);
   return categoryList;
 };
+/* FUNCTION END */
+
+onMounted(async () => {
+  cards.value = await getCategories();
+  setStep();
+  resetTranslate();
+});
 </script>
 <template>
   <div class="flex slide-horizontal">
@@ -51,92 +122,6 @@ const getCategories = async () => {
     <!-- <Button icon="pi pi-star" severity="contrast" @click="next" text rounded aria-label="Star" /> -->
   </div>
 </template>
-
-<script>
-const cards = ref()
-export default {
-  data() {
-    return {
-      innerStyles: {},
-      step: '',
-      transitioning: false
-    }
-  },
-
-  mounted() {
-    this.setStep()
-    this.resetTranslate()
-  },
-
-  methods: {
-    setStep() {
-      const innerWidth = this.$refs.inner.scrollWidth;
-      const totalCards = cards.length;
-      this.step = `${innerWidth / totalCards}px`
-    },
-
-    next() {
-      if (this.transitioning) return
-
-      this.transitioning = true
-
-      this.moveLeft()
-
-      this.afterTransition(() => {
-        const card = this.cards.shift()
-        this.cards.push(card)
-        this.resetTranslate()
-        this.transitioning = false
-      })
-    },
-
-    prev() {
-      if (this.transitioning) return
-
-      this.transitioning = true
-
-      this.moveRight()
-
-      this.afterTransition(() => {
-        const card = this.cards.pop()
-        this.cards.unshift(card)
-        this.resetTranslate()
-        this.transitioning = false
-      })
-    },
-
-    moveLeft() {
-      this.innerStyles = {
-        transform: `translateX(-${this.step})
-                    translateX(-${this.step})`
-      }
-    },
-
-    moveRight() {
-      this.innerStyles = {
-        transform: `translateX(${this.step})
-                    translateX(-${this.step})`
-      }
-    },
-
-    afterTransition(callback) {
-      const listener = () => {
-        callback()
-        this.$refs.inner.removeEventListener('transitionend', listener)
-      }
-      this.$refs.inner.addEventListener('transitionend', listener)
-    },
-
-    resetTranslate() {
-      this.innerStyles = {
-        transition: 'none',
-        transform: `translateX(-${this.step})`
-      }
-    }
-  }
-}
-</script>
-
 
 <style scoped>
 :deep(.p-button-icon-only.p-button-rounded) {
