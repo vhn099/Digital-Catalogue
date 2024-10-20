@@ -27,6 +27,7 @@ const isSignIn = ref(true);
 const isForgotPassword = ref(false);
 const isSendLink = ref(false);
 
+/* FUNCTION START */
 function forgotPassWord() {
 
     isForgotPassword.value = true;
@@ -67,6 +68,7 @@ async function sendLink() {
     isSignIn.value = false;
     isForgotPassword.value = false;
 }
+/* FUNCTION END */
 
 </script>
 
@@ -215,7 +217,6 @@ export default {
 
         handleSubmit: async (v$) => {
             const isValid = await v$.$validate();
-            console.log(isValid);
             if (isValid) {
                 if (typeof window.grecaptcha === 'undefined') {
                     alert('reCAPTCHA is not loaded');

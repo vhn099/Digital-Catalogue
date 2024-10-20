@@ -31,7 +31,6 @@ export const UserFirestore = {
                 result.message = "User's account is either blocked or not activated in the system";
             }
         }
-        console.log(result);
         return result;
     },
 
@@ -91,7 +90,6 @@ export const UserFirestore = {
         try {
             const docRef = getDoc(doc(db, userForm.id));
             if ((await docRef).exists()) {
-                console.log(userForm, "USER FORM");
                 await updateDoc(doc(db, userForm.id), {
                     first_name: userForm.firstname || "",
                     last_name: userForm.lastname || "",
@@ -120,7 +118,6 @@ export const UserFirestore = {
         };
         try {
             const docRef = doc(db, userID);
-            console.log(docRef, "DOC REF");
             await updateDoc(docRef, {
                 disabled: true,
                 updated: updated,
