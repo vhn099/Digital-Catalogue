@@ -12,6 +12,8 @@ import AdminContactEmail from '@/views/ContactEmail/ContactEmailView.vue'
 import AdminEmailReceived from '@/views/EmailReceived/EmailReceivedView.vue'
 import { getAuth } from 'firebase/auth'
 import DeckDetail from '@/views/DeckDetail/DeckDetail.vue'
+import MyProfile from '@/views/MyProfile/MyProfile.vue'
+import MyFavorite from '@/views/MyFavorite/MyFavorite.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -126,6 +128,24 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         pageTitle: 'Deck Detail',
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: MyProfile,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'My Profile',
+      }
+    },
+    {
+      path: '/favorite',
+      name: 'myfavorite',
+      component: MyFavorite,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'My Favorite',
       }
     }
   ]
