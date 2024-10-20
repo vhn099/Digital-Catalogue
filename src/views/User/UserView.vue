@@ -15,11 +15,10 @@ import Password from "primevue/password";
 import Toast from "primevue/toast";
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 
-const visible = ref(false);
 const formFields = reactive({
     id: '',
     username: '',
@@ -108,10 +107,7 @@ const datatable = ref();
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
-
-onMounted(async () => {
-    users.value = await getUsers();
-});
+const visible = ref(false);
 
 /* FUNCTIONS */
 const resetFormData = () => {
@@ -120,12 +116,11 @@ const resetFormData = () => {
     formFields.username = '';
     formFields.password = '';
     formFields.confirmPassword = '';
-    formFields.isAdmin = '';
+    formFields.isAdmin = false;
 };
 const closeDrawer = () => {
     visible.value = false;
     edit.value = false;
-    resetFormData();
 };
 const openDrawer = () => { // Used for insert case
     visible.value = true;
@@ -183,6 +178,7 @@ const submitForm = async () => {
         });
         if (result.status === 'success') {
             visible.value = false;
+            users.value = await getUsers();
         }
     } else {
 
@@ -203,83 +199,83 @@ const editRow = (data) => {
 };
 /* FUNCTIONS */
 
+watch(visible, () => {
+    if (!visible.value) {
+        resetFormData();
+    }
+});
+
+onMounted(async () => {
+    users.value = await getUsers();
+});
 </script>
 <template>
     <Toast />
-    <div class="">
-        <!-- <Button label="Show" @click="visible = true" /> -->
-
-        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
-            :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <div class="form-container">
-                <form>
-                    <div class="flex flex-col" v-if="edit">
-                        <label class="form-label" for="id">ID</label>
-                        <InputText :readonly="edit" :fluid="true" id="id" v-model="formFields.id" />
-                    </div>
-
-                    <div class="flex flex-col">
-                        <label class="form-label" for="username">Username <span class="required-icon">*</span></label>
-                        <InputText :readonly="edit" :fluid="true" placeholder="Username" id="username"
-                            v-model="formFields.username" :invalid="v$.username.$errors.length > 0" />
-                        <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
-                            v$.username.$errors[0].$message }}</small>
-                    </div>
-
-                    <div class="flex flex-col">
-                        <label class="form-label" for="firstname">First Name</label>
-                        <InputText :fluid="true" placeholder="First Name" id="firstname"
-                            v-model="formFields.firstname" />
-                    </div>
-
-                    <div class="flex flex-col">
-                        <label class="form-label" for="lastname">Last Name</label>
-                        <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" />
-                    </div>
-
-                    <div class="flex flex-col" v-if="!edit">
-                        <label class="form-label" for="username">Password <span class="required-icon">*</span></label>
-                        <Password :feedback="false" :fluid="true" placeholder="Password" id="password"
-                            v-model="formFields.password" :invalid="v$.password.$errors.length > 0" />
-                        <small class="error-messages" v-if="v$.password.$errors.length > 0">{{
-                            v$.password.$errors[0].$message }}</small>
-                    </div>
-
-                    <div class="flex flex-col" v-if="!edit">
-                        <label class="form-label" for="username">Confirm Password <span
-                                class="required-icon">*</span></label>
-                        <Password :feedback="false" :fluid="true" placeholder="Confirm Password" id="confirmPassword"
-                            v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0" />
-                        <small class="error-messages" v-if="v$.confirmPassword.$errors.length > 0">{{
-                            v$.confirmPassword.$errors[0].$message }}</small>
-                    </div>
-
-                    <div class="flex items-center mt-3">
-                        <ToggleSwitch v-model="formFields.isAdmin">
-                            <template #handle="">
-                                <i
-                                    :class="['!text-xs pi', { 'pi-check': formFields.isAdmin, 'pi-times': !formFields.isAdmin }]" />
-                            </template>
-                        </ToggleSwitch>
-
-                        <!-- <Checkbox v-model="" inputId="isAdmin" name="isAdmin" value="Admin" /> -->
-                        <label for="isAdmin" class="ml-2"> Admin? </label>
-                    </div>
-                </form>
-
-                <div class="flex items-center mt-3 gap-2">
-                    <Button type="button" label="Save" icon="pi pi-save" @click="submitForm" />
-                    <Button type="button" label="Cancel" severity="warn" icon="pi pi-times" @click="closeDrawer" />
+    <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
+        :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <div class="form-container">
+            <form>
+                <div class="flex flex-col" v-if="edit">
+                    <label class="form-label" for="id">ID</label>
+                    <InputText readonly :fluid="true" id="id" v-model="formFields.id" />
                 </div>
 
+                <div class="flex flex-col">
+                    <label class="form-label" for="username">Username <span class="required-icon">*</span></label>
+                    <InputText :readonly="edit" :fluid="true" placeholder="Username" id="username"
+                        v-model="formFields.username" :invalid="v$.username.$errors.length > 0" />
+                    <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
+                        v$.username.$errors[0].$message }}</small>
+                </div>
+
+                <div class="flex flex-col">
+                    <label class="form-label" for="firstname">First Name</label>
+                    <InputText :fluid="true" placeholder="First Name" id="firstname" v-model="formFields.firstname" />
+                </div>
+
+                <div class="flex flex-col">
+                    <label class="form-label" for="lastname">Last Name</label>
+                    <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" />
+                </div>
+
+                <div class="flex flex-col" v-if="!edit">
+                    <label class="form-label" for="username">Password <span class="required-icon">*</span></label>
+                    <Password :feedback="false" :fluid="true" placeholder="Password" id="password"
+                        v-model="formFields.password" :invalid="v$.password.$errors.length > 0" />
+                    <small class="error-messages" v-if="v$.password.$errors.length > 0">{{
+                        v$.password.$errors[0].$message }}</small>
+                </div>
+
+                <div class="flex flex-col" v-if="!edit">
+                    <label class="form-label" for="username">Confirm Password <span
+                            class="required-icon">*</span></label>
+                    <Password :feedback="false" :fluid="true" placeholder="Confirm Password" id="confirmPassword"
+                        v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0" />
+                    <small class="error-messages" v-if="v$.confirmPassword.$errors.length > 0">{{
+                        v$.confirmPassword.$errors[0].$message }}</small>
+                </div>
+
+                <div class="flex items-center mt-3">
+                    <ToggleSwitch v-model="formFields.isAdmin">
+                        <template #handle="">
+                            <i
+                                :class="['!text-xs pi', { 'pi-check': formFields.isAdmin, 'pi-times': !formFields.isAdmin }]" />
+                        </template>
+                    </ToggleSwitch>
+
+                    <label for="isAdmin" class="ml-2"> Admin? </label>
+                </div>
+            </form>
+
+            <div class="flex items-center mt-3 gap-2">
+                <Button type="button" label="Save" icon="pi pi-save" @click="submitForm" />
+                <Button type="button" label="Cancel" severity="warn" icon="pi pi-times" @click="closeDrawer" />
             </div>
-        </Dialog>
-        <!-- 
-        <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
-            
-        </Drawer> -->
+
+        </div>
+    </Dialog>
+    <div class="">
         <div class="flex flex-col table-section">
-            <!-- <Button class="add-user" @click="openDrawer">Add User</Button> -->
             <div class="card">
                 <DataTable datakey="id" :value="users" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
                     tableStyle="width: 100%"
@@ -315,11 +311,6 @@ const editRow = (data) => {
                                     severity="warn" />
                                 <Button icon="pi pi-pencil" aria-label="Update" @click="editRow(data)" rounded />
                             </div>
-
-                            <!-- <Button class="table-button" severity="secondary" icon="pi pi-trash"
-                                @click="deleteRow(data)" rounded></Button>
-                            <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary"
-                                rounded></Button> -->
                         </template>
                     </Column>
                 </DataTable>
@@ -356,21 +347,9 @@ const editRow = (data) => {
     border-radius: 5px;
 }
 
-/* 
-.add-user {
-    width: 100px;
-    height: 40px;
-    margin-bottom: 20px;
-} */
-
 .table-section {
     padding: 20px;
 }
-
-/* 
-.table-button {
-    margin-right: 10px;
-} */
 
 :deep(.actions) {
     display: flex;
