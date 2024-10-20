@@ -20,9 +20,9 @@
 </ToggleSwitch> -->
             <Menubar :model="items" class="admin-menu" />
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
-            <i class="pi pi-heart" style="font-size: 43px; color: white;"></i>
+            <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i>
 
-            <Avatar label="T" class="my-avatar" shape="circle" />
+            <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
         </div>
     </div>
 
@@ -104,6 +104,14 @@ const items = ref([
         ]
     }
 ]);
+
+/* FUNCTION START */
+const routing = (routeName) => {
+    router.push({
+        name: routeName
+    })
+}
+/* FUNCTION END */
 </script>
 
 <style scoped>
@@ -149,6 +157,7 @@ const items = ref([
 }
 
 .my-avatar {
+    cursor: pointer;
     width: 43px;
     height: 43px;
 }
