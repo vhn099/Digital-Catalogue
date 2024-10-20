@@ -1,5 +1,30 @@
 <script setup>
+import { CategoryFirestore } from '@/lib/Category';
 import Button from 'primevue/button';
+import { onMounted, ref } from 'vue';
+
+const cards = ref();
+
+onMounted(async () => {
+  cards.value = await getCategories();
+});
+
+const getCategories = async () => {
+  const categoryList = [];
+  (await CategoryFirestore.getCategories()).forEach(category => {
+    const data = category.data();
+    const object = {
+      id: category.id,
+      name: data.name,
+      icon: data.image,
+    };
+
+    categoryList.push(object);
+  });
+
+  console.log('categoryList', categoryList);
+  return categoryList;
+};
 </script>
 <template>
   <div class="flex slide-horizontal">
@@ -28,21 +53,10 @@ import Button from 'primevue/button';
 </template>
 
 <script>
-const cards = [
-  {
-    icon: ".../../src/assets/img/icon/tshirt.png",
-    name: "Apparel"
-  }, {
-    icon: "../../src/assets/img/icon/christmas-ball.png",
-    name: "Christmas"
-  }, {
-    icon: "../../src/assets/img/icon/shopping.png",
-    name: "Shopper Marketing"
-  }];
+const cards = ref()
 export default {
   data() {
     return {
-      cards: cards,
       innerStyles: {},
       step: '',
       transitioning: false
