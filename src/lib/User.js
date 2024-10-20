@@ -57,7 +57,8 @@ export const UserFirestore = {
                     // Set user with custom sys_id in firestore
                     await setDoc(userDoc, {
                         email: userForm.email_form,
-                        full_name: userForm.full_name,
+                        first_name: userForm.first_name,
+                        last_name: userForm.last_name,
                         isAdmin: userForm.isAdmin,
                         disabled: false,
                         created: userForm.created,
