@@ -50,16 +50,16 @@ export const UserFirestore = {
             data: {}
         };
         try {
-            let findUser = await getDocs(query(db, where('email', '==', userForm.email_form)));
+            let findUser = await getDocs(query(db, where('email', '==', userForm.username)));
             if (findUser.docs.length === 0) {
                 await createUserWithEmailAndPassword(getAuth(), userForm.email_form, userForm.password).then(async response => {
                     const userDoc = doc(getFirestore(), useAppStore().getUsersCollection, response.user.uid);
                     // Set user with custom sys_id in firestore
                     await setDoc(userDoc, {
-                        email: userForm.email_form,
-                        first_name: userForm.first_name,
-                        last_name: userForm.last_name,
-                        isAdmin: userForm.isAdmin,
+                        email: userForm.username,
+                        first_name: userForm.first_name || '',
+                        last_name: userForm.last_name || '',
+                        isAdmin: userForm.isAdmin || false,
                         disabled: false,
                         created: userForm.created,
                         created_by: userForm.created_by,
@@ -70,8 +70,8 @@ export const UserFirestore = {
                     });
                 });
             } else {
-                result.message = `Email ${userForm.email} has already existed`;
-                result.status = 'warning';
+                result.message = `Email ${userForm.username} has already existed`;
+                result.status = 'warn';
             }
         } catch (error) {
             result.status = 'error';
@@ -91,15 +91,17 @@ export const UserFirestore = {
         try {
             const docRef = getDoc(doc(db, userForm.id));
             if ((await docRef).exists()) {
+                console.log(userForm, "USER FORM");
                 await updateDoc(doc(db, userForm.id), {
-                    full_name: userForm.full_name,
+                    first_name: userForm.firstname || "",
+                    last_name: userForm.lastname || "",
                     updated: userForm.updated,
                     updated_by: userForm.updated_by
                 }).then(response => {
-                    result.message = `Update user with email ${userForm.email} successfully`;
+                    result.message = `Update user with email ${userForm.username} successfully`;
                 });
             } else {
-                result.message = `Email ${userForm.email} is not existed`;
+                result.message = `Email ${userForm.username} is not existed`;
                 result.status = 'warning';
             }
         } catch (error) {
