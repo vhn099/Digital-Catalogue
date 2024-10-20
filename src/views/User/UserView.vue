@@ -67,30 +67,30 @@ const tableColumns = [
         field: 'created',
         label: 'Created On',
         styles: {
-
+            width: "10%"
         }
     },
     {
         field: 'created',
         label: 'Created By',
         styles: {
-
+            width: "10%"
         }
     },
     {
         field: 'updated',
         label: 'Updated On',
         styles: {
-
+            width: "10%"
         }
     },
     {
         field: 'updated',
         label: 'Updated By',
         styles: {
-
+            width: "10%"
         }
-    },
+    }
 ]
 const v$ = useVuelidate(rules, formFields);
 const toast = useToast();
@@ -174,7 +174,7 @@ const editRow = (data) => {
 
 </script>
 <template>
-    <div class="card flex justify-center">
+    <div class="">
         <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
             <div class="form-container">
                 <form>
@@ -236,7 +236,7 @@ const editRow = (data) => {
                     currentPageReportTemplate="{first} to {last} of {totalRecords}">
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }"></Column>
-                    <Column class="w-24 !text-end">
+                    <Column class="actions">
                         <template #body="{ data }">
                             <Button class="table-button" severity="secondary" icon="pi pi-trash" @click="deleteRow(data)"rounded></Button>
                             <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary" rounded></Button>
@@ -290,5 +290,9 @@ const editRow = (data) => {
 }
 .table-button {
     margin-right: 10px;
+}
+
+:deep(.actions) {
+    display: flex;
 }
 </style>
