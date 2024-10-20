@@ -128,7 +128,7 @@ const getCategories = async () => {
     const categoryList = [];
     (await CategoryFirestore.getCategories()).forEach(category => {
         const data = category.data();
-        console.log('PN TEST', data);
+        // console.log('PN TEST', data);
         const object = {
             id: category.id,
             name: data.name,

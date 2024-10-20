@@ -87,7 +87,7 @@ const getCategories = async () => {
     categoryList.push(object);
   });
 
-  console.log('categoryList', categoryList);
+  // console.log('categoryList', categoryList);
   return categoryList;
 };
 /* FUNCTION END */

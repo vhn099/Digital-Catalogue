@@ -26,7 +26,7 @@ export const CategoryFirestore = {
   },
 
   async createCategory(categoryForm) {
-    console.log("createCategory:", categoryForm);
+    // console.log("createCategory:", categoryForm);
     const result = {
       status: "success",
       message: "",
@@ -53,7 +53,7 @@ export const CategoryFirestore = {
   },
 
   async updateCategory(categoryForm) {
-    console.log("updateCategory:", categoryForm);
+    // console.log("updateCategory:", categoryForm);
     const db = collection(
       getFirestore(),
       useAppStore().getCategoriesCollection
@@ -67,7 +67,7 @@ export const CategoryFirestore = {
     try {
       const docRef = getDoc(doc(db, categoryForm.id));
       if ((await docRef).exists()) {
-        console.log(categoryForm, "CATEGORY FORM");
+        // console.log(categoryForm, "CATEGORY FORM");
 
         await updateDoc(doc(db, categoryForm.id), {
           name: categoryForm.name || "",
@@ -90,7 +90,7 @@ export const CategoryFirestore = {
   },
 
   async deleteCategory(id) {
-    console.log("deleteCategory:", id);
+    // console.log("deleteCategory:", id);
     const result = {
       status: "success",
       message: "",
