@@ -409,7 +409,8 @@ const MyPreset = definePreset(Aura, {
     // }
 });
 let app = '';
-const auth = getAuth();
+export const auth = getAuth(initial)
+
 onAuthStateChanged(auth, currentUser => {
     if (!app) {
         app = createApp(App);

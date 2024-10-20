@@ -35,15 +35,26 @@ function toggleDarkMode() {
       <CateHorizonItem></CateHorizonItem>
 
       <SectionItem></SectionItem>
-      <div class="flex">
+      
+      <div class="top-line">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
       </div>
-      <div class="flex">
+      <div class="normal-line">
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
+        <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
       </div>
+
       <!-- <DeckItem></DeckItem> -->
 
       <!-- <FloatLabel variant="in">
@@ -57,3 +68,6 @@ function toggleDarkMode() {
   </div>
 
 </template>
+<style scoped>
+
+</style>
