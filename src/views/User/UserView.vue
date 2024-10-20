@@ -2,6 +2,8 @@
 import { UserFirestore } from "@/lib/User";
 import useVuelidate from "@vuelidate/core";
 import { minLength, required, sameAs, email, helpers } from "@vuelidate/validators";
+import { getAuth } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 import Button from "primevue/button";
 import Checkbox from "primevue/checkbox";
 import Column from "primevue/column";
@@ -9,11 +11,16 @@ import DataTable from "primevue/datatable";
 import Drawer from "primevue/drawer";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
+import Toast from "primevue/toast";
+import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
 import { computed, onMounted, reactive, ref } from "vue";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
 
 const visible = ref(false);
 const formFields = reactive({
+    id: '',
     username: '',
     firstname: '',
     lastname: '',
@@ -35,7 +42,7 @@ const rules = computed(() => {
         },
         confirmPassword: {
             required,
-            sameAs: sameAs(formFields.confirmPassword)
+            sameAs: sameAs(formFields.password)
         }
     };
 });
@@ -71,7 +78,7 @@ const tableColumns = [
         }
     },
     {
-        field: 'created',
+        field: 'created_by',
         label: 'Created By',
         styles: {
 
@@ -85,7 +92,7 @@ const tableColumns = [
         }
     },
     {
-        field: 'updated',
+        field: 'updated_by',
         label: 'Updated By',
         styles: {
 
@@ -96,27 +103,37 @@ const v$ = useVuelidate(rules, formFields);
 const toast = useToast();
 const users = ref();
 const edit = ref();
+const datatable = ref();
+const filters = ref({
+    'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
 onMounted(async () => {
     users.value = await getUsers();
 });
 
 /* FUNCTIONS */
+const resetFormData = () => {
+    formFields.lastname = '';
+    formFields.firstname = '';
+    formFields.username = '';
+    formFields.password = '';
+    formFields.confirmPassword = '';
+    formFields.isAdmin = '';
+};
 const closeDrawer = () => {
     visible.value = false;
     edit.value = false;
+    resetFormData();
 };
 const openDrawer = () => { // Used for insert case
     visible.value = true;
     edit.value = false;
 };
-const resetFormData = () => {
-
-};
 const getUserFormData = () => {
-    const userFormData = {};
+    const userForm = {};
     Object.keys(formFields).forEach(key => {
-        userFormData[key] = formFields[key];
+        userForm[key] = formFields[key];
     });
     userForm.updated = Timestamp.now().toDate();
     userForm.updated_by = getAuth().currentUser.email;
@@ -124,7 +141,7 @@ const getUserFormData = () => {
         userForm.created = Timestamp.now().toDate();
         userForm.created_by = getAuth().currentUser.email;
     }
-    return userFormData;
+    return userForm;
 }
 
 const getUsers = async () => {
@@ -148,10 +165,16 @@ const getUsers = async () => {
 
 const submitForm = async () => {
     const isValid = await v$.value.$validate();
-    if (isValid) {
+    if (isValid || edit.value) {
         const userFormData = getUserFormData();
-        const result = await UserFirestore.createUsers(userFormData);
+        let result = {};
+        if (edit.value) {
+            result = await UserFirestore.updateUser(userFormData);
+        } else {
+            result = await UserFirestore.createUsers(userFormData);
+        }
         toast.add({
+            summary: 'System Message',
             severity: result.status,
             detail: result.message,
             life: 3000 // 3s
@@ -167,6 +190,12 @@ const deleteRow = (data) => {
 
 };
 const editRow = (data) => {
+    formFields.id = data.id;
+    formFields.username = data.email;
+    formFields.firstname = data.firstname;
+    formFields.lastname = data.lastname;
+    formFields.isAdmin = data.isAdmin;
+
     visible.value = true;
     edit.value = true;
 };
@@ -175,13 +204,20 @@ const editRow = (data) => {
 </script>
 <template>
     <div class="card flex justify-center">
+        <Toast />
         <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
             <div class="form-container">
                 <form>
+                    <div class="flex flex-col" v-if="edit">
+                        <label class="form-label" for="id">ID</label>
+                        <InputText :readonly="edit" :fluid="true" id="id"
+                            v-model="formFields.id" />
+                    </div>
+
                     <div class="flex flex-col">
                         <label class="form-label" for="username">Username <span class="required-icon">*</span></label>
-                        <InputText :fluid="true" placeholder="Username" id="username" v-model="formFields.username"
-                            :invalid="v$.username.$errors.length > 0" />
+                        <InputText :readonly="edit" :fluid="true" placeholder="Username" id="username"
+                            v-model="formFields.username" :invalid="v$.username.$errors.length > 0" />
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
                     </div>
@@ -197,7 +233,7 @@ const editRow = (data) => {
                         <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" />
                     </div>
 
-                    <div class="flex flex-col">
+                    <div class="flex flex-col" v-if="!edit">
                         <label class="form-label" for="username">Password <span class="required-icon">*</span></label>
                         <Password :feedback="false" :fluid="true" placeholder="Password" id="password"
                             v-model="formFields.password" :invalid="v$.password.$errors.length > 0" />
@@ -205,7 +241,7 @@ const editRow = (data) => {
                             v$.password.$errors[0].$message }}</small>
                     </div>
 
-                    <div class="flex flex-col">
+                    <div class="flex flex-col" v-if="!edit">
                         <label class="form-label" for="username">Confirm Password <span
                                 class="required-icon">*</span></label>
                         <Password :feedback="false" :fluid="true" placeholder="Confirm Password" id="confirmPassword"
@@ -230,16 +266,34 @@ const editRow = (data) => {
         <div class="flex flex-col table-section">
             <Button class="add-user" @click="openDrawer">Add User</Button>
             <div class="card">
-                <DataTable :value="users" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+                <DataTable datakey="id" :value="users" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
                     tableStyle="width: 100%"
-                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    currentPageReportTemplate="{first} to {last} of {totalRecords}">
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate="{first} to {last} of {totalRecords}"
+                    ref="datatable"
+                    :filters="filters"
+                    :paginator="true"
+                >
+                    <template #header>
+                        <div class="flex flex-wrap gap-2 items-center justify-between">
+                            <h4 class="m-1">Manage Users</h4>
+                            <IconField>
+                                <InputIcon>
+                                    <i class="pi pi-search" />
+                                </InputIcon>
+                                <InputText v-model="filters['global'].value" placeholder="Search..." />
+                            </IconField>
+                        </div>
+                    </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
-                        :style="{ ...column.styles }"></Column>
+                        :style="{ ...column.styles }">
+                    </Column>
                     <Column class="w-24 !text-end">
                         <template #body="{ data }">
-                            <Button class="table-button" severity="secondary" icon="pi pi-trash" @click="deleteRow(data)"rounded></Button>
-                            <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary" rounded></Button>
+                            <Button class="table-button" severity="secondary" icon="pi pi-trash"
+                                @click="deleteRow(data)" rounded></Button>
+                            <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary"
+                                rounded></Button>
                         </template>
                     </Column>
                 </DataTable>
@@ -288,6 +342,7 @@ const editRow = (data) => {
 .table-section {
     padding: 20px;
 }
+
 .table-button {
     margin-right: 10px;
 }
