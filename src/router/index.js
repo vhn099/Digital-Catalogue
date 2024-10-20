@@ -8,6 +8,8 @@ import Category from '../views/Category/Category.vue'
 import { UserFirestore } from '@/lib/User'
 import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
 import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
+import AdminContactEmail from '@/views/ContactEmail/ContactEmailView.vue'
+import AdminEmailReceived from '@/views/EmailReceived/EmailReceivedView.vue'
 import { getAuth } from 'firebase/auth'
 
 const router = createRouter({
@@ -93,6 +95,26 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         pageTitle: 'Desk Management',
+        adminSite: true
+      }
+    },
+    {
+      path: '/admin/contactemail',
+      name: 'contactemail',
+      component: AdminContactEmail,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Contact Email Management',
+        adminSite: true
+      }
+    },
+    {
+      path: '/admin/emailreceived',
+      name: 'emailreceived',
+      component: AdminEmailReceived,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Emails Received Management',
         adminSite: true
       }
     }
