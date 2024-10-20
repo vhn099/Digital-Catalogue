@@ -208,8 +208,8 @@ const editRow = (data) => {
     <div class="">
         <!-- <Button label="Show" @click="visible = true" /> -->
 
-        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"' :style="{ width: '50vw' }"
-            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
+            :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
                 <form>
                     <div class="flex flex-col" v-if="edit">
@@ -273,7 +273,7 @@ const editRow = (data) => {
 
             </div>
         </Dialog>
-<!-- 
+        <!-- 
         <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
             
         </Drawer> -->
@@ -307,11 +307,13 @@ const editRow = (data) => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                     </Column>
-                    <Column header="Actions" class="actions">
+                    <Column header="Actions">
                         <template #body="{ data }">
-                            <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
-                                severity="warn" />
-                            <Button icon="pi pi-pencil" aria-label="Update" @click="editRow(data)" rounded />
+                            <div class="actions">
+                                <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
+                                    severity="warn" />
+                                <Button icon="pi pi-pencil" aria-label="Update" @click="editRow(data)" rounded />
+                            </div>
 
                             <!-- <Button class="table-button" severity="secondary" icon="pi pi-trash"
                                 @click="deleteRow(data)" rounded></Button>
@@ -379,6 +381,7 @@ const editRow = (data) => {
 :deep(.actions button) {
     display: flex;
     text-align: center;
+    margin: 5px;
 }
 
 .header-table {
