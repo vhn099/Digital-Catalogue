@@ -29,7 +29,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="flex gap-1 mt-1 pt-4">
+    <div class="flex gap-2 mt-1 pt-4">
         <!-- <i class="pi pi-cog"></i> -->
          <img :src="icon" width="25">
         <span>{{ icon_text }}</span>

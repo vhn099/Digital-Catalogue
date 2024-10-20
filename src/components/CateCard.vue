@@ -5,7 +5,9 @@
             <img width="110" height="110" fill="none" src="../assets/img/icon/tshirt.png" />
 
         </div>
-        <div class="cate-card-name">Shopper Marketing</div>
+        <div class="cate-card-name">
+            <p>Shopper</p>
+        </div>
     </div>
 
 </template>

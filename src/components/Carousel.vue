@@ -75,10 +75,11 @@ const inside = ref(true);
 .slideshow-canva {
     width: 100%;
     height: 100%;
+    padding-left: 10%;
     background-color: aliceblue;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     background: linear-gradient(90deg, #FC3134 0%, #7B0E0F 100%);
 }
 
@@ -121,5 +122,9 @@ const inside = ref(true);
 
 .slideshow-image {
     justify-content: flex-end;
+}
+
+.pedding-border {
+    width: 10%;
 }
 </style>
