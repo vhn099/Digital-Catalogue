@@ -379,6 +379,7 @@ const editRow = (data) => {
 :deep(.actions button) {
     display: flex;
     text-align: center;
+    margin: 5px;
 }
 
 .header-table {
