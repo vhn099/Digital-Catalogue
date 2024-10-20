@@ -20,11 +20,11 @@ const sectionText = "Decks";
       <!-- <SectionItem></SectionItem> -->
       <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
 
-      <div class="top-line">
+      <div class="card top-line">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
       </div>
-      <div class="normal-line">
+      <div class="card normal-line">
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>
         <DeckItem></DeckItem>

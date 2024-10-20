@@ -83,6 +83,7 @@ import Tag from 'primevue/tag';
     padding: 50px 20px 20px 20px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%);
     /* margin-top: 30px; */
+    justify-content: space-between;
 }
 
 .deck-info-desc {
