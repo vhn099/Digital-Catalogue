@@ -52,18 +52,17 @@ async function sendLink() {
 
     try {
         const actionCodeSettings = {
-            url: 'http://localhost:3000/home', // Đường dẫn đến component ResetPassword
+            url: 'http://localhost:3000/home',
             handleCodeInApp: true,
         };
         console.log(email.value);
 
-        const x = await sendPasswordResetEmail(auth, email.value,actionCodeSettings);
-        console.log('Email reset password đã được gửi!');
-        console.log('cxxxx',x);
+        const x = await sendPasswordResetEmail(auth, email.value, actionCodeSettings);
+        console.log('Email reset password be sent!');
     } catch (error) {
-        console.log('Có lỗi xảy ra: ' + error.message);
+        console.log('Error: ' + error.message);
     }
-    
+
     isSendLink.value = true;
     isSignIn.value = false;
     isForgotPassword.value = false;
@@ -84,6 +83,7 @@ async function sendLink() {
                     <Password :feedback="false" :fluid="true" class="input" placeholder="Password" id="password"
                         v-model="v$.password.$model.value" />
                     <div class="form-captcha" id="recaptcha_element"></div>
+                    <div id="error_recaptcha"></div>
                     <Button type="link" label="Forgotten username/password?" :fluid="true" @click="forgotPassWord()" />
                     <Button :fluid="true" @click="handleSubmit(v$)" label="Login" />
                 </div>
@@ -91,7 +91,7 @@ async function sendLink() {
 
                     <span>Forgot Your Password?</span>
                     <p>No worries! Enter your email address below, and we’ll send you a link to reset your password.</p>
-                    <InputText :fluid="true" class="input" placeholder="Email address" v-model="email" id="email"/>
+                    <InputText :fluid="true" class="input" placeholder="Email address" v-model="email" id="email" />
                     <div class="form-captcha" id="recaptcha_element1"></div>
                     <Button label="Send Reset Link" :fluid="true" @click="sendLink()" />
                 </div>
@@ -198,15 +198,19 @@ async function sendLink() {
 export default {
     data() {
         return {
-            siteKey: '6Lea3WMqAAAAAB8InVXkbFEjCkXPkf_IJ6nNlaKT',
+            siteKey: '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu',
             picture: '../../assets/img/login/mask-group.png'
         };
     },
     methods: {
         onReCaptchaLoad() {
             grecaptcha.render('recaptcha_element', {
-                'sitekey': this.siteKey
+                'sitekey': this.siteKey,
+                'callback' : clickReCaptcha,
             });
+        },
+        clickReCaptcha(){
+            document.getElementById("error_recaptcha").innerHTML = '';
         },
 
         handleSubmit: async (v$) => {
@@ -218,9 +222,11 @@ export default {
                     return;
                 }
                 const captchaResponse = grecaptcha.getResponse();
+                
                 if (!captchaResponse) {
-                    alert('Please complete the reCAPTCHA');
+                    document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
                     return;
+
                 }
                 const username = v$.username.$model.value;
                 const password = v$.password.$model.value;
@@ -238,6 +244,7 @@ export default {
     mounted() {
         console.log('Site Key:', this.siteKey); // Kiểm tra giá trị siteKey
         globalThis.onReCaptchaLoad = this.onReCaptchaLoad;
+        globalThis.clickReCaptcha = this.clickReCaptcha;
         const script = document.createElement('script');
         script.src = `https://www.google.com/recaptcha/api.js?onload=onReCaptchaLoad`;
         script.async = true;
