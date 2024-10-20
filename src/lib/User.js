@@ -52,7 +52,7 @@ export const UserFirestore = {
         try {
             let findUser = await getDocs(query(db, where('email', '==', userForm.username)));
             if (findUser.docs.length === 0) {
-                await createUserWithEmailAndPassword(getAuth(), userForm.email_form, userForm.password).then(async response => {
+                await createUserWithEmailAndPassword(getAuth(), userForm.username, userForm.password).then(async response => {
                     const userDoc = doc(getFirestore(), useAppStore().getUsersCollection, response.user.uid);
                     // Set user with custom sys_id in firestore
                     await setDoc(userDoc, {
