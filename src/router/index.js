@@ -122,13 +122,14 @@ const router = createRouter({
       }
     },
     {
-      path: '/deck/detail',
+      path: '/deck/:id',
       name: 'deckdetail',
       component: DeckDetail,
       meta: {
         requireAuth: true,
         pageTitle: 'Deck Detail',
-      }
+      },
+      sensitive: true
     },
     {
       path: '/profile',
