@@ -8,6 +8,7 @@ import Category from '../views/Category/Category.vue'
 import { UserFirestore } from '@/lib/User'
 import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
 import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
+import { getAuth } from 'firebase/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

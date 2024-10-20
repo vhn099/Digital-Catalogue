@@ -7,8 +7,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 import { createPinia } from "pinia";
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
+import ToastService from 'primevue/toastservice';
 
 /* FIREBASE START */
 import environment from '../firebase-config.json';
@@ -16,8 +15,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 const initial = initializeApp(environment.FIREBASE_INFO);
-/* FIREBASE END */
 const db = getFirestore(initial);
+/* FIREBASE END */
 export { db };
 const MyPreset = definePreset(Aura, {
     semantic: {
@@ -414,9 +413,9 @@ const auth = getAuth();
 onAuthStateChanged(auth, currentUser => {
     if (!app) {
         app = createApp(App);
-        app.use(createPinia());
-        app.use(router);
-        app.use(PrimeVue, {
+        app.use(createPinia()); // Store service
+        app.use(router); // Router service
+        app.use(PrimeVue, { // PrimeVue component definition
             theme: {
                 preset: Aura, //MyPreset,
                 options: {
@@ -424,6 +423,7 @@ onAuthStateChanged(auth, currentUser => {
                 }
             }
         });
+        app.use(ToastService); // Alert Service
         app.mount('#app');
     }
 });
