@@ -3,7 +3,8 @@
     <div class="flex myNav">
         <div class="flex-1 flex align-items-center m-2 px-5 py-1">
             <div class="my-logo">
-                <img style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo" src="../assets/img/logo.png" />
+                <img style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo"
+                    src="../assets/img/logo.png" />
             </div>
         </div>
 
@@ -16,7 +17,7 @@
                 <template #handle="{ checked }">
                     <i :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
                 </template>
-            </ToggleSwitch> -->
+</ToggleSwitch> -->
             <Menubar :model="items" class="admin-menu" />
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <i class="pi pi-heart" style="font-size: 43px; color: white;"></i>
@@ -69,8 +70,13 @@ const items = ref([
                 }
             },
             {
-                label: 'Emails',
-                icon: 'pi pi-inbox'
+                label: 'Emails received',
+                icon: 'pi pi-inbox',
+                command: () => {
+                    router.push({
+                        name: 'emailreceived'
+                    });
+                }
             },
             {
                 label: 'Like',
@@ -83,6 +89,25 @@ const items = ref([
                     {
                         label: 'Ultima',
                         icon: 'pi pi-palette'
+                    }
+                ]
+            },
+            {
+                label: 'Other config',
+                icon: 'pi pi-cog',
+                items: [
+                    {
+                        label: 'Banner',
+                        icon: 'pi pi-heart',
+                    },
+                    {
+                        label: 'Contact emails',
+                        icon: 'pi pi-address-book',
+                        command: () => {
+                            router.push({
+                                name: 'contactemail'
+                            });
+                        }
                     }
                 ]
             }
