@@ -299,7 +299,7 @@ const editRow = (data) => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                     </Column>
-                    <Column class="actions">
+                    <Column header="Actions" class="actions">
                         <template #body="{ data }">
                             <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
                                 severity="warn" />
@@ -369,9 +369,8 @@ const editRow = (data) => {
 }
 
 :deep(.actions button) {
-    /* display: flex; */
+    display: flex;
     text-align: center;
-    margin: 5px;
 }
 
 .header-table {

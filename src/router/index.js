@@ -11,6 +11,7 @@ import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
 import AdminContactEmail from '@/views/ContactEmail/ContactEmailView.vue'
 import AdminEmailReceived from '@/views/EmailReceived/EmailReceivedView.vue'
 import { getAuth } from 'firebase/auth'
+import DeckDetail from '@/views/DeckDetail/DeckDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -116,6 +117,15 @@ const router = createRouter({
         requireAuth: true,
         pageTitle: 'Emails Received Management',
         adminSite: true
+      }
+    },
+    {
+      path: '/deck/detail',
+      name: 'deckdetail',
+      component: DeckDetail,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Deck Detail',
       }
     }
   ]
