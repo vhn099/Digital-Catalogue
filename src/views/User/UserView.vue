@@ -9,7 +9,7 @@ import Checkbox from "primevue/checkbox";
 import ToggleSwitch from "primevue/toggleSwitch";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
-import Drawer from "primevue/drawer";
+import Dialog from "primevue/dialog";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
 import Toast from "primevue/toast";
@@ -206,7 +206,10 @@ const editRow = (data) => {
 <template>
     <Toast />
     <div class="">
-        <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
+        <!-- <Button label="Show" @click="visible = true" /> -->
+
+        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"' :style="{ width: '50vw' }"
+            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
                 <form>
                     <div class="flex flex-col" v-if="edit">
@@ -253,7 +256,8 @@ const editRow = (data) => {
                     <div class="flex items-center mt-3">
                         <ToggleSwitch v-model="formFields.isAdmin">
                             <template #handle="">
-                                <i :class="['!text-xs pi', { 'pi-check': formFields.isAdmin, 'pi-times': !formFields.isAdmin }]" />
+                                <i
+                                    :class="['!text-xs pi', { 'pi-check': formFields.isAdmin, 'pi-times': !formFields.isAdmin }]" />
                             </template>
                         </ToggleSwitch>
 
@@ -268,7 +272,11 @@ const editRow = (data) => {
                 </div>
 
             </div>
-        </Drawer>
+        </Dialog>
+<!-- 
+        <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
+            
+        </Drawer> -->
         <div class="flex flex-col table-section">
             <!-- <Button class="add-user" @click="openDrawer">Add User</Button> -->
             <div class="card">
