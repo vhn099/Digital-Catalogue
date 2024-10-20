@@ -56,7 +56,7 @@ const getCategories = async () => {
       <SectionItem></SectionItem>
 
       <div class="card-container">
-        <CateCardItem :data="categories"></CateCardItem>
+        <CateCardItem v-for="data in categories"  :data="data"></CateCardItem>
       </div>
     </div>
   </div>

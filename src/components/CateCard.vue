@@ -1,12 +1,12 @@
 <template>
-    <div class="cate-card-box" v-for="({ id, name, image }, index) in data" :key="id">
+    <div class="cate-card-box" :key="data.id">
         <div class="cate-card-image">
 
-            <img width="110" height="110" fill="none" :src="image" />
+            <img width="110" height="110" fill="none" :src="data.image" />
 
         </div>
         <div class="cate-card-name">
-            <p>{{ name }}</p>
+            <p>{{ data.name }}</p>
         </div>
     </div>
 
@@ -14,20 +14,20 @@
 <script setup>
 defineProps({
     data: {
-        type: Array,
-        required: true,
-        id: {
-            type: String,
-            required: true,
-        },
-        name: {
-            type: String,
-            required: true,
-        },
-        image: {
-            type: String,
-            required: true,
-        },
+        type: Object,
+        // required: true,
+        // id: {
+        //     type: String,
+        //     required: true,
+        // },
+        // name: {
+        //     type: String,
+        //     required: true,
+        // },
+        // image: {
+        //     type: String,
+        //     required: true,
+        // },
     }
 });
 </script>

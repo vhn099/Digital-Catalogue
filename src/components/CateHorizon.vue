@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CategoryFirestore } from '@/lib/Category';
+import CateSmallItem from './CateSmall.vue';
 import Button from 'primevue/button';
 import { computed, onMounted, ref } from 'vue';
 
@@ -102,10 +103,10 @@ onMounted(async () => {
 
     <Button icon="pi pi-angle-left" text rounded aria-label="Filter" @click="prev" />
 
-    <div class="carousel">
+    <CateSmallItem v-for="data in cards"  :card="data"></CateSmallItem>
+    <!-- <div class="carousel">
       <div class="inner" ref="inner" :style="innerStyles">
         <div class="card" v-for="card in cards" :key="card">
-          <!-- {{ card }} -->
           <div class="cate-item">
             <div class="cate-logo">
               <img width="52" height="52" fill="none" :src="card.icon" />
@@ -116,7 +117,7 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <Button icon="pi pi-angle-right" text rounded aria-label="Filter" @click="next" />
 
     <!-- <Button icon="pi pi-star" severity="contrast" @click="next" text rounded aria-label="Star" /> -->
