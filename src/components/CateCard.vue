@@ -1,17 +1,36 @@
 <template>
-    <div class="cate-card-box">
+    <div class="cate-card-box" :key="data.id">
         <div class="cate-card-image">
 
-            <img width="110" height="110" fill="none" src="../assets/img/icon/tshirt.png" />
+            <img width="110" height="110" fill="none" :src="data.image" />
 
         </div>
         <div class="cate-card-name">
-            <p>Shopper</p>
+            <p>{{ data.name }}</p>
         </div>
     </div>
 
 </template>
-<script setup></script>
+<script setup>
+defineProps({
+    data: {
+        type: Object,
+        // required: true,
+        // id: {
+        //     type: String,
+        //     required: true,
+        // },
+        // name: {
+        //     type: String,
+        //     required: true,
+        // },
+        // image: {
+        //     type: String,
+        //     required: true,
+        // },
+    }
+});
+</script>
 <style scoped>
 .cate-card-box {
     width: 258px;

@@ -8,7 +8,7 @@ import Category from '../views/Category/Category.vue'
 import { UserFirestore } from '@/lib/User'
 import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
 import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
-import AdminContactEmail from '@/views/ContactEmail/ContactEmailView.vue'
+import AdminContactEmail from '@/views/ContactEmail/OtherConfig.vue'
 import AdminEmailReceived from '@/views/EmailReceived/EmailReceivedView.vue'
 import { getAuth } from 'firebase/auth'
 import DeckDetail from '@/views/DeckDetail/DeckDetail.vue'
@@ -155,13 +155,14 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const currentUser = await UserFirestore.getCurrentUser(); // Check custom authen of users.
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
+  const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
   if (requireAuth && currentUser.status !== 'success') {
     next('/sign-in');
-  } else if (!requireAuth && currentUser.status == 'success') {
+  } else if (requireAuth && requireAdmin && !currentUser.isAdmin) {
     next('/home');
   } else {
-    next();
+    next()
   }
   // next();
 });
