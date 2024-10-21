@@ -15,22 +15,18 @@ import { computed, onMounted, reactive, ref } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import { CategoryFirestore } from "@/lib/Category";
+import { FirebaseStorage } from "@/lib/Storage";
+import FileUpload from "primevue/fileupload";
 
-const visible = ref(false);
-const deleteCategoryDialog = ref(false);
 const formFields = reactive({
     id: '',
     name: '',
-    image: '',
 });
 
 /* COMPUTED VALUES */
 const rules = computed(() => {
     return {
         name: {
-            required,
-        },
-        image: {
             required,
         },
     };
@@ -81,24 +77,28 @@ const tableColumns = [
         }
     }
 ]
-const v$ = useVuelidate(rules, formFields);
 const toast = useToast();
+
+/* REF DEFINITION START */
 const categories = ref();
 const edit = ref();
 const datatable = ref();
+const visible = ref(false);
+const image = ref(null);
+const deleteCategoryDialog = ref(false);
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
+const imageCustomRules = ref([]);
+/* REF DEFINITION END*/
 
-onMounted(async () => {
-    categories.value = await getCategories();
-});
+const v$ = useVuelidate(rules, formFields);
 
 /* FUNCTIONS */
 const resetFormData = () => {
     formFields.id = '';
     formFields.name = '';
-    formFields.image = '';
+    image.value = null;
 };
 const closeDrawer = () => {
     visible.value = false;
@@ -146,9 +146,18 @@ const getCategories = async () => {
 
 const submitForm = async () => {
     const isValid = await v$.value.$validate();
+    let imageName = image.value.$data.files[0].name;
+    let imageData = image.value.$data.files[0];
+    if (imageData.length == 0) {
+        console.log("NO IMAGES");
+        return false;
+    }
     if (isValid || edit.value) {
         const categoryFormData = getCategoryFormData();
         let result = {};
+        const downloadURL = await FirebaseStorage.uploadFile(imageName, imageData);
+        categoryFormData.image = downloadURL;
+        categoryFormData.image_name = imageName;
         if (edit.value) {
             result = await CategoryFirestore.updateCategory(categoryFormData);
         } else {
@@ -193,19 +202,21 @@ const deleteRow = (data) => {
 const editRow = (data) => {
     formFields.id = data.id;
     formFields.name = data.name;
-    formFields.image = data.image;
 
     visible.value = true;
     edit.value = true;
 };
+
 /* FUNCTIONS */
 
+
+onMounted(async () => {
+    categories.value = await getCategories();
+});
 </script>
 <template>
     <Toast />
     <div class="">
-        <!-- <Button label="Show" @click="visible = true" /> -->
-
         <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Category"'
             :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
@@ -225,10 +236,9 @@ const editRow = (data) => {
 
                     <div class="flex flex-col">
                         <label class="form-label" for="image">Image <span class="required-icon">*</span></label>
-                        <InputText :fluid="true" placeholder="Image" id="image" v-model="formFields.image"
-                            :invalid="v$.image.$errors.length > 0" />
-                        <small class="error-messages" v-if="v$.image.$errors.length > 0">{{
-                            v$.image.$errors[0].$message }}</small>
+                        <FileUpload ref="image" mode="basic" name="image[]" :maxFileSize="1000000" accept="image/*" />
+                        <!-- <small class="error-messages" v-if="imageV$.image.$errors.length > 0">{{
+                            imageV$.image.$errors[0].$message }}</small> -->
                     </div>
                 </form>
 
@@ -239,10 +249,6 @@ const editRow = (data) => {
 
             </div>
         </Dialog>
-        <!-- 
-        <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
-            
-        </Drawer> -->
         <Dialog v-model:visible="deleteCategoryDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
@@ -255,7 +261,6 @@ const editRow = (data) => {
         </Dialog>
 
         <div class="flex flex-col table-section">
-            <!-- <Button class="add-user" @click="openDrawer">Add User</Button> -->
             <div class="card">
                 <DataTable datakey="id" :value="categories" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
                     tableStyle="width: 100%"
@@ -283,8 +288,9 @@ const editRow = (data) => {
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
-                        <template v-if="column.image">
-                            <img :src="column.image" width="64" />
+                        <template #body="slotProps">
+                             <img :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64"/>
+                             <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
                     <Column header="Actions">
@@ -294,11 +300,6 @@ const editRow = (data) => {
                                     severity="warn" />
                                 <Button icon="pi pi-pencil" aria-label="Update" @click="editRow(data)" rounded />
                             </div>
-
-                            <!-- <Button class="table-button" severity="secondary" icon="pi pi-trash"
-                                @click="deleteRow(data)" rounded></Button>
-                            <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary"
-                                rounded></Button> -->
                         </template>
                     </Column>
                 </DataTable>

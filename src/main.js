@@ -22,7 +22,7 @@ const db = getFirestore(initial);
 export { db };
 
 let app = '';
-export const auth = getAuth(initial)
+export const auth = getAuth(initial);
 
 onAuthStateChanged(auth, currentUser => {
     if (!app) {
