@@ -155,13 +155,14 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const currentUser = await UserFirestore.getCurrentUser(); // Check custom authen of users.
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
+  const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
   if (requireAuth && currentUser.status !== 'success') {
     next('/sign-in');
-  } else if (!requireAuth && currentUser.status == 'success') {
+  } else if (requireAuth && requireAdmin && !currentUser.isAdmin) {
     next('/home');
   } else {
-    next();
+    next()
   }
   // next();
 });

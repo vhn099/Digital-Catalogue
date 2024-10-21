@@ -15,9 +15,11 @@ import Password from "primevue/password";
 import Toast from "primevue/toast";
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
+import ConfirmDialog from "primevue/confirmdialog";
 
 const formFields = reactive({
     id: '',
@@ -99,6 +101,7 @@ const tableColumns = [
         }
     }
 ]
+const confirm = useConfirm();
 const v$ = useVuelidate(rules, formFields);
 const toast = useToast();
 const users = ref();
@@ -148,7 +151,7 @@ const getUsers = async () => {
             id: user.id,
             email: data.email,
             firstname: data.firstname || '',
-            lastname: data.firstname || '',
+            lastname: data.lastname || '',
             isAdmin: data.isAdmin,
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
@@ -164,6 +167,7 @@ const submitForm = async () => {
     const isValid = await v$.value.$validate();
     if (isValid || edit.value) {
         const userFormData = getUserFormData();
+        console.log(userFormData);
         let result = {};
         if (edit.value) {
             result = await UserFirestore.updateUser(userFormData);
@@ -185,7 +189,33 @@ const submitForm = async () => {
     }
 };
 const deleteRow = (data) => {
+    confirm.require({
+        message: 'Do you want to delete this user ?',
+        header: 'ATTENTION',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: async () => {
+            const result = await UserFirestore.deleteUser(data.id, data.username, Timestamp.now().toDate(), getAuth().currentUser.email);
+            toast.add({
+                summary: 'System Message',
+                severity: result.status,
+                detail: result.message,
+                life: 3000 // 3s
+            });
+            users.value = await getUsers();
+        },
+        reject: () => {
 
+        }
+    })
 };
 const editRow = (data) => {
     formFields.id = data.id;
@@ -211,6 +241,7 @@ onMounted(async () => {
 </script>
 <template>
     <Toast />
+    <ConfirmDialog />
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
         :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-container">
@@ -257,9 +288,9 @@ onMounted(async () => {
 
                 <div class="flex items-center mt-3">
                     <ToggleSwitch v-model="formFields.isAdmin">
-                        <template #handle="">
+                        <template #handle="{ checked }">
                             <i
-                                :class="['!text-xs pi', { 'pi-check': formFields.isAdmin, 'pi-times': !formFields.isAdmin }]" />
+                                :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
                         </template>
                     </ToggleSwitch>
 

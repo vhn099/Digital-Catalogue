@@ -12,7 +12,7 @@
             <span class="my-nav-text">Innovation Portal</span>
         </div>
         <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1">
-            <Menubar :model="items" class="admin-menu" />
+            <Menubar :model="items" class="admin-menu" v-if="currentUser.isAdmin"/>
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
             <img width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
@@ -27,9 +27,11 @@ import InputText from 'primevue/inputtext';
 import Avatar from 'primevue/avatar';
 import Menubar from 'primevue/menubar';
 
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import router from '@/router';
+import { UserFirestore } from '@/lib/User';
 const checked = ref(false);
+const currentUser = ref({});
 
 const items = ref([
     {
@@ -100,6 +102,9 @@ const items = ref([
 ]);
 
 /* FUNCTION START */
+onMounted(async () => {
+    currentUser.value = await UserFirestore.getCurrentUser();
+});
 const routing = (routeName) => {
     router.push({
         name: routeName

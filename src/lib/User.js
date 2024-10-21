@@ -8,12 +8,13 @@ export const UserFirestore = {
         const result = {
             status: 'success',
             message: '',
+            isAdmin: false,
         };
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
         const currentUser = getAuth().currentUser;
         if (!currentUser) {
             result.status = 'error';
-            result.message = 'User is not logged in to the system';
+            result.message = useAppStore().getMessageMaster.AUTH.NOT_LOGGED_IN;
         } else {
             const email = currentUser.email;
             const userQuery = query(db, where('email', "==", email));
@@ -21,14 +22,15 @@ export const UserFirestore = {
 
             if (userDoc.docs.length > 0) {
                 const userData = userDoc.docs[0].data();
+                result.isAdmin = userData.isAdmin || false;
                 const disabled = userData.disabled;
                 if (disabled) {
                     result.status = 'error';
-                    result.message = "User's account is blocked";
+                    result.message = useAppStore().getMessageMaster.AUTH.BLOCKED; 
                 }
             } else {
                 result.status = 'error';
-                result.message = "User's account is either blocked or not activated in the system";
+                result.message = useAppStore().getMessageMaster.AUTH.NOT_EXISTED_ACCOUNT;
             }
         }
         return result;
@@ -43,21 +45,31 @@ export const UserFirestore = {
 
     async createUsers(userForm) {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
+        const currentUser = await this.getCurrentUser();
         const result = {
             status: 'success',
             message: '',
             data: {}
         };
+        // Check current operation of the current user if they are admin but suddenly got remove role.
+        if (!currentUser.isAdmin) {
+            result.status = 'error',
+            result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
+            result.data = {};
+            return result;
+        }
         try {
             let findUser = await getDocs(query(db, where('email', '==', userForm.username)));
             if (findUser.docs.length === 0) {
+
+                // Firebase lồn để cái function tự động sign in chi ????
                 await createUserWithEmailAndPassword(getAuth(), userForm.username, userForm.password).then(async response => {
                     const userDoc = doc(getFirestore(), useAppStore().getUsersCollection, response.user.uid);
                     // Set user with custom sys_id in firestore
                     await setDoc(userDoc, {
                         email: userForm.username,
-                        first_name: userForm.first_name || '',
-                        last_name: userForm.last_name || '',
+                        firstname: userForm.firstname || '',
+                        lastname: userForm.lastname || '',
                         isAdmin: userForm.isAdmin || false,
                         disabled: false,
                         created: userForm.created,
@@ -65,11 +77,11 @@ export const UserFirestore = {
                         updated: userForm.updated,
                         updated_by: userForm.updated_by
                     }).then(async response => {
-                        result.message = `Created user with email ${result.data.email}`;
+                        result.message = useAppStore().getMessageMaster.DATA(response.data.email).USER_CREATED;
                     });
                 });
             } else {
-                result.message = `Email ${userForm.username} has already existed`;
+                result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_EXISTED;
                 result.status = 'warn';
             }
         } catch (error) {
@@ -82,24 +94,33 @@ export const UserFirestore = {
     },
     async updateUser(userForm) {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
+        const currentUser = await this.getCurrentUser();
         const result = {
             status: 'success',
             message: '',
             data: {}
         };
+        // Check current operation of the current user if they are admin but suddenly got remove role.
+        if (!currentUser.isAdmin) {
+            result.status = 'error',
+            result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
+            result.data = {};
+            return result;
+        }
         try {
             const docRef = getDoc(doc(db, userForm.id));
             if ((await docRef).exists()) {
                 await updateDoc(doc(db, userForm.id), {
-                    first_name: userForm.firstname || "",
-                    last_name: userForm.lastname || "",
+                    isAdmin: userForm.isAdmin || false,
+                    firstname: userForm.firstname || "",
+                    lastname: userForm.lastname || "",
                     updated: userForm.updated,
                     updated_by: userForm.updated_by
                 }).then(response => {
-                    result.message = `Update user with email ${userForm.username} successfully`;
+                    result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_UPDATE;
                 });
             } else {
-                result.message = `Email ${userForm.username} is not existed`;
+                result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_NOT_EXISTED;
                 result.status = 'warning';
             }
         } catch (error) {
@@ -111,11 +132,19 @@ export const UserFirestore = {
     },
     async deleteUser(userID, email, updated, updated_by) {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
+        const currentUser = await this.getCurrentUser();
         const result = {
             status: 'success',
             message: '',
             data: {}
         };
+        // Check current operation of the current user if they are admin but suddenly got remove role.
+        if (!currentUser.isAdmin) {
+            result.status = 'error',
+            result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
+            result.data = {};
+            return result;
+        }
         try {
             const docRef = doc(db, userID);
             await updateDoc(docRef, {
@@ -123,7 +152,7 @@ export const UserFirestore = {
                 updated: updated,
                 updated_by: updated_by
             }).then(response => {
-                result.message = `Delete user with email ${email} successfully`;
+                result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_DELETE;
             });
         } catch (error) {
             result.status = 'error';
