@@ -69,12 +69,9 @@ const position = 'left';
 <style scoped>
 .myDock {
     z-index: 99999;
-}
-
-:deep(.p-dock-left){
-    left: 0;
-    top: 0;
-    height: initial;
+    top: 150px !important;
+    height: inherit;
+    display: block;
 }
 
 :deep(.p-dock-list-container) {
