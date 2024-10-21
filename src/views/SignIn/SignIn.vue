@@ -2,12 +2,14 @@
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
+import FloatLabel from 'primevue/floatlabel';
+
 import { watch, reactive, ref, onMounted, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import router from '@/router';
-import { db , auth } from '@/main';
+import { db, auth } from '@/main';
 import { query, collection, getDocs, where } from "firebase/firestore";
 import Checkbox from 'primevue/checkbox';
 
@@ -68,7 +70,7 @@ async function sendLink() {
     const isValidEmail = await vEmailInput.value.$validate();
     if (isValidEmail) {
         if (typeof window.grecaptcha === 'undefined') {
-           console.error('reCAPTCHA is not loaded');
+            console.error('reCAPTCHA is not loaded');
             return;
         }
         const captchaResponse = grecaptcha.getResponse();
@@ -185,10 +187,18 @@ onMounted(async () => {
         <div class="login-container">
             <!-- Left side - Login Form -->
             <div class="form-container">
-                <img style="object-fit: contain;" width="125" height="125px" src="../../assets/img/adm_logo.png" />
+                <div style="display: flex;justify-content: space-around;">
+                    <img style="object-fit: contain;" width="125" height="125px" src="../../assets/img/adm_logo.png" />
+                </div>
                 <div v-if="isSignIn && !isForgotPassword && !isSendLink">
                     <span>Sign in to your account</span>
                     <div class="flex flex-col">
+                        <!-- <FloatLabel variant="in">
+                            <InputText id="username" autocomplete="off" v-model="formFields.username" :fluid="true"
+                                :invalid="v$.username.$errors.length > 0" />
+                            <label for="username">Username</label>
+                        </FloatLabel> -->
+
                         <InputText :fluid="true" placeholder="Username" id="username" v-model="formFields.username"
                             :invalid="v$.username.$errors.length > 0" />
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
@@ -200,38 +210,52 @@ onMounted(async () => {
                             v-model="formFields.password" />
                     </div>
 
-                    <div class="flex items-center" style="margin-top: 5px;">
-                        <Checkbox v-model="formFields.rememberMe" inputId="rememberMe" name="rememberMe"
-                            value="rememberMe" />
-                        <label class="ml-2">Remember Me</label>
+                    <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
+                        <div>
+                            <Checkbox v-model="formFields.rememberMe" inputId="rememberMe" name="rememberMe"
+                                value="rememberMe" />
+                            <label class="ml-2">Remember Me</label>
+                        </div>
+                        <div>
+                            <a style="cursor: pointer; font-size: 11px;color: #B72828;"
+                                @click="forgotPassWord()">Forgotten username/password?</a>
+
+                        </div>
                     </div>
 
                     <div class="flex flex-col mt-3">
                         <div class="form-captcha" id="recaptcha_element"></div>
-                        <small id="error_recaptcha" class="error-messages" ></small>
+                        <small id="error_recaptcha" class="error-messages"></small>
                     </div>
 
                     <div class="flex flex-col button-container">
-                        <Button type="link" label="Forgotten username/password?" :fluid="true"
-                            @click="forgotPassWord()" />
+                        <!-- <Button type="link" label="Forgotten username/password?" :fluid="true"
+                            @click="forgotPassWord()" /> -->
                         <Button :fluid="true" @click="handleSubmit(v$)" label="Login" />
                     </div>
                 </div>
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink">
 
-                    <span>Forgot Your Password?</span>
-                    <p>No worries! Enter your email address below, and we’ll send you a link to reset your password.</p>
+                    <span style="font-size: 15px;">Forgot Your Password?</span>
+                    <p style="font-size: 11px;">No worries! Enter your email address below, and we’ll send you a link to reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
-                        id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0" v-on:change="clearInvalidEmailMess()"/>
-                    <small  class="error-messages" v-if="vEmailInput.emailInput.$errors.length > 0">{{
+                        id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
+                        v-on:change="clearInvalidEmailMess()" />
+                    <small class="error-messages" v-if="vEmailInput.emailInput.$errors.length > 0">{{
                         vEmailInput.emailInput.$errors[0].$message }}</small>
-                        <small id="invalidEmail" class="error-messages" ></small>
-                    <div class="form-captcha" id="recaptcha_element1"></div>
-                    <small id="error_recaptcha1" class="error-messages" ></small>
+                    <small id="invalidEmail" class="error-messages"></small>
+
+                    <div class="flex flex-col mt-3">
+                        <div class="form-captcha" id="recaptcha_element1"></div>
+                        <small id="error_recaptcha" class="error-messages"></small>
+                    </div>
+
+                    <!-- <div class="form-captcha" id="recaptcha_element1"></div>
+                    <small id="error_recaptcha1" class="error-messages"></small> -->
                     <Button label="Send Reset Link" :fluid="true" @click="sendLink(vEmailInput)" />
                 </div>
                 <div v-if="!isSignIn && !isForgotPassword && isSendLink">
-                    <h1>isSendLink</h1>
+                    <h1>Check Your Inbox!</h1>
                 </div>
             </div>
 
