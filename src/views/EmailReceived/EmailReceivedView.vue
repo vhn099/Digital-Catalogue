@@ -51,18 +51,23 @@ const tableColumns = [
         label: 'Message',
         styles: {
             maxWidth: "300px",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
             wordWrap: "break-word",
-            scrollHeight: "10%",
-            scrollWidth: "10%",
-            scrollable: "true",
-
+            // overFlow: "hidden",
+            overflow: "hidden"
         }
     },
     {
         field: 'receiver',
         label: 'Receiver',
         styles: {
-            width: "10%"
+            // width: "10%",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            wordWrap: "break-word",
+            // overFlow: "hidden",
+            overflow: "hidden"
         }
     },
     {
@@ -191,7 +196,7 @@ const viewRow = (data) => {
                         <div class="header-table">
                             <span class="table-title">List Emails</span>
                             <div class="table-actions gap-2">
-        
+
                                 <div>
                                     <IconField>
                                         <InputIcon>
