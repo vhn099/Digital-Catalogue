@@ -68,12 +68,13 @@ function forgotPassWord() {
     isForgotPassword.value = true;
     isSendLink.value = false;
     isSignIn.value = false;
-    setTimeout(() => {
-        grecaptcha.render('recaptcha_element1', {
-            'sitekey': siteKey,
-            'callback': clickReCaptcha,
-        });
-    }, "1");
+    renderRecaptcha('recaptcha_element1');
+    // setTimeout(() => {
+    //     grecaptcha.render('recaptcha_element1', {
+    //         'sitekey': siteKey,
+    //         'callback': clickReCaptcha,
+    //     });
+    // }, "1");
 }
 
 async function sendLink() {
@@ -149,6 +150,22 @@ const clickReCaptcha = () => {
 const clearInvalidEmailMess = () => {
     document.getElementById("invalidEmail").innerHTML = '';
 };
+
+const backLogin = () => {
+    isForgotPassword.value = false;
+    isSendLink.value = false;
+    isSignIn.value = true;
+    renderRecaptcha('recaptcha_element');
+};
+const renderRecaptcha = (id) => {
+    setTimeout(() => {
+        grecaptcha.render(id, {
+            'sitekey': siteKey,
+            'callback': clickReCaptcha,
+        });
+    }, "1");
+};
+
 const handleSubmit = async () => {
     const isValid = await v$.value.$validate();
     if (isValid) {
@@ -203,8 +220,8 @@ onMounted(async () => {
             <!-- Left side - Login Form -->
             <div class="form-container">
                 <div class="sign-logo">
-                    <img draggable="false" style="object-fit: contain;margin-bottom: -20px;" width="125"
-                        height="125px" src="../../assets/img/adm_logo.png" />
+                    <img draggable="false" style="object-fit: contain;margin-bottom: -20px;" width="125" height="125px"
+                        src="../../assets/img/adm_logo.png" />
                     <span></span> <!--dont delete this one. it do something -->
                     <p>Innovation Portal</p>
                 </div>
@@ -279,7 +296,8 @@ onMounted(async () => {
                     <Button label="Send Reset Link" :fluid="true" @click="sendLink(vEmailInput)" />
                     <div class="flex flex-col mt-3">
                         <div class="back-router">
-                            <RouterLink :to="{ name: 'home' }" class="back-home">Back to Login Page</RouterLink>
+                            <RouterLink :to="{ name: 'home' }" class="back-home" @click="backLogin()">Back to Login Page
+                            </RouterLink>
                         </div>
                     </div>
 
@@ -288,6 +306,10 @@ onMounted(async () => {
                 <div v-if="!isSignIn && !isForgotPassword && isSendLink">
                     <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS"
                         :pageBody="messagePageBody" />
+                    <div class="back-home-router">
+                        <RouterLink :to="{ name: 'home' }" class="back-home" @click="backLogin()">Back to Login Page
+                        </RouterLink>
+                    </div>
                 </div>
             </div>
 
@@ -438,4 +460,12 @@ onMounted(async () => {
     font-size: 15px;
     font-weight: 400;
 }
+.back-home-router {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
 </style>

@@ -12,9 +12,9 @@
 
   
 
-    <div class="back-home-router">
+    <!-- <div class="back-home-router">
         <RouterLink :to="{ name: 'home' }" class="back-home">Back to Login Page</RouterLink>
-    </div>
+    </div> -->
 </template>
 
 <style scoped>
