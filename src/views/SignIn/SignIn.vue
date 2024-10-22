@@ -202,6 +202,9 @@ const handleSubmit = async () => {
         console.log('Invalid form');
     }
 };
+const focusPassword = () => {
+    document.getElementById('password').firstChild.focus()
+}
 /* FUNCTION END */
 
 
@@ -241,14 +244,14 @@ onMounted(async () => {
                         </FloatLabel> -->
 
                         <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
-                            :invalid="v$.username.$errors.length > 0" />
+                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture=""/>
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
                     </div>
 
                     <div class="flex flex-col">
-                        <Password :feedback="false" :fluid="true" class="input" placeholder="Password"
-                            v-model="formFields.password" />
+                        <Password id="password" :feedback="false" :fluid="true" class="input" placeholder="Password"
+                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"/>
                     </div>
 
                     <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
@@ -271,7 +274,7 @@ onMounted(async () => {
                     <div class="flex flex-col button-container">
                         <!-- <Button type="link" label="Forgotten username/password?" :fluid="true"
                             @click="forgotPassWord()" /> -->
-                        <Button :fluid="true" @click="handleSubmit(v$)" label="Login" />
+                        <Button :fluid="true" @click="handleSubmit" label="Login" />
                     </div>
                 </div>
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink">
