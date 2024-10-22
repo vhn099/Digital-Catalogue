@@ -3,10 +3,7 @@
 </script>
 
 <template>
-    <div>
-
-    </div>
-    <h1 style="text-align: center;">Thank You for Reaching Out!</h1>
+    <h1 style="text-align: center;font-size: 36px; font-weight: 500; line-height: 54px;text-align: center;">Thank You for Reaching Out!</h1>
     <div class="content-section">
         <p>
             We’ve received your details and our team will get back to you within 24-48 hours. Meanwhile, feel free to
@@ -20,13 +17,13 @@
             <img src="../assets/img/icon/mail.png" />
         </div>
         <div>
-            <p>Email us</p>
+            <p style="font-size: 20px;font-weight: 500;">Email us</p>
             <p>Write to our friendly team, we are here to help.</p>
             <a href="#">info.au@admgroup.com</a>
         </div>
     </div>
 
-    <div>
+    <div class="back-home-router">
         <RouterLink :to="{ name: 'home' }" class="back-home">Back home</RouterLink>
     </div>
 </template>
@@ -35,6 +32,7 @@
 .content-section {
     display: flex;
     justify-content: center;
+    padding: 15px 0 50px 0;
 }
 
 .content-section p {
@@ -42,26 +40,36 @@
     text-align: center;
     display: flex;
     align-items: center;
+    /* padding: 15%; */
 }
 
 .email-us {
     border-radius: 5px;
-    background-color: #C1C1C1;
-    width: 45%;
+    /* background-color: #C1C1C1; */
+    background: #C1C1C11F;
+    /* width: 45%; */
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 }
 
 .mail-icon {
-    margin-bottom: 5%;
+    width: 60px;
+    /* margin-bottom: 5%; */
+    /* padding: 0 10px; */
 }
 
-.back-home{
+.back-home-router {
+    padding-top: 100px;
+}
+
+.back-home {
     color: gray;
-    font-size: 24px;
+    font-size: 14px;
+    font-weight: 700;
     font-style: italic;
     text-decoration: underline;
-    padding-top: 1000px
+    /* padding-top: 1000px */
 }
 </style>
