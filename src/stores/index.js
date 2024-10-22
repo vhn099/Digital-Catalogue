@@ -4,6 +4,7 @@ export const useAppStore = defineStore("storeId", {
     collections: {
       users: "users",
       categories: "category",
+      decks: 'decks'
     },
     MessageMaster: {
       AUTH: {
@@ -34,6 +35,9 @@ export const useAppStore = defineStore("storeId", {
     }
   }),
   getters: {
+    getDecksCollection: (state) => {
+      return state.collections.decks;
+    },
     getUsersCollection: (state) => {
       return state.collections.users;
     },
