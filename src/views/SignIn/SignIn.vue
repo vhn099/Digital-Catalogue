@@ -61,7 +61,8 @@ function forgotPassWord() {
     isSignIn.value = false;
     setTimeout(() => {
         grecaptcha.render('recaptcha_element1', {
-            'sitekey': siteKey
+            'sitekey': siteKey,
+            'callback': clickReCaptcha,
         });
     }, "1");
 }
@@ -127,8 +128,13 @@ const onReCaptchaLoad = () => {
     });
 };
 const clickReCaptcha = () => {
-    document.getElementById("error_recaptcha").innerHTML = '';
-    document.getElementById("error_recaptcha1").innerHTML = '';
+    const divError = document.getElementById("error_recaptcha");
+    if (divError) {
+        document.getElementById("error_recaptcha").innerHTML = '';
+    }
+    else {
+        document.getElementById("error_recaptcha1").innerHTML = '';
+    }
 };
 
 const clearInvalidEmailMess = () => {
@@ -237,7 +243,8 @@ onMounted(async () => {
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink">
 
                     <span style="font-size: 15px;">Forgot Your Password?</span>
-                    <p style="font-size: 11px;">No worries! Enter your email address below, and we’ll send you a link to reset your password.</p>
+                    <p style="font-size: 11px;">No worries! Enter your email address below, and we’ll send you a link to
+                        reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
                         id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
                         v-on:change="clearInvalidEmailMess()" />
@@ -247,7 +254,7 @@ onMounted(async () => {
 
                     <div class="flex flex-col mt-3">
                         <div class="form-captcha" id="recaptcha_element1"></div>
-                        <small id="error_recaptcha" class="error-messages"></small>
+                        <small id="error_recaptcha1" class="error-messages"></small>
                     </div>
 
                     <!-- <div class="form-captcha" id="recaptcha_element1"></div>
