@@ -46,7 +46,7 @@ import Tag from 'primevue/tag';
     background: #999999C7;
     color: white;
     font-size: 10px;
-    font-weight: 900;
+    font-weight: 600;
     margin-left: 5px;
     border-radius: 25px;
 }
