@@ -83,7 +83,7 @@ async function submitForm() {
     bodyReq.value.message.html = message;
     bodyReq.value.message.firstName = firstName;
     bodyReq.value.message.lastName = lastName;
-    bodyReq.value.message.email = userEmail;
+    bodyReq.value.message.email = formFields.userEmail;
 
     console.log(bodyReq.value);
     try {
