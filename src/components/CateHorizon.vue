@@ -95,7 +95,7 @@ async function getCategories() {
   return categoryList;
 };
 /* FUNCTION END */
-watch(cards, ()=> {
+watch(cards, () => {
   console.log(inner.value.scrollWidth);
 });
 
@@ -112,7 +112,7 @@ onMounted(async () => {
 <template>
   <div class="flex slide-horizontal">
 
-    <Button icon="pi pi-angle-left" text rounded aria-label="Filter" @click="prev" />
+    <Button icon="pi pi-angle-left" text aria-label="Filter" @click="prev" />
 
     <!-- <CateSmallItem v-for="data in cards"  :card="data"></CateSmallItem> -->
     <div class="carousel">
@@ -129,18 +129,26 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <Button icon="pi pi-angle-right" text rounded aria-label="Filter" @click="next" />
+    <Button icon="pi pi-angle-right" text aria-label="Filter" @click="next" />
 
   </div>
 </template>
 
 <style scoped>
-:deep(.p-button-icon-only.p-button-rounded) {
+:deep(.p-button-icon-only) {
   height: inherit;
 }
 
-:deep(.p-button-icon-only.p-button-rounded span) {
+:deep(.p-button-icon-only span) {
   font-size: 50px;
+}
+
+:deep(.p-button-text:not(:disabled):active) {
+  background: transparent;
+}
+
+:deep(.p-button-text:not(:disabled):hover) {
+  background: transparent;
 }
 
 .carousel {
