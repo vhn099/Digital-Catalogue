@@ -1,7 +1,9 @@
 import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, where } from "firebase/firestore";
 
 import { useAppStore } from "@/stores";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import axios from "axios";
+import { COMMON_VARIABLE } from "./Common";
 
 export const UserFirestore = {
     async getCurrentUser() {
@@ -26,7 +28,7 @@ export const UserFirestore = {
                 const disabled = userData.disabled;
                 if (disabled) {
                     result.status = 'error';
-                    result.message = useAppStore().getMessageMaster.AUTH.BLOCKED; 
+                    result.message = useAppStore().getMessageMaster.AUTH.BLOCKED;
                 }
             } else {
                 result.status = 'error';
@@ -45,40 +47,41 @@ export const UserFirestore = {
 
     async createUsers(userForm) {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
-        const currentUser = await this.getCurrentUser();
         const result = {
             status: 'success',
             message: '',
             data: {}
         };
-        // Check current operation of the current user if they are admin but suddenly got remove role.
-        if (!currentUser.isAdmin) {
-            result.status = 'error',
-            result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
-            result.data = {};
-            return result;
-        }
         try {
             let findUser = await getDocs(query(db, where('email', '==', userForm.username)));
             if (findUser.docs.length === 0) {
-
-                // Firebase lồn để cái function tự động sign in chi ????
-                await createUserWithEmailAndPassword(getAuth(), userForm.username, userForm.password).then(async response => {
-                    const userDoc = doc(getFirestore(), useAppStore().getUsersCollection, response.user.uid);
-                    // Set user with custom sys_id in firestore
-                    await setDoc(userDoc, {
-                        email: userForm.username,
-                        firstname: userForm.firstname || '',
-                        lastname: userForm.lastname || '',
-                        isAdmin: userForm.isAdmin || false,
-                        disabled: false,
-                        created: userForm.created,
-                        created_by: userForm.created_by,
-                        updated: userForm.updated,
-                        updated_by: userForm.updated_by
-                    }).then(async response => {
-                        result.message = useAppStore().getMessageMaster.DATA(response.data.email).USER_CREATED;
-                    });
+                const userData = {
+                    email: userForm.username,
+                    firstname: userForm.firstname || '',
+                    lastname: userForm.lastname || '',
+                    isAdmin: userForm.isAdmin || false,
+                    disabled: false,
+                    // created: userForm.created,
+                    created_by: userForm.created_by,
+                    // updated: userForm.updated,
+                    updated_by: userForm.updated_by
+                };
+                const userToken = await getAuth().currentUser.getIdToken();
+                await axios.post(COMMON_VARIABLE.CREATE_USER_FUNCTION, {
+                    userForm: userData,
+                    password: userForm.password
+                }, {
+                    headers: { Authorization: `Bearer ${userToken}` }
+                }).then(response => {
+                    if (response.status != 200) {
+                        result.status = 'error';
+                        result.message = response.data.message;
+                        console.log(response.data, "RESPONSE");
+                    } else {
+                        result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_CREATED;
+                    }
+                }).catch(error => {
+                    
                 });
             } else {
                 result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_EXISTED;
@@ -103,7 +106,7 @@ export const UserFirestore = {
         // Check current operation of the current user if they are admin but suddenly got remove role.
         if (!currentUser.isAdmin) {
             result.status = 'error',
-            result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
+                result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
             result.data = {};
             return result;
         }
@@ -141,7 +144,7 @@ export const UserFirestore = {
         // Check current operation of the current user if they are admin but suddenly got remove role.
         if (!currentUser.isAdmin) {
             result.status = 'error',
-            result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
+                result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
             result.data = {};
             return result;
         }
@@ -152,7 +155,7 @@ export const UserFirestore = {
                 updated: updated,
                 updated_by: updated_by
             }).then(response => {
-                result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_DELETE;
+                result.message = useAppStore().getMessageMaster.DATA(email).USER_DELETE;
             });
         } catch (error) {
             result.status = 'error';

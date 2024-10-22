@@ -1,4 +1,6 @@
 <script setup>
+import { useAppStore } from '@/stores';
+
 
 </script>
 
@@ -6,7 +8,7 @@
     <h1 style="text-align: center;font-size: 33px; font-weight: 500; line-height: 54px;text-align: center;">Check Your Inbox!</h1>
     <div class="content-section">
         <p> We've sent a password reset link to </p>
-        <p style="padding: 10px 0;color: #7326D9;font-size: 15px;">[your email address]</p>
+        <p style="padding: 10px 0;color: #7326D9;font-size: 15px;">{{ useAppStore().getUserEmailReset }}</p>
         <p>Please follow the instructions in the email to reset your password.</p>
     </div>
 

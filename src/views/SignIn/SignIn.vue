@@ -15,6 +15,7 @@ import Checkbox from 'primevue/checkbox';
 
 // Reset Link sent
 import MessagePage from '@/components/MessagePage.vue';
+import { useAppStore } from '@/stores';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
     fontSize: "62px",
@@ -27,7 +28,7 @@ const messagePageBody = 'login';
 const formFields = reactive({
     username: '',
     password: '',
-    rememberMe: '',
+    rememberMe: ['remember'],
 });
 
 const formForgotPW = reactive({
@@ -105,6 +106,7 @@ async function sendLink() {
             isSendLink.value = true;
             isSignIn.value = false;
             isForgotPassword.value = false;
+            useAppStore().setmail(formForgotPW.emailInput);
         }
         else {
             document.getElementById("invalidEmail").innerHTML = 'Invalid Email';
@@ -185,7 +187,7 @@ const handleSubmit = async () => {
         const rememberMe = formFields.rememberMe;
         let persistence = browserSessionPersistence;
 
-        if (rememberMe) {
+        if (rememberMe.length === 0) {
             persistence = browserSessionPersistence;
         }
 
@@ -238,7 +240,7 @@ onMounted(async () => {
                             <label for="username">Username</label>
                         </FloatLabel> -->
 
-                        <InputText :fluid="true" placeholder="Username" id="username" v-model="formFields.username"
+                        <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
                             :invalid="v$.username.$errors.length > 0" />
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
@@ -250,9 +252,8 @@ onMounted(async () => {
                     </div>
 
                     <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
-                        <div>
-                            <Checkbox v-model="formFields.rememberMe" inputId="rememberMe" name="rememberMe"
-                                value="rememberMe" />
+                        <div class="flex items-center">
+                            <Checkbox v-model="formFields.rememberMe" value="remember" inputId="rememberMe" name="rememberMe"/>
                             <label class="ml-2">Remember Me</label>
                         </div>
                         <div>
