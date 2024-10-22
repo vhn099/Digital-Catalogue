@@ -25,7 +25,7 @@ const sectionText = "My Favorite";
                 <MyFavCardItem title="Placeholder for the product" description="Short detail information about the product"></MyFavCardItem>
                 <MyFavCardItem></MyFavCardItem>
                 <!-- <MyFavCardItem></MyFavCardItem> -->
-                <MyFavCardItem isnew="true"></MyFavCardItem>
+                <MyFavCardItem :isnew="true"></MyFavCardItem>
             </div>
         </div>
 

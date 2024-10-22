@@ -41,7 +41,7 @@ const deckRouting = () => {
                 </div>
 
             </template>
-            <template #content>
+            <template>
                 <p class="m-0">
                     {{ description }}
                 </p>
@@ -57,9 +57,9 @@ const deckRouting = () => {
                     <div class="new-icon">
                         <i class="pi pi-plus-circle" style="color: #c1c1c1; font-size: 250px;"></i>
                     </div>
-                    <di class="add-more-text">
+                    <div class="add-more-text">
                         <span style="font-size: 28px; font-weight: 500; color: #c1c1c1;">Add More Desk</span>
-                    </di>
+                    </div>
                 </div>
             </template>
         </Card>

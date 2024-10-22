@@ -16,8 +16,8 @@
                 </div>
                 <div class="deck-info-like">
                     <div class="button-like">
-                        <Button severity="secondary" label="Favourite">
-                            <img width="40" height="40" fill="none" src="../assets/img/icon/favorite_black.png" />
+                        <Button severity="secondary" label="Favourite" @click="favoriteRouting">
+                            <img width="40" height="40" fill="none" :src="FavoriteBlackIcon" />
                             <label>Favourite</label>
                         </Button>
                         <!-- <Button label="Favourite" icon="pi pi-heart" iconPos="top" /> -->
@@ -34,12 +34,20 @@ import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import router from '@/router';
 
+import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
+
 /* FUNCTION START */
 const routingDeck = () => {
     router.push({
         name: 'deckdetail',
         params: { id: 1 }
     });
+}
+
+const favoriteRouting = () => {
+    router.push({
+        name: 'myfavorite'
+    })
 }
 /* FUNCTION END */
 </script>
