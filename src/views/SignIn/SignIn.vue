@@ -202,9 +202,16 @@ onMounted(async () => {
         <div class="login-container">
             <!-- Left side - Login Form -->
             <div class="form-container">
-                <div style="display: flex;justify-content: space-around;">
-                    <img style="object-fit: contain;" width="125" height="125px" src="../../assets/img/adm_logo.png" />
+                <div class="sign-logo">
+                    <img draggable="false" style="object-fit: contain;" width="125" height="125px"
+                        src="../../assets/img/adm_logo.png" />
+                    <span></span> <!--dont delete this one. it do something -->
+                    <p>Innovation Portal</p>
                 </div>
+                <!-- <div class="text-decord">
+                    <p class="the-line"></p>
+                    
+                </div> -->
                 <div v-if="isSignIn && !isForgotPassword && !isSendLink">
                     <span>Sign in to your account</span>
                     <div class="flex flex-col">
@@ -252,7 +259,8 @@ onMounted(async () => {
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink">
 
                     <span style="font-size: 15px; font-weight: 500;">Forgot Your Password?</span>
-                    <p style="font-size: 13px;padding: 5px 0;">No worries! Enter your email address below, and we’ll send you a link to
+                    <p style="font-size: 13px;padding: 5px 0;">No worries! Enter your email address below, and we’ll
+                        send you a link to
                         reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
                         id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
@@ -410,5 +418,24 @@ onMounted(async () => {
     font-weight: 700;
     font-style: italic;
     text-decoration: underline;
+}
+
+.sign-logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.sign-logo span {
+    border: 1px solid #000000;
+    width: 50%;
+}
+
+.sign-logo p {
+    padding: 5px 0 20px 0;
+    font-size: 15px;
+    font-weight: 400;
 }
 </style>
