@@ -1,6 +1,6 @@
 <script setup>
 
-import { Timestamp, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/main";
 import Button from "primevue/button";
 import Column from "primevue/column";
@@ -14,12 +14,16 @@ import { useToast } from "primevue/usetoast";
 import { onMounted, reactive, ref } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
-
+import Tag from 'primevue/tag';
 const visible = ref(false);
 const formFields = reactive({
     email: '',
+    receiver: '',
     firstname: '',
     lastname: '',
+    subject: '',
+    created: '',
+    status: '',
     message: ''
 });
 
@@ -66,8 +70,8 @@ const tableColumns = [
         }
     },
     {
-        field: 'state',
-        label: 'State',
+        field: 'status',
+        label: 'status',
         styles: {
             width: "10%"
         }
@@ -119,7 +123,7 @@ const getEmails = async () => {
             subject: data.message.subject || '',
             message: data.message.html || '',
             receiver: data.to || '',
-            state: data.delivery.state || '',
+            status: data.delivery.state || '',
             created: data.delivery.startTime ? data.delivery.startTime.toDate().toLocaleString() : '',
         };
         emailList.push(object);
@@ -129,8 +133,12 @@ const getEmails = async () => {
 
 const viewRow = (data) => {
     formFields.email = data.email;
+    formFields.receiver = data.receiver;
     formFields.firstname = data.first_name;
     formFields.lastname = data.last_name;
+    formFields.subject = data.subject;
+    formFields.created = data.created;
+    formFields.status = data.status;
     formFields.message = data.message;
     visible.value = true;
     view.value = true;
@@ -143,31 +151,63 @@ const viewRow = (data) => {
     <div class="">
         <!-- <Button label="Show" @click="visible = true" /> -->
 
-        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
+        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "Preview email"'
             :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
-                <form>
-                    <div class="flex flex-col">
-                        <label class="form-label">Email</label>
-                        <InputText :readonly="view" :fluid="true" id="email" v-model="formFields.email" />
+                <div class="form-container">
+                    <div class="flex">
+                        <div class="flex-1 p-2">
+                            <label class="form-label">From</label>
+                            <InputText :readonly="view" :fluid="true" id="email" v-model="formFields.email" />
+                        </div>
+
+                        <div class="flex-1 p-2">
+                            <label class="form-label">To</label>
+                            <InputText :readonly="view" :fluid="true" v-model="formFields.receiver" />
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-1 p-2">
+                            <label class="form-label">First Name</label>
+                            <InputText :readonly="view" :fluid="true" v-model="formFields.firstname" />
+                        </div>
+
+                        <div class="flex-1 p-2">
+                            <label class="form-label">Last Name</label>
+                            <InputText :readonly="view" :fluid="true" v-model="formFields.lastname" />
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-1 p-2">
+                            <label class="form-label">Created on</label>
+                            <InputText :readonly="view" :fluid="true" v-model="formFields.created" />
+                        </div>
+
+                        <div class="flex-1 p-2">
+                            <div class="flex-col">
+                                <label class="form-label">Status</label>
+                            </div>
+                            <div class="flex-col mt-1">
+                                <div v-if="formFields.status == 'SUCCESS'">
+                                    <Tag severity="success" :value="formFields.status" :fluid="true"></Tag>
+                                </div>
+                                <div v-else>
+                                    <Tag severity="danger" :value="formFields.status" :fluid="true"></Tag>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flex flex-col">
-                        <label class="form-label">First Name</label>
-                        <InputText :fluid="true" placeholder="First Name" id="firstname"
-                            v-model="formFields.firstname" />
+                    <div class="flex flex-col p-2">
+                        <label class="form-label">Subject</label>
+                        <InputText :readonly="view" v-model="formFields.subject" />
                     </div>
-
-                    <div class="flex flex-col">
-                        <label class="form-label">Last Name</label>
-                        <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" />
-                    </div>
-
-                    <div class="flex flex-col">
+                    <div class="flex-1 p-2">
                         <label class="form-label">Message</label>
-                        <Textarea id="over_label" :fluid="true" rows="8" v-model="formFields.message" />
+                        <Textarea :readonly="view" id="over_label" :fluid="true" rows="8"
+                            v-model="formFields.message" />
                     </div>
-                </form>
+                </div>
 
                 <div class="flex items-center mt-3 gap-2">
                     <Button type="button" label="Cancel" severity="warn" icon="pi pi-times" @click="closeDrawer" />
@@ -212,11 +252,6 @@ const viewRow = (data) => {
                             <div class="actions">
                                 <Button icon="pi pi-eye" aria-label="Update" @click="viewRow(data)" rounded />
                             </div>
-
-                            <!-- <Button class="table-button" severity="secondary" icon="pi pi-trash"
-                                @click="deleteRow(data)" rounded></Button>
-                            <Button class="table-button" icon="pi pi-pencil" @click="editRow(data)" severity="secondary"
-                                rounded></Button> -->
                         </template>
                     </Column>
                 </DataTable>
