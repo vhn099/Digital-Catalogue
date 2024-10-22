@@ -50,12 +50,7 @@ const tableColumns = [
         field: 'message',
         label: 'Message',
         styles: {
-            maxWidth: "300px",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            wordWrap: "break-word",
-            // overFlow: "hidden",
-            overflow: "hidden"
+            maxWidth: "500px",
         }
     },
     {
@@ -300,5 +295,18 @@ const viewRow = (data) => {
 .table-actions {
     display: flex;
     justify-content: center;
+}
+
+:deep(.p-datatable-tbody tr) {
+    height: 90px !important;
+}
+
+:deep(.p-datatable-tbody tr td:nth-child(4)) {
+    height: 90px !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 100%;
 }
 </style>
