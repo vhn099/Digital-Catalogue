@@ -257,8 +257,8 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex flex-col">
-                    <label class="form-label" for="username">Username <span class="required-icon">*</span></label>
-                    <InputText :readonly="edit" :fluid="true" placeholder="Username" id="username"
+                    <label class="form-label" for="email">Email <span class="required-icon">*</span></label>
+                    <InputText :readonly="edit" :fluid="true" placeholder="Email" id="email"
                         v-model="formFields.username" :invalid="v$.username.$errors.length > 0" />
                     <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                         v$.username.$errors[0].$message }}</small>
@@ -275,7 +275,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex flex-col" v-if="!edit">
-                    <label class="form-label" for="username">Password <span class="required-icon">*</span></label>
+                    <label class="form-label" for="password">Password <span class="required-icon">*</span></label>
                     <Password :feedback="false" :fluid="true" placeholder="Password" id="password"
                         v-model="formFields.password" :invalid="v$.password.$errors.length > 0" />
                     <small class="error-messages" v-if="v$.password.$errors.length > 0">{{
@@ -283,7 +283,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex flex-col" v-if="!edit">
-                    <label class="form-label" for="username">Confirm Password <span
+                    <label class="form-label" for="confirmPassword">Confirm Password <span
                             class="required-icon">*</span></label>
                     <Password :feedback="false" :fluid="true" placeholder="Confirm Password" id="confirmPassword"
                         v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0" />

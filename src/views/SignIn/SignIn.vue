@@ -240,7 +240,7 @@ onMounted(async () => {
                             <label for="username">Username</label>
                         </FloatLabel> -->
 
-                        <InputText :fluid="true" placeholder="Username" id="username" v-model="formFields.username"
+                        <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
                             :invalid="v$.username.$errors.length > 0" />
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
