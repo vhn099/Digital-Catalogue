@@ -8,13 +8,15 @@ import Button from 'primevue/button';
 // components
 import DockItem from '../../components/Dock.vue';
 import SectionItem from '../../components/Section.vue'
-import { ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/main";
 import MessagePage from '@/components/MessagePage.vue';
+import { required, email } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 const firstName = ref(null);
 const lastName = ref(null);
-const userEmail = ref(null);
+//const userEmail = ref(null);
 const message = ref(null);
 const emails = ref([]);
 const bodyReq = ref({
@@ -35,6 +37,21 @@ const line4 = {
   deck: 'Glassware Design'
 };
 
+const formFields = reactive({
+  userEmail: '',
+});
+/* VALIDATION DEFINITION START */
+const rules = computed(() => {
+  return {
+    userEmail: {
+      required,
+      email
+    }
+  };
+});
+const v$ = useVuelidate(rules, formFields);
+/* VALIDATION DEFINITION END */
+
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
   fontSize: "62px",
@@ -48,41 +65,43 @@ function toggleDarkMode() {
 }
 
 async function submitForm() {
-  //console.log(value1);
-  const fetchEmails = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'contact_emails'));
-      querySnapshot.forEach((doc) => {
-        emails.value.push(doc.data().email);
-      });
-    } catch (error) {
-      console.error('Error fetching emails: ', error);
-    }
-  };
-  await fetchEmails();
-  bodyReq.value.to = emails.value;
-  bodyReq.value.message.subject = 'Feedback email';
-  bodyReq.value.message.html = message;
-  bodyReq.value.message.firstName = firstName;
-  bodyReq.value.message.lastName = lastName;
-  bodyReq.value.message.email = userEmail;
+  const isValid = await v$.value.$validate();
+  if (isValid) {
+    const fetchEmails = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'contact_emails'));
+        querySnapshot.forEach((doc) => {
+          emails.value.push(doc.data().email);
+        });
+      } catch (error) {
+        console.error('Error fetching emails: ', error);
+      }
+    };
+    await fetchEmails();
+    bodyReq.value.to = emails.value;
+    bodyReq.value.message.subject = 'Feedback email';
+    bodyReq.value.message.html = message;
+    bodyReq.value.message.firstName = firstName;
+    bodyReq.value.message.lastName = lastName;
+    bodyReq.value.message.email = userEmail;
 
-  console.log(bodyReq.value);
-  try {
-    await addDoc(collection(db, 'mail'), bodyReq.value);
-    //alert('Feedback sent successfully!');
-    // Reset form if needed
-    bodyReq.value.to = [];
-    bodyReq.value.message.subject = '';
-    bodyReq.value.message.html = '';
-    bodyReq.value.message.firstName = '';
-    bodyReq.value.message.lastName = '';
-    bodyReq.value.message.email = '';
-    //show SuccessPage
-    isSuccess.value = true;
-  } catch (error) {
-    console.error('Error adding feedback: ', error);
-    alert('Error sending feedback: ' + error.message);
+    console.log(bodyReq.value);
+    try {
+      await addDoc(collection(db, 'mail'), bodyReq.value);
+      //alert('Feedback sent successfully!');
+      // Reset form if needed
+      bodyReq.value.to = [];
+      bodyReq.value.message.subject = '';
+      bodyReq.value.message.html = '';
+      bodyReq.value.message.firstName = '';
+      bodyReq.value.message.lastName = '';
+      bodyReq.value.message.email = '';
+      //show SuccessPage
+      isSuccess.value = true;
+    } catch (error) {
+      console.error('Error adding feedback: ', error);
+      alert('Error sending feedback: ' + error.message);
+    }
   }
 }
 </script>
@@ -102,13 +121,13 @@ async function submitForm() {
             <div class="flex">
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
-                  <InputText id="in_label" :fluid="true" v-model="firstName" autocomplete="off" />
+                  <InputText id="in_label" :fluid="true" v-model="firstName" autocomplete="off" maxlength="20" />
                   <label for="in_label">First Name</label>
                 </FloatLabel>
               </div>
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
-                  <InputText id="in_label" :fluid="true" v-model="lastName" autocomplete="off" />
+                  <InputText id="in_label" :fluid="true" v-model="lastName" autocomplete="off" maxlength="20" />
                   <label for="in_label">Last Name</label>
                 </FloatLabel>
               </div>
@@ -116,9 +135,12 @@ async function submitForm() {
             <div class="flex">
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
-                  <InputText id="in_label" :fluid="true" v-model="userEmail" autocomplete="off" />
-                  <label for="in_label">Email</label>
+                  <InputText :fluid="true" id="in_label" v-model="formFields.userEmail" autocomplete="off" maxlength="40"
+                    :invalid="v$.userEmail.$errors.length > 0" />
+                    <label for="in_label">Email</label> 
                 </FloatLabel>
+                <small class="error-messages" v-if="v$.userEmail.$errors.length > 0">{{
+                    v$.userEmail.$errors[0].$message }}</small>
               </div>
               <div class="flex-1 p-2">
 
@@ -126,7 +148,7 @@ async function submitForm() {
             </div>
             <div class="p-2">
               <FloatLabel variant="in">
-                <Textarea id="over_label" :fluid="true" v-model="message" rows="8" />
+                <Textarea id="over_label" :fluid="true" v-model="message" rows="8" maxlength="4000" />
                 <label for="in_label">Message here</label>
               </FloatLabel>
             </div>
@@ -147,9 +169,9 @@ async function submitForm() {
             </div>
           </div>
           <div v-if="isSuccess">
-            <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS" :pageBody="messagePageBody"/>
+            <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS" :pageBody="messagePageBody" />
           </div>
-          
+
         </div>
 
         <div class="col-4 contract-image">
@@ -182,5 +204,11 @@ async function submitForm() {
   .contract-image {
     display: none;
   }
+}
+.error-messages {
+    margin-bottom: 16px;
+    color: red;
+    font-size: 12px;
+    margin-bottom: 4px;
 }
 </style>
