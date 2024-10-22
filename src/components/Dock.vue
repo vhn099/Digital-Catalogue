@@ -11,13 +11,18 @@
 import router from '@/router';
 import { getAuth, signOut } from 'firebase/auth';
 import Dock from 'primevue/dock';
+import HomeIcon from '@/assets/img/homepage/home.png';
+import SupplyChainIcon from '@/assets/img/homepage/supply-chain.png';
+import DeckIcon from '@/assets/img/homepage/deck.png';
+import SupportIcon from '@/assets/img/homepage/support.png';
+import LogoutIcon from '@/assets/img/homepage/logout.png';
 
 import { ref } from "vue";
 
 const items = ref([
     {
         label: 'Home',
-        icon: 'src/assets/img/homepage/home.png',
+        icon: HomeIcon,
         eventHandler: () => {
             router.push({
                 name: 'home'
@@ -26,7 +31,7 @@ const items = ref([
     },
     {
         label: 'Category',
-        icon: 'src/assets/img/homepage/supply-chain.png',
+        icon: SupplyChainIcon,
         eventHandler: () => {
             router.push({
                 name: 'category'
@@ -35,7 +40,7 @@ const items = ref([
     },
     {
         label: 'Desks',
-        icon: 'src/assets/img/homepage/deck.png',
+        icon: DeckIcon,
         eventHandler: () => {
             router.push({
                 name: 'desks'
@@ -44,7 +49,7 @@ const items = ref([
     },
     {
         label: 'Contact Us',
-        icon: 'src/assets/img/homepage/support.png',
+        icon: SupportIcon,
         eventHandler: () => {
             router.push({
                 name: 'contactus'
@@ -53,7 +58,7 @@ const items = ref([
     },
     {
         label: 'Logout',
-        icon: 'src/assets/img/homepage/logout.png',
+        icon: LogoutIcon,
         eventHandler: async () => {
             await signOut(getAuth());
             router.push({

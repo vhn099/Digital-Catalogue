@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CategoryFirestore } from '@/lib/Category';
+import router from '@/router';
 import Button from 'primevue/button';
 import { computed, watch, onMounted, ref, nextTick } from 'vue';
 
@@ -94,6 +95,12 @@ async function getCategories() {
   // console.log('categoryList', categoryList);
   return categoryList;
 };
+
+const categoryRouting = () => {
+  router.push({
+    name: 'desks'
+  })
+}
 /* FUNCTION END */
 watch(cards, () => {
   console.log(inner.value.scrollWidth);
@@ -117,7 +124,7 @@ onMounted(async () => {
     <div class="carousel">
       <div class="inner" ref="inner" :style="innerStyles">
         <div class="card" v-for="card in cards" :key="card">
-          <div class="cate-item">
+          <div class="cate-item" @click="categoryRouting">
             <div class="cate-logo">
               <img width="52" height="52" fill="none" :src="card.icon" />
             </div>

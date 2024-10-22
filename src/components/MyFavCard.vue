@@ -3,6 +3,7 @@
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
+import router from '@/router';
 
 defineProps({
     title: {
@@ -15,6 +16,14 @@ defineProps({
         type: Boolean
     }
 });
+
+/* FUNCTION START */
+const deckRouting = () => {
+    router.push({
+        name: 'desks'
+    });
+}
+/* FUNCTION END */
 </script>
 
 <template>
@@ -44,7 +53,7 @@ defineProps({
 
         <Card style="width: 25rem; overflow: hidden" v-if="isnew">
             <template #content>
-                <div class="add-new-fav">
+                <div class="add-new-fav" @click="deckRouting">
                     <div class="new-icon">
                         <i class="pi pi-plus-circle" style="color: #c1c1c1; font-size: 250px;"></i>
                     </div>

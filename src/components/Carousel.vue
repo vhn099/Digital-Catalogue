@@ -9,7 +9,7 @@
                 <div class="slideshow-text">
                     <span class="line-1">New Collection Just In!</span>
                     <span class="line-2">Get Yours Now with an Exclusive Discount!</span>
-                    <Button label="View Deck" />
+                    <Button @click="viewDeck" label="View Deck" />
                 </div>
                 <div class="slideshow-image">
                     <img height="100%" fill="none" :src="slotProps.item.itemImageSrc" />
@@ -29,6 +29,7 @@
 import { ref, onMounted } from "vue";
 import Galleria from 'primevue/galleria';
 import Button from 'primevue/button';
+import router from "@/router";
 const position = ref('bottom');
 const images = [
     {
@@ -47,6 +48,14 @@ const images = [
     }
 ];
 const inside = ref(true);
+
+/* FUNCTIONS START */
+const viewDeck = () => {
+    router.push({
+        name: 'desks'
+    });
+};
+/* FUNCTIONS END */
 
 </script>
 

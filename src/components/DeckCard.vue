@@ -6,7 +6,7 @@
             </div>
             <div class="deck-info">
                 <div class="deck-info-desc">
-                    <span class="deck-name">Placeholder for the title of deck 1</span>
+                    <span class="deck-name" @click="routingDeck">Placeholder for the title of deck 1</span>
                     <div class="deck-tag gap-2">
                         <Tag severity="secondary" value="#news"></Tag>
                         <Tag severity="secondary" value="#news"></Tag>
@@ -32,6 +32,16 @@
 import Chip from 'primevue/chip';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
+import router from '@/router';
+
+/* FUNCTION START */
+const routingDeck = () => {
+    router.push({
+        name: 'deckdetail',
+        params: { id: 1 }
+    });
+}
+/* FUNCTION END */
 </script>
 
 <style scoped>
@@ -55,6 +65,7 @@ import Tag from 'primevue/tag';
     font-size: 36px;
     font-weight: 500;
     line-height: 54px;
+    cursor: pointer;
 }
 
 .my-card-deck {

@@ -5,10 +5,12 @@ import Galleria from 'primevue/galleria';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import { ref, onMounted } from "vue";
+import SectionIcon from '@/assets/img/homepage/support.png';
+
 onMounted(() => {
     console.log('yo moe m');
 });
-const sectionIcon = "src/assets/img/homepage/support.png";
+const sectionIcon = SectionIcon;
 const sectionText = "Contact us";
 
 const images = [
@@ -161,6 +163,7 @@ const responsiveOptions = ref([
 }
 
 .deck-canva {
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
     width: 100%;
