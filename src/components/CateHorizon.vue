@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { CategoryFirestore } from '@/lib/Category';
-import CateSmallItem from './CateSmall.vue';
 import Button from 'primevue/button';
-import { computed, onMounted, ref } from 'vue';
+import { computed, watch, onMounted, ref } from 'vue';
 
 /* REF DEFINE START */
 const cards = ref();
@@ -13,14 +12,14 @@ const inner = ref(null);
 /* REF DEFINE END */
 
 /* FUNCTIONS START */
-const resetTranslate = () => {
+function resetTranslate() {
   innerStyles.value = {
     transition: 'none',
     transform: `translateX(-${step.value})`
   }
 };
 
-const prev = () => {
+function prev() {
   if (transitioning.value) return;
 
   transitioning.value = true
@@ -35,20 +34,22 @@ const prev = () => {
   })
 };
 
-const moveLeft = () => {
+function moveLeft() {
+  console.log(innerStyles)
   innerStyles.value = {
     transform: `translateX(-${step.value})
                     translateX(-${step.value})`
   }
 };
 
-const moveRight = () => {
+function moveRight() {
   innerStyles.value = {
     transform: `translateX(${step.value})
                     translateX(-${step.value})`
   }
 };
-const next = () => {
+
+function next() {
   if (transitioning.value) return;
 
   transitioning.value = true
@@ -62,19 +63,22 @@ const next = () => {
     transitioning.value = false;
   })
 };
-const afterTransition = (callback) => {
+
+function afterTransition(callback) {
   const listener = () => {
     callback();
     inner.value.removeEventListener('transitionend', listener);
   }
   inner.value.addEventListener('transitionend', listener);
 };
-const setStep = () => {
+
+function setStep() {
   const innerWidth = inner.value.scrollWidth;
   const totalCards = cards.value.length;
   step.value = `${innerWidth / totalCards}px`;
 };
-const getCategories = async () => {
+
+async function getCategories() {
   const categoryList = [];
   (await CategoryFirestore.getCategories()).forEach(category => {
     const data = category.data();
@@ -91,11 +95,18 @@ const getCategories = async () => {
   return categoryList;
 };
 /* FUNCTION END */
+watch(cards, ()=> {
+  console.log(inner.value.scrollWidth);
+});
+
+// computed({})
 
 onMounted(async () => {
   cards.value = await getCategories();
   setStep();
   resetTranslate();
+  console.log(inner);
+  console.log(inner.value.scrollWidth);
 });
 </script>
 <template>
@@ -103,8 +114,8 @@ onMounted(async () => {
 
     <Button icon="pi pi-angle-left" text rounded aria-label="Filter" @click="prev" />
 
-    <CateSmallItem v-for="data in cards"  :card="data"></CateSmallItem>
-    <!-- <div class="carousel">
+    <!-- <CateSmallItem v-for="data in cards"  :card="data"></CateSmallItem> -->
+    <div class="carousel">
       <div class="inner" ref="inner" :style="innerStyles">
         <div class="card" v-for="card in cards" :key="card">
           <div class="cate-item">
@@ -117,10 +128,9 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <Button icon="pi pi-angle-right" text rounded aria-label="Filter" @click="next" />
 
-    <!-- <Button icon="pi pi-star" severity="contrast" @click="next" text rounded aria-label="Star" /> -->
   </div>
 </template>
 
@@ -133,21 +143,13 @@ onMounted(async () => {
   font-size: 50px;
 }
 
-/* 
-.slide-horizontal {
-  height: 300px;
-  padding-right: 20px;
-} */
-
 .carousel {
-  /* width: 170px; */
   overflow: hidden;
 }
 
 .inner {
   transition: transform 0.2s;
   white-space: nowrap;
-  /* margin: 10px; */
 }
 
 .card {
@@ -163,9 +165,6 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  /* 
-  display: flex;
-  flex-direction: column; */
 }
 
 
@@ -182,18 +181,10 @@ onMounted(async () => {
 }
 
 .cate-name {
-  /* display: grid;
-  place-items: center; */
-  /* Centers both vertically and horizontally */
   height: 40%;
   width: 100%;
-  /* Full height of the outer container */
-  /* border: 1px solid black; */
-  /* Optional: to see the outer container */
   word-wrap: break-word;
-  /* Ensures long words wrap inside the box */
   overflow-wrap: break-word;
-  /* Alternative for word wrapping */
   text-align: center;
   white-space: normal !important;
   font-size: 15px;
