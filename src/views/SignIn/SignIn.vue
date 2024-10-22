@@ -203,8 +203,8 @@ onMounted(async () => {
             <!-- Left side - Login Form -->
             <div class="form-container">
                 <div class="sign-logo">
-                    <img draggable="false" style="object-fit: contain;" width="125" height="125px"
-                        src="../../assets/img/adm_logo.png" />
+                    <img draggable="false" style="object-fit: contain;margin-bottom: -20px;" width="125"
+                        height="125px" src="../../assets/img/adm_logo.png" />
                     <span></span> <!--dont delete this one. it do something -->
                     <p>Innovation Portal</p>
                 </div>
