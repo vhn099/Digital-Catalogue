@@ -41,7 +41,7 @@ export const CategoryFirestore = {
       const dataObj = categoryForm;
 
       await addDoc(colRef, dataObj).then(async (response) => {
-        result.message = `Created category with ${response.data.name}`;
+        result.message = useAppStore().getMessageMaster.DATA(dataObj.name).CATEGORY_CREATED;
       });
     } catch (error) {
       result.status = "error";
@@ -70,13 +70,14 @@ export const CategoryFirestore = {
         await updateDoc(doc(db, categoryForm.id), {
           name: categoryForm.name || "",
           image: categoryForm.image || "",
+          image_name: categoryForm.image_name || "",
           updated: categoryForm.updated,
           updated_by: categoryForm.updated_by,
         }).then((response) => {
-          result.message = `Update category with name ${categoryForm.name} successfully`;
+          result.message = useAppStore().getMessageMaster.DATA(categoryForm.name).CATEGORY_UPDATED;
         });
       } else {
-        result.message = `Name ${categoryForm.name} is not existed`;
+        result.message = useAppStore().getMessageMaster.DATA(categoryForm.name).CATEGORY_NOT_EXISTED;
         result.status = "warning";
       }
     } catch (error) {
@@ -98,7 +99,7 @@ export const CategoryFirestore = {
       await deleteDoc(
         doc(getFirestore(), useAppStore().getCategoriesCollection, id)
       ).then((response) => {
-        result.message = `Delete category successfully`;
+        result.message = useAppStore().getMessageMaster.DATA(categoryForm.name).CATEGORY_DELETED;
       });
     } catch (error) {
       result.status = "error";

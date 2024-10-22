@@ -1,6 +1,6 @@
 <script setup>
 import useVuelidate from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { required, requiredIf } from "@vuelidate/validators";
 import { getAuth } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import Button from "primevue/button";
@@ -11,7 +11,7 @@ import InputText from "primevue/inputtext";
 import Toast from "primevue/toast";
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import { CategoryFirestore } from "@/lib/Category";
@@ -89,7 +89,8 @@ const deleteCategoryDialog = ref(false);
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
-const imageCustomRules = ref([]);
+const imageRule = ref(null);
+const imagePreview = ref(null);
 /* REF DEFINITION END*/
 
 const v$ = useVuelidate(rules, formFields);
@@ -99,11 +100,11 @@ const resetFormData = () => {
     formFields.id = '';
     formFields.name = '';
     image.value = null;
+    imagePreview.value = null;
 };
 const closeDrawer = () => {
     visible.value = false;
     edit.value = false;
-    resetFormData();
 };
 const openDrawer = () => { // Used for insert case
     visible.value = true;
@@ -146,13 +147,18 @@ const getCategories = async () => {
 
 const submitForm = async () => {
     const isValid = await v$.value.$validate();
-    let imageName = image.value.$data.files[0].name;
-    let imageData = image.value.$data.files[0];
-    if (imageData.length == 0) {
-        console.log("NO IMAGES");
+    const imageFile = image.value.files;
+    if (imageFile.length === 0) {
+        imageRule.value = "Value is required";
         return false;
+    } else {
+        imageRule.value = null;
     }
+
+
     if (isValid || edit.value) {
+        let imageData = imageFile[0];
+        let imageName = imageFile[0].name;
         const categoryFormData = getCategoryFormData();
         let result = {};
         const downloadURL = await FirebaseStorage.uploadFile(imageName, imageData);
@@ -202,16 +208,32 @@ const deleteRow = (data) => {
 const editRow = (data) => {
     formFields.id = data.id;
     formFields.name = data.name;
+    imagePreview.value = data.image;
 
     visible.value = true;
     edit.value = true;
 };
+const onFileSelected = (event) => {
+    const file = event.files[0];
+    const reader = new FileReader();
 
+    reader.onload = async (e) => {
+        imagePreview.value = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+};
 /* FUNCTIONS */
 
 
 onMounted(async () => {
     categories.value = await getCategories();
+});
+
+watch(visible, () => {
+    if (!visible.value) {
+        resetFormData();
+    }
 });
 </script>
 <template>
@@ -236,9 +258,10 @@ onMounted(async () => {
 
                     <div class="flex flex-col">
                         <label class="form-label" for="image">Image <span class="required-icon">*</span></label>
-                        <FileUpload ref="image" mode="basic" name="image[]" :maxFileSize="1000000" accept="image/*" />
-                        <!-- <small class="error-messages" v-if="imageV$.image.$errors.length > 0">{{
-                            imageV$.image.$errors[0].$message }}</small> -->
+                        <img v-if="imagePreview" :src="imagePreview" alt="Image" width="64"/>
+                        <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="1000000" accept="image/*" />
+                        <small class="error-messages" v-if="imageRule" customUpload>{{
+                            imageRule }}</small>
                     </div>
                 </form>
 
@@ -289,8 +312,8 @@ onMounted(async () => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                         <template #body="slotProps">
-                             <img :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64"/>
-                             <p v-else>{{ slotProps.data[column.field] }}</p>
+                            <img :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64" />
+                            <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
                     <Column header="Actions">
@@ -339,21 +362,18 @@ onMounted(async () => {
     border-radius: 5px;
 }
 
-/* 
-.add-user {
-    width: 100px;
-    height: 40px;
-    margin-bottom: 20px;
-} */
+/* FILE UPLOAD CSS START */
+:deep(.p-fileupload-basic) {
+    margin-top: 10px;
+    justify-content: unset;
+}
+
+/* FILE UPLOAD CSS END */
 
 .table-section {
     padding: 20px;
 }
 
-/* 
-.table-button {
-    margin-right: 10px;
-} */
 
 :deep(.actions) {
     display: flex;

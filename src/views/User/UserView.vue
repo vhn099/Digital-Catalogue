@@ -20,6 +20,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import ConfirmDialog from "primevue/confirmdialog";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 const formFields = reactive({
     id: '',
@@ -111,9 +112,11 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const visible = ref(false);
+const spinner = ref(false);
 
 /* FUNCTIONS */
 const resetFormData = () => {
+    formFields.id = '';
     formFields.lastname = '';
     formFields.firstname = '';
     formFields.username = '';
@@ -165,9 +168,9 @@ const getUsers = async () => {
 
 const submitForm = async () => {
     const isValid = await v$.value.$validate();
+    spinner.value = true;
     if (isValid || edit.value) {
         const userFormData = getUserFormData();
-        console.log(userFormData);
         let result = {};
         if (edit.value) {
             result = await UserFirestore.updateUser(userFormData);
@@ -187,6 +190,7 @@ const submitForm = async () => {
     } else {
 
     }
+    spinner.value = false;
 };
 const deleteRow = (data) => {
     confirm.require({
@@ -240,6 +244,7 @@ onMounted(async () => {
 });
 </script>
 <template>
+    <LoadingSpinner v-if="spinner"/>
     <Toast />
     <ConfirmDialog />
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'

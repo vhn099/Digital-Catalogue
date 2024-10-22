@@ -15,6 +15,7 @@ import Checkbox from 'primevue/checkbox';
 
 // Reset Link sent
 import MessagePage from '@/components/MessagePage.vue';
+import { useAppStore } from '@/stores';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
     fontSize: "62px",
@@ -105,6 +106,7 @@ async function sendLink() {
             isSendLink.value = true;
             isSignIn.value = false;
             isForgotPassword.value = false;
+            useAppStore().setmail(formForgotPW.emailInput);
         }
         else {
             document.getElementById("invalidEmail").innerHTML = 'Invalid Email';
