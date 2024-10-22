@@ -165,5 +165,9 @@ const routing = (routeName) => {
     .my-nav-2 {
         display: none !important;
     }
+
+    .my-nav-1 {
+        display: none !important;
+    }
 }
 </style>
