@@ -1,17 +1,17 @@
 <template>
 
     <div class="flex myNav">
-        <div class="flex-1 flex align-items-center m-2 px-5 py-1">
+        <div class="flex-1 flex align-items-center m-2 px-5 py-1 my-nav-1">
             <div class="my-logo">
                 <img draggable="false" style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo"
                     src="../assets/img/logo.png" />
             </div>
         </div>
 
-        <div class="flex-1 flex align-items-center justify-content-center m-2 px-5 py-1">
+        <div class="flex-1 flex align-items-center justify-content-center m-2 px-5 py-1 my-nav-2">
             <span class="my-nav-text">Innovation Portal</span>
         </div>
-        <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1">
+        <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1 my-nav-3">
             <Menubar :model="items" class="admin-menu" v-if="currentUser.isAdmin"/>
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
@@ -159,5 +159,15 @@ const routing = (routeName) => {
     cursor: pointer;
     width: 43px;
     height: 43px;
+}
+
+@media (max-width: 992px) {
+    .my-nav-2 {
+        display: none !important;
+    }
+
+    .my-nav-1 {
+        display: none !important;
+    }
 }
 </style>
