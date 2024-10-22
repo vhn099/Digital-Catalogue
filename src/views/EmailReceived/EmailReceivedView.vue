@@ -307,6 +307,5 @@ const viewRow = (data) => {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 100%;
 }
 </style>
