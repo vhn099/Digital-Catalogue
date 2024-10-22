@@ -13,6 +13,15 @@ import { db, auth } from '@/main';
 import { query, collection, getDocs, where } from "firebase/firestore";
 import Checkbox from 'primevue/checkbox';
 
+// Reset Link sent
+import MessagePage from '@/components/MessagePage.vue';
+const messagePageIcon = "pi pi-check-circle";
+const messagePageIconCSS = {
+    fontSize: "62px",
+    color: "#58DA67",
+    fontWeight: "bold"
+};
+const messagePageBody = 'login';
 
 /* PAGE VARIABLES START */
 const formFields = reactive({
@@ -242,8 +251,8 @@ onMounted(async () => {
                 </div>
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink">
 
-                    <span style="font-size: 15px;">Forgot Your Password?</span>
-                    <p style="font-size: 11px;">No worries! Enter your email address below, and we’ll send you a link to
+                    <span style="font-size: 15px; font-weight: 500;">Forgot Your Password?</span>
+                    <p style="font-size: 13px;padding: 5px 0;">No worries! Enter your email address below, and we’ll send you a link to
                         reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
                         id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
@@ -260,9 +269,17 @@ onMounted(async () => {
                     <!-- <div class="form-captcha" id="recaptcha_element1"></div>
                     <small id="error_recaptcha1" class="error-messages"></small> -->
                     <Button label="Send Reset Link" :fluid="true" @click="sendLink(vEmailInput)" />
+                    <div class="flex flex-col mt-3">
+                        <div class="back-router">
+                            <RouterLink :to="{ name: 'home' }" class="back-home">Back to Login Page</RouterLink>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div v-if="!isSignIn && !isForgotPassword && isSendLink">
-                    <h1>Check Your Inbox!</h1>
+                    <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS"
+                        :pageBody="messagePageBody" />
                 </div>
             </div>
 
@@ -380,5 +397,18 @@ onMounted(async () => {
     .image-container {
         height: 200px;
     }
+}
+
+.back-router {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.back-home {
+    color: gray;
+    font-size: 14px;
+    font-weight: 700;
+    font-style: italic;
+    text-decoration: underline;
 }
 </style>

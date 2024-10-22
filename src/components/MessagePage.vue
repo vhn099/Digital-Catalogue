@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ContactUsSuccessPage from './ContactUsSuccessPage.vue';
+import LinkSent from './LinkSent.vue';
 
 
 defineProps({
@@ -22,8 +23,9 @@ defineProps({
     <div class="message-container">
         <p class="page-title">{{ title }}</p>
         <i :class="iconName" :style="{ ...iconStyle }"></i>
-        <div class="page-body-container" v-if="pageBody === 'contact'">
-            <ContactUsSuccessPage />
+        <div class="page-body-container">
+            <ContactUsSuccessPage v-if="pageBody === 'contact'"></ContactUsSuccessPage>
+            <LinkSent v-if="pageBody === 'login'"></LinkSent>
         </div>
     </div>
 </template>
