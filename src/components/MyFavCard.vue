@@ -63,7 +63,7 @@ defineProps({
     background: #999999C7;
     color: white;
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 600;
     margin-right: 5px;
     border-radius: 25px;
 }
