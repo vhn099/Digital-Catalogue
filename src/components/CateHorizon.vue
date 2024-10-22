@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CategoryFirestore } from '@/lib/Category';
 import Button from 'primevue/button';
-import { computed, watch, onMounted, ref } from 'vue';
+import { computed, watch, onMounted, ref, nextTick } from 'vue';
 
 /* REF DEFINE START */
 const cards = ref();
@@ -103,10 +103,9 @@ watch(cards, () => {
 
 onMounted(async () => {
   cards.value = await getCategories();
+  await nextTick();
   setStep();
   resetTranslate();
-  console.log(inner);
-  console.log(inner.value.scrollWidth);
 });
 </script>
 <template>
