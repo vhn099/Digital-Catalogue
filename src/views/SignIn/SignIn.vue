@@ -27,7 +27,7 @@ const messagePageBody = 'login';
 const formFields = reactive({
     username: '',
     password: '',
-    rememberMe: '',
+    rememberMe: ['remember'],
 });
 
 const formForgotPW = reactive({
@@ -168,7 +168,7 @@ const handleSubmit = async () => {
         const rememberMe = formFields.rememberMe;
         let persistence = browserSessionPersistence;
 
-        if (rememberMe) {
+        if (rememberMe.length === 0) {
             persistence = browserSessionPersistence;
         }
 
@@ -233,9 +233,8 @@ onMounted(async () => {
                     </div>
 
                     <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
-                        <div>
-                            <Checkbox v-model="formFields.rememberMe" inputId="rememberMe" name="rememberMe"
-                                value="rememberMe" />
+                        <div class="flex items-center">
+                            <Checkbox v-model="formFields.rememberMe" value="remember" inputId="rememberMe" name="rememberMe"/>
                             <label class="ml-2">Remember Me</label>
                         </div>
                         <div>
