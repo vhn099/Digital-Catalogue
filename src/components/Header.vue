@@ -3,7 +3,7 @@
     <div class="flex myNav">
         <div class="flex-1 flex align-items-center m-2 px-5 py-1">
             <div class="my-logo">
-                <img style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo"
+                <img draggable="false" style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo"
                     src="../assets/img/logo.png" />
             </div>
         </div>
