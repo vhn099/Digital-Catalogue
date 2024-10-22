@@ -74,20 +74,20 @@ const items = ref([
                     });
                 }
             },
-            {
-                label: 'Like',
-                icon: 'pi pi-thumbs-up',
-                items: [
-                    {
-                        label: 'Apollo',
-                        icon: 'pi pi-heart'
-                    },
-                    {
-                        label: 'Ultima',
-                        icon: 'pi pi-palette'
-                    }
-                ]
-            },
+            // {
+            //     label: 'Like',
+            //     icon: 'pi pi-thumbs-up',
+            //     items: [
+            //         {
+            //             label: 'Apollo',
+            //             icon: 'pi pi-heart'
+            //         },
+            //         {
+            //             label: 'Ultima',
+            //             icon: 'pi pi-palette'
+            //         }
+            //     ]
+            // },
             {
                 label: 'Other config',
                 icon: 'pi pi-cog',
