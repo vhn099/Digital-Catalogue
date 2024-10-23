@@ -1,5 +1,5 @@
 <template>
-    <div class="cate-card-box" :key="data.id">
+    <div class="cate-card-box" :key="data.id" @click="deckRouting">
         <div class="cate-card-image">
 
             <img draggable="false" width="110" height="110" fill="none" :src="data.image" />
@@ -12,6 +12,8 @@
 
 </template>
 <script setup>
+import router from '@/router';
+
 defineProps({
     data: {
         type: Object,
@@ -30,6 +32,12 @@ defineProps({
         // },
     }
 });
+
+const deckRouting = () => {
+    router.push({
+        name: 'decks'
+    })
+};
 </script>
 <style scoped>
 .cate-card-box {

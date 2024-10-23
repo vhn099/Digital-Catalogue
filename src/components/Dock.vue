@@ -33,11 +33,8 @@ const items = ref([
         label: 'Category',
         icon: SupplyChainIcon,
         eventHandler: () => {
-            // router.push({
-            //     name: 'category'
-            // });
             router.push({
-                name: 'decks'
+                name: 'category'
             });
         }
     },
