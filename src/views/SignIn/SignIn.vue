@@ -7,7 +7,7 @@ import FloatLabel from 'primevue/floatlabel';
 import { watch, reactive, ref, onMounted, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserSessionPersistence } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import router from '@/router';
 import { db, auth } from '@/main';
 import { query, collection, getDocs, where } from "firebase/firestore";
@@ -16,6 +16,9 @@ import Checkbox from 'primevue/checkbox';
 // Reset Link sent
 import MessagePage from '@/components/MessagePage.vue';
 import { useAppStore } from '@/stores';
+import { UserFirestore } from '@/lib/User';
+import { useToast } from 'primevue/usetoast';
+import Toast from 'primevue/toast';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
     fontSize: "62px",
@@ -60,6 +63,7 @@ const ruleEmailInput = computed(() => {
     };
 });
 
+const toast = useToast();
 const vEmailInput = useVuelidate(ruleEmailInput, formForgotPW);
 /* VALIDATION DEFINITION END */
 
@@ -185,18 +189,29 @@ const handleSubmit = async () => {
         const username = formFields.username;
         const password = formFields.password;
         const rememberMe = formFields.rememberMe;
-        let persistence = browserSessionPersistence;
+        let expire = 3; // expires in 3 days
 
         if (rememberMe.length === 0) {
-            persistence = browserSessionPersistence;
+            expire = 14;
         }
 
-        await setPersistence(getAuth(), persistence).then(async () => {
-            await signInWithEmailAndPassword(getAuth(), username, password).then(response => {
-                router.push({
-                    name: 'home'
-                });
+        await signInWithEmailAndPassword(getAuth(), username, password).then(async response => {
+            const userData = await UserFirestore.getCurrentUser();
+            UserFirestore.setCookie('user-auth', JSON.stringify(userData), expire);
+            router.push({
+                name: 'home'
             });
+        }).catch(error => {
+            let message = error.message;
+            if (error.code === 'auth/invalid-credential') {
+                message = 'Invalid username/password'
+            }
+            toast.add({
+                severity: 'error',
+                summary: 'System Message',
+                detail: message,
+                life: 3000
+            })
         });
     } else {
         console.log('Invalid form');
@@ -220,6 +235,7 @@ onMounted(async () => {
 </script>
 
 <template>
+    <Toast />
     <div class="center-container">
         <div class="login-container">
             <!-- Left side - Login Form -->
@@ -244,19 +260,20 @@ onMounted(async () => {
                         </FloatLabel> -->
 
                         <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
-                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture=""/>
+                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" />
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
                     </div>
 
                     <div class="flex flex-col">
                         <Password id="password" :feedback="false" :fluid="true" class="input" placeholder="Password"
-                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"/>
+                            v-model="formFields.password" v-on:keyup.enter="handleSubmit" />
                     </div>
 
                     <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
                         <div class="flex items-center">
-                            <Checkbox v-model="formFields.rememberMe" value="remember" inputId="rememberMe" name="rememberMe"/>
+                            <Checkbox v-model="formFields.rememberMe" value="remember" inputId="rememberMe"
+                                name="rememberMe" />
                             <label class="ml-2">Remember Me</label>
                         </div>
                         <div>
@@ -464,6 +481,7 @@ onMounted(async () => {
     font-size: 15px;
     font-weight: 400;
 }
+
 .back-home-router {
     padding: 20px;
     display: flex;
@@ -471,5 +489,4 @@ onMounted(async () => {
     justify-content: center;
     flex-direction: column;
 }
-
 </style>

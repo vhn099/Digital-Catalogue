@@ -6,6 +6,33 @@ import axios from "axios";
 import { COMMON_VARIABLE } from "./Common";
 
 export const UserFirestore = {
+    setCookie(key, value, days) {
+        let expires = '';
+        if (days) {
+            let date = new Date();
+            const oneDayTime = 24 * 60 * 60 * 1000 // 1 day
+            date.setTime(date.getTime() + (days * oneDayTime));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = key + "=" + (value || "") + expires + "; path=/";
+    },
+
+    getCookie(name) {
+        let cname = name + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(cname) == 0) {
+                return c.substring(cname.length, c.length);
+            }
+        }
+        return "";
+    },
+
     async getCurrentUser() {
         const result = {
             status: 'success',
@@ -25,9 +52,8 @@ export const UserFirestore = {
 
             if (userDoc.docs.length > 0) {
                 const userData = userDoc.docs[0].data();
-                result.isAdmin = userData.isAdmin || false;
-                const disabled = userData.disabled;
                 result.userData = userData;
+                const disabled = result.userData.disabled;
                 if (disabled) {
                     result.status = 'error';
                     result.message = useAppStore().getMessageMaster.AUTH.BLOCKED;
@@ -83,7 +109,7 @@ export const UserFirestore = {
                         result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_CREATED;
                     }
                 }).catch(error => {
-                    
+
                 });
             } else {
                 result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_EXISTED;

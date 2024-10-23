@@ -3,13 +3,16 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
+import { definePreset } from '@primevue/themes';
+
+/* EXTERNAL LIBRARIES START */
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
-import { definePreset } from '@primevue/themes';
 import { createPinia } from "pinia";
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import PDFObjectPlugin from 'pdfobject-vue';
+/* EXTERNAL LIBRARIES END */
 
 /* FIREBASE START */
 import environment from '../firebase-config.json';

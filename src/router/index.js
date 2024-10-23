@@ -43,7 +43,7 @@ const router = createRouter({
       name: 'signin',
       component: SignIn,
       meta: {
-        pageTitle: "Sign In"
+        pageTitle: "Sign In",
       }
     },
     {
@@ -168,13 +168,15 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const currentUser = await UserFirestore.getCurrentUser(); // Check custom authen of users.
+  const currentUser = UserFirestore.getCookie("user-auth"); // Check custom authen of users.
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
   const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
-  if (requireAuth && currentUser.status !== 'success') {
+  if (requireAuth && !currentUser) { // User is not authen will be redirected to sign in page
     next('/sign-in');
-  } else if (requireAuth && requireAdmin && !currentUser.isAdmin) {
+  } else if (requireAuth && requireAdmin && !currentUser.isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
+    next('/home');
+  } else if (currentUser && !requireAuth) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
     next('/home');
   } else {
     next();
