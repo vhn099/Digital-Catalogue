@@ -3,7 +3,7 @@
     <div class="my-footer">
         <div class="flex-1 flex align-items-center justify-content-center">
             <div class="my-footer-logo">
-                <img alt="logo" src="../assets/img/logo.png"/>
+                <img alt="logo" src="../assets/img/logo.png" draggable="false"/>
             </div>
         </div>
       

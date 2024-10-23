@@ -126,7 +126,7 @@ onMounted(async () => {
         <div class="card" v-for="card in cards" :key="card">
           <div class="cate-item" @click="categoryRouting">
             <div class="cate-logo">
-              <img width="52" height="52" fill="none" :src="card.icon" />
+              <img draggable="false" width="52" height="52" fill="none" :src="card.icon" />
             </div>
             <div class="cate-name">
               {{ card.name }}

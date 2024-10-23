@@ -1,10 +1,12 @@
 <script setup>
 // components
 import DockItem from '../../components/Dock.vue';
-import SectionItem from '../../components/Section.vue'
-import DeckItem from '../../components/DeckCard.vue'
+import SectionItem from '../../components/Section.vue';
+import DeckItem from '../../components/DeckCard.vue';
+import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
+
 import { ref } from 'vue';
-const sectionIcon = "src/assets/img/icon/supply-chain.png";
+const sectionIcon = SupplyChainIcon;
 const sectionText = "Decks";
 </script>
 

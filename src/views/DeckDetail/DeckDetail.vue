@@ -7,26 +7,30 @@ import Tag from 'primevue/tag';
 import { ref, onMounted } from "vue";
 import SectionIcon from '@/assets/img/homepage/support.png';
 
+import CapImage from '@/assets/img/carousel/CAP.png';
+import CarltonImage from '@/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png';
+import PepsiShirtImage from '@/assets/img/carousel/Pepsi_Shirt.png';
+
 onMounted(() => {
-    console.log('yo moe m');
+    
 });
 const sectionIcon = SectionIcon;
 const sectionText = "Contact us";
 
 const images = [
     {
-        itemImageSrc: '../src/assets/img/carousel/CAP.png',
-        thumbnailImageSrc: '../src/assets/img/carousel/CAP.png',
+        itemImageSrc: CapImage,
+        thumbnailImageSrc: CapImage,
         alt: 'Description for Image 1',
         title: 'Title 1'
     }, {
-        itemImageSrc: '../src/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png',
-        thumbnailImageSrc: '../src/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png',
+        itemImageSrc: CarltonImage,
+        thumbnailImageSrc: CarltonImage,
         alt: 'Description for Image 1',
         title: 'Title 2'
     }, {
-        itemImageSrc: '../src/assets/img/carousel/Pepsi_Shirt.png',
-        thumbnailImageSrc: '../src/assets/img/carousel/Pepsi_Shirt.png',
+        itemImageSrc: PepsiShirtImage,
+        thumbnailImageSrc: PepsiShirtImage,
         alt: 'Description for Image 1',
         title: 'Title 3',
         backgroundColor: ''
@@ -53,7 +57,7 @@ const responsiveOptions = ref([
 
         </div>
         <div class="col-11">
-            <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
+            <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
 
             <!-- https://pdfobject.com/guide/quick-start.html -->
             <div class="deck-canva">
@@ -61,11 +65,11 @@ const responsiveOptions = ref([
                     <Galleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="5"
                         containerStyle="max-width: 640px" :circular="true" :autoPlay="false" :transitionInterval="3000">
                         <template #item="slotProps">
-                            <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
+                            <img draggable="false" :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
                                 style="width: 100%; display: block" />
                         </template>
                         <template #thumbnail="slotProps">
-                            <img :src="slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt"
+                            <img draggable="false" :src="slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt"
                                 style="max-height:100%; max-width:100% ;display: block;" />
                         </template>
                     </Galleria>
@@ -79,7 +83,7 @@ const responsiveOptions = ref([
                             <div class="button-like">
 
                                 <Button severity="secondary" label="Favourite">
-                                    <img width="40" height="40" fill="none"
+                                    <img draggable="false" width="40" height="40" fill="none"
                                         src="../../assets/img/icon/search_file.png" />
                                     <label>View Deck</label>
                                 </Button>
@@ -88,7 +92,7 @@ const responsiveOptions = ref([
                     </div>
                     <div class="deck-fav-button">
                         <Button label="Favourite">
-                            <img width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
+                            <img draggable="false" width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
                             <label>Add to my Favorite</label>
                         </Button>
                     </div>
@@ -115,7 +119,7 @@ const responsiveOptions = ref([
             <div class="pdf-canva">
                 <div class="pdf-fav-button">
                     <Button label="Favourite">
-                        <img width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
+                        <img draggable="false" width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
                         <label>Add to my Favorite</label>
                     </Button>
                 </div>

@@ -17,7 +17,7 @@
                 <div class="deck-info-like">
                     <div class="button-like">
                         <Button severity="secondary" label="Favourite" @click="favoriteRouting">
-                            <img width="40" height="40" fill="none" :src="FavoriteBlackIcon" />
+                            <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" />
                             <label>Favourite</label>
                         </Button>
                         <!-- <Button label="Favourite" icon="pi pi-heart" iconPos="top" /> -->

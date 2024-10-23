@@ -15,7 +15,7 @@
             <Menubar :model="items" class="admin-menu" v-if="currentUser.isAdmin"/>
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
-            <img width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
+            <img draggable="false" width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
             <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
         </div>
     </div>
@@ -46,6 +46,15 @@ const items = ref([
                         name: 'adminusers'
                     });
                 }
+            },
+            {
+                label: 'Favorite',
+                icon: 'pi pi-heart',
+                command: () => {
+                    router.push({
+                        name: 'adminfavorite'
+                    });
+                },
             },
             {
                 label: 'Categories',

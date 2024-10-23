@@ -258,7 +258,7 @@ watch(visible, () => {
 
                     <div class="flex flex-col">
                         <label class="form-label" for="image">Image <span class="required-icon">*</span></label>
-                        <img v-if="imagePreview" :src="imagePreview" alt="Image" width="64"/>
+                        <img draggable="false" v-if="imagePreview" :src="imagePreview" alt="Image" width="64"/>
                         <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="1000000" accept="image/*" />
                         <small class="error-messages" v-if="imageRule" customUpload>{{
                             imageRule }}</small>
@@ -312,7 +312,7 @@ watch(visible, () => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                         <template #body="slotProps">
-                            <img :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64" />
+                            <img draggable="false" :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64" />
                             <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>

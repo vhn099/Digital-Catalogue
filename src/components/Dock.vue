@@ -1,7 +1,7 @@
 <template>
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
-            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" />
+            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" draggable="false"/>
             <span> {{ item.label }}</span>
         </template>
     </Dock>
@@ -33,8 +33,11 @@ const items = ref([
         label: 'Category',
         icon: SupplyChainIcon,
         eventHandler: () => {
+            // router.push({
+            //     name: 'category'
+            // });
             router.push({
-                name: 'category'
+                name: 'decks'
             });
         }
     },
