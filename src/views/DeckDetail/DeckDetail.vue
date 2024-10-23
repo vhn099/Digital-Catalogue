@@ -125,7 +125,7 @@ const responsiveOptions = ref([
                 </div>
                 <div class="pdf-place">
                     <PdfObject class="pdf-view"
-                        url="https://file-examples.com/storage/feb05093336710053a32bc1/2017/10/file-sample_150kB.pdf" />
+                        url="https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fpdf%2Fexample.pdf?alt=media&token=ba1748fd-1602-46dd-bcc8-a49fc4f56754" />
                 </div>
             </div>
         </div>
