@@ -99,7 +99,7 @@ export const CategoryFirestore = {
       await deleteDoc(
         doc(getFirestore(), useAppStore().getCategoriesCollection, id)
       ).then((response) => {
-        result.message = useAppStore().getMessageMaster.DATA(categoryForm.name).CATEGORY_DELETED;
+        result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_DELETED;
       });
     } catch (error) {
       result.status = "error";

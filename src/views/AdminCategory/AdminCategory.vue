@@ -158,7 +158,7 @@ const submitForm = async () => {
 
     if (isValid || edit.value) {
         let imageData = imageFile[0];
-        let imageName = imageFile[0].name;
+        let imageName = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toDateString()}`;
         const categoryFormData = getCategoryFormData();
         let result = {};
         const downloadURL = await FirebaseStorage.uploadFile(imageName, imageData);
