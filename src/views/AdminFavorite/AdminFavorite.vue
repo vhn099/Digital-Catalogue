@@ -10,13 +10,6 @@ import { ref } from 'vue';
 
 const tableColumns = [
     {
-        field: 'email',
-        label: 'Email',
-        styles: {
-
-        }
-    },
-    {
         field: 'created',
         label: 'Created On',
         styles: {
