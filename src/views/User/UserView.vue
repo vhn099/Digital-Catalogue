@@ -74,6 +74,13 @@ const tableColumns = [
         }
     },
     {
+        field: 'isAdmin',
+        label: 'Admin',
+        styles: {
+
+        }
+    },
+    {
         field: 'created',
         label: 'Created On',
         styles: {
@@ -339,6 +346,10 @@ onMounted(async () => {
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
+                        <template #body="slotProps">
+                            <p v-if="column.field === 'isAdmin'" style="text-align: center;">{{ slotProps.data[column.field] ? 'Yes' : 'No' }}</p>
+                            <p v-else>{{ slotProps.data[column.field] }}</p>
+                        </template>
                     </Column>
                     <Column header="Actions">
                         <template #body="{ data }">

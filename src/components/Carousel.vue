@@ -12,7 +12,7 @@
                     <Button @click="viewDeck" label="View Deck" />
                 </div>
                 <div class="slideshow-image">
-                    <img height="100%" fill="none" :src="slotProps.item.itemImageSrc" />
+                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.itemImageSrc" />
                 </div>
             </div>
 
@@ -30,18 +30,23 @@ import { ref, onMounted } from "vue";
 import Galleria from 'primevue/galleria';
 import Button from 'primevue/button';
 import router from "@/router";
+
+import CapImage from '@/assets/img/carousel/CAP.png';
+import CarltonImage from '@/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png';
+import PepsiShirtImage from '@/assets/img/carousel/Pepsi_Shirt.png';
+
 const position = ref('bottom');
 const images = [
     {
-        itemImageSrc: '../src/assets/img/carousel/CAP.png',
+        itemImageSrc: CapImage,
         alt: 'Description for Image 1',
         title: 'Title 1'
     }, {
-        itemImageSrc: '../src/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png',
+        itemImageSrc: CarltonImage,
         alt: 'Description for Image 1',
         title: 'Title 2'
     }, {
-        itemImageSrc: '../src/assets/img/carousel/Pepsi_Shirt.png',
+        itemImageSrc: PepsiShirtImage,
         alt: 'Description for Image 1',
         title: 'Title 3',
         backgroundColor: ''

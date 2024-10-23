@@ -14,7 +14,7 @@
 
     <div class="email-us">
         <div class="mail-icon">
-            <img src="../assets/img/icon/mail.png" />
+            <img draggable="false" src="../assets/img/icon/mail.png" />
         </div>
         <div>
             <p style="font-size: 20px;font-weight: 500;">Email us</p>

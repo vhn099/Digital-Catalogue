@@ -2,10 +2,11 @@
 // components
 import DockItem from '../../components/Dock.vue';
 import SectionItem from '../../components/Section.vue'
-import MyFavCardItem from '../../components/MyFavCard.vue'
+import MyFavCardItem from '../../components/MyFavCard.vue';
+import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 
 import { ref } from 'vue';
-const sectionIcon = "src/assets/img/icon/favorite_black.png";
+const sectionIcon = FavoriteBlackIcon;
 const sectionText = "My Favorite";
 </script>
 

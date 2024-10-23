@@ -2,7 +2,7 @@
     <div class="cate-card-box" :key="data.id">
         <div class="cate-card-image">
 
-            <img width="110" height="110" fill="none" :src="data.image" />
+            <img draggable="false" width="110" height="110" fill="none" :src="data.image" />
 
         </div>
         <div class="cate-card-name">

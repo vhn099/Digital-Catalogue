@@ -14,6 +14,8 @@ import { getAuth } from 'firebase/auth'
 import DeckDetail from '@/views/DeckDetail/DeckDetail.vue'
 import MyProfile from '@/views/MyProfile/MyProfile.vue'
 import MyFavorite from '@/views/MyFavorite/MyFavorite.vue'
+import { nextTick } from 'vue'
+import AdminFavorite from '@/views/AdminFavorite/AdminFavorite.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +41,10 @@ const router = createRouter({
     {
       path: '/sign-in',
       name: 'signin',
-      component: SignIn
+      component: SignIn,
+      meta: {
+        pageTitle: "Sign In"
+      }
     },
     {
       path: '/contact-us',
@@ -148,6 +153,16 @@ const router = createRouter({
         requireAuth: true,
         pageTitle: 'My Favorite',
       }
+    },
+    {
+      path: '/admin/favorite',
+      name: 'adminfavorite',
+      component: AdminFavorite,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Favorite Management',
+        adminSite: true
+      }
     }
   ]
 });
@@ -162,9 +177,14 @@ router.beforeEach(async (to, from, next) => {
   } else if (requireAuth && requireAdmin && !currentUser.isAdmin) {
     next('/home');
   } else {
-    next()
+    next();
   }
-  // next();
+});
+
+router.afterEach((to, from) => {
+  // Use next tick to handle router history correctly
+  // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+  document.title = to.meta.pageTitle;
 });
 
 export default router

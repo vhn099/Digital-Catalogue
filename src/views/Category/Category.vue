@@ -6,10 +6,11 @@ import DockItem from '../../components/Dock.vue';
 import CarouselItem from '../../components/Carousel.vue'
 import CateCardItem from '../../components/CateCard.vue'
 import SectionItem from '../../components/Section.vue'
+import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
 import { onMounted, ref } from 'vue';
 import { CategoryFirestore } from "@/lib/Category";
 
-const sectionIcon = "src/assets/img/icon/supply-chain.png";
+const sectionIcon = SupplyChainIcon;
 const sectionText = "Category";
 const sectionTitle = "Browse by Category:";
 

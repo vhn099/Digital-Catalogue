@@ -14,6 +14,7 @@ import { db } from "@/main";
 import MessagePage from '@/components/MessagePage.vue';
 import { required, email } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
+import SupportIcon from '@/assets/img/homepage/support.png';
 const firstName = ref(null);
 const lastName = ref(null);
 //const userEmail = ref(null);
@@ -30,7 +31,7 @@ const bodyReq = ref({
   },
 });
 const isSuccess = ref(false);
-const sectionIcon = "src/assets/img/homepage/support.png";
+const sectionIcon = SupportIcon;
 const sectionText = "Contact us";
 const line4 = {
   title: 'Selected',
@@ -115,7 +116,7 @@ async function submitForm() {
     <div class="col-11">
       <div class="flex">
         <div class="col-8">
-          <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
+          <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
           <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
             <div class="flex">

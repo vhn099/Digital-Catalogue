@@ -30,7 +30,7 @@ const deckRouting = () => {
     <div class="fav-canva">
         <Card style="width: 25rem; overflow: hidden" v-if="!isnew">
             <template #header>
-                <img alt="user header" src="../assets/img/demo/peroni.png" />
+                <img alt="user header" src="../assets/img/demo/peroni.png" draggable="false"/>
             </template>
             <template #title>{{ title }}</template>
             <template #subtitle>
