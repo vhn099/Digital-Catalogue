@@ -15,25 +15,31 @@ onMounted(() => {
     
 });
 const sectionIcon = SectionIcon;
-const sectionText = "Contact us";
+const sectionText = "Deck";
 const isViewDeck = ref(false);
 
 const images = [
     {
-        itemImageSrc: CapImage,
-        thumbnailImageSrc: CapImage,
+        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F1.png?alt=media&token=26006724-e5aa-4483-a11a-8367c6a54c39',
+        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F1.png?alt=media&token=26006724-e5aa-4483-a11a-8367c6a54c39',
         alt: 'Description for Image 1',
         title: 'Title 1'
     }, {
-        itemImageSrc: CarltonImage,
-        thumbnailImageSrc: CarltonImage,
-        alt: 'Description for Image 1',
+        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F2.png?alt=media&token=cc5c0d93-493f-4474-bf1e-a557d9848c6f',
+        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F2.png?alt=media&token=cc5c0d93-493f-4474-bf1e-a557d9848c6f',
+        alt: 'Description for Image 2',
         title: 'Title 2'
     }, {
-        itemImageSrc: PepsiShirtImage,
-        thumbnailImageSrc: PepsiShirtImage,
-        alt: 'Description for Image 1',
+        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F3.jpg?alt=media&token=671fbf19-d788-4e0e-ac79-c659e74990c0',
+        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F3.jpg?alt=media&token=671fbf19-d788-4e0e-ac79-c659e74990c0',
+        alt: 'Description for Image 3',
         title: 'Title 3',
+        backgroundColor: ''
+    },{
+        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F4.png?alt=media&token=cb82599a-2692-4376-8eb5-655127e50026',
+        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F4.png?alt=media&token=cb82599a-2692-4376-8eb5-655127e50026',
+        alt: 'Description for Image 4',
+        title: 'Title 4',
         backgroundColor: ''
     }
 ];
@@ -66,8 +72,8 @@ function viewDeck() {
             <!-- https://pdfobject.com/guide/quick-start.html -->
             <div v-if="!isViewDeck" class="deck-canva">
                 <div class="deck-image">
-                    <Galleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="5"
-                        containerStyle="max-width: 640px" :circular="true" :autoPlay="false" :transitionInterval="3000">
+                    <Galleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="4"
+                        containerStyle="max-width: 800px" :circular="true" :autoPlay="true" :transitionInterval="4000">
                         <template #item="slotProps">
                             <img draggable="false" :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
                                 style="width: 100%; display: block" />
@@ -181,7 +187,8 @@ function viewDeck() {
 
     .deck-image {
         width: 50%;
-        background-color: antiquewhite;
+        display: flex;
+        justify-content: center;
     }
 
     .deck-info {
