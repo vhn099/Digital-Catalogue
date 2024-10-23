@@ -12,6 +12,7 @@ onMounted(() => {
 });
 const sectionIcon = SectionIcon;
 const sectionText = "Contact us";
+const isViewDeck = ref(false);
 
 const images = [
     {
@@ -43,6 +44,9 @@ const responsiveOptions = ref([
         numVisible: 1
     }
 ]);
+function viewDeck() {
+    isViewDeck.value = true;
+}
 </script>
 
 <template>
@@ -56,7 +60,7 @@ const responsiveOptions = ref([
             <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
 
             <!-- https://pdfobject.com/guide/quick-start.html -->
-            <div class="deck-canva">
+            <div v-if="!isViewDeck" class="deck-canva">
                 <div class="deck-image">
                     <Galleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="5"
                         containerStyle="max-width: 640px" :circular="true" :autoPlay="false" :transitionInterval="3000">
@@ -78,7 +82,7 @@ const responsiveOptions = ref([
                         <div class="deck-title-right">
                             <div class="button-like">
 
-                                <Button severity="secondary" label="Favourite">
+                                <Button severity="secondary" label="Favourite" @click="viewDeck()">
                                     <img width="40" height="40" fill="none"
                                         src="../../assets/img/icon/search_file.png" />
                                     <label>View Deck</label>
@@ -112,7 +116,7 @@ const responsiveOptions = ref([
                     </div>
                 </div>
             </div>
-            <div class="pdf-canva">
+            <div v-if="isViewDeck" class="pdf-canva">
                 <div class="pdf-fav-button">
                     <Button label="Favourite">
                         <img width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
@@ -137,6 +141,7 @@ const responsiveOptions = ref([
 .pdf-place {
     padding-top: 10px;
 }
+
 .pdf-view {
     height: 800px;
 }
