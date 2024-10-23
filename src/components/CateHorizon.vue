@@ -98,7 +98,7 @@ async function getCategories() {
 
 const categoryRouting = () => {
   router.push({
-    name: 'desks'
+    name: 'decks'
   })
 }
 /* FUNCTION END */

@@ -52,7 +52,7 @@ const inside = ref(true);
 /* FUNCTIONS START */
 const viewDeck = () => {
     router.push({
-        name: 'desks'
+        name: 'decks'
     });
 };
 /* FUNCTIONS END */

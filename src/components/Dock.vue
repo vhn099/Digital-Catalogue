@@ -39,11 +39,11 @@ const items = ref([
         }
     },
     {
-        label: 'Desks',
+        label: 'Decks',
         icon: DeckIcon,
         eventHandler: () => {
             router.push({
-                name: 'desks'
+                name: 'decks'
             });
         }
     },

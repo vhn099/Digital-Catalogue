@@ -7,10 +7,27 @@ import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
+import ProfileIcon from '@/assets/img/icon/profile.png';
+import { onMounted, ref } from 'vue';
+import { getAuth } from 'firebase/auth';
+import { UserFirestore } from '@/lib/User';
 
-import { ref } from 'vue';
-const sectionIcon = "src/assets/img/icon/profile.png";
+
+const sectionIcon = ProfileIcon;
 const sectionText = "My Profile";
+
+/* REF DEFINITION START */
+const firstname = ref('');
+const lastName = ref('');
+const email = ref('');
+/* REF DEFINITION END */
+
+onMounted(async () => {
+    email.value = getAuth().currentUser.email;
+    const user = await UserFirestore.getCurrentUser(); 
+    firstname.value = user.userData.firstname;
+    lastName.value = user.userData.lastname;
+});
 </script>
 
 <template>
@@ -28,7 +45,7 @@ const sectionText = "My Profile";
 
             <div class="flex">
                 <div class="col-12">
-                    <SectionItem :icon="sectionIcon" :icon_text="sectionText" line3="true"></SectionItem>
+                    <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
                     <div class="flex flex-column">
                         <!-- <span>Please fill in a form and we get back to you</span> -->
                         <span class="profile-description">Keep your profile up to date to ensure we have the latest information.</span>
@@ -36,7 +53,7 @@ const sectionText = "My Profile";
                         <div class="flex">
                             <div class="flex-1 p-2">
                                 <FloatLabel variant="in">
-                                    <InputText id="in_label" :fluid="true" v-model="firstName" autocomplete="off" />
+                                    <InputText id="in_label" :fluid="true" v-model="firstname" autocomplete="off" />
                                     <label for="in_label">First Name</label>
                                 </FloatLabel>
                             </div>
@@ -50,7 +67,7 @@ const sectionText = "My Profile";
                         <div class="flex">
                             <div class="flex-1 p-2">
                                 <FloatLabel variant="in">
-                                    <InputText id="in_label" disabled :fluid="true" v-model="userEmail"
+                                    <InputText id="in_label" disabled :fluid="true" v-model="email"
                                         autocomplete="off" />
                                     <label for="in_label">Email</label>
                                 </FloatLabel>

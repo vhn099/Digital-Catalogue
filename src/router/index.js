@@ -3,7 +3,7 @@ import HomeView from '../views/Home/HomeView.vue'
 import SignIn from '../views/SignIn/SignIn.vue'
 import ContactView from '../views/ContactUs/ContactView.vue'
 import UserView from '../views/User/UserView.vue'
-import Desks from '../views/Desks/Desks.vue'
+import Decks from '../views/Decks/Decks.vue'
 import Category from '../views/Category/Category.vue'
 import { UserFirestore } from '@/lib/User'
 import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
@@ -62,12 +62,12 @@ const router = createRouter({
       }
     },
     {
-      path: '/desks',
-      name: 'desks',
-      component: Desks,
+      path: '/decks',
+      name: 'decks',
+      component: Decks,
       meta: {
         requireAuth: true,
-        pageTitle: 'Desks',
+        pageTitle: 'Decks',
         adminSite: false
       }
     },

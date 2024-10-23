@@ -11,6 +11,7 @@ export const UserFirestore = {
             status: 'success',
             message: '',
             isAdmin: false,
+            userData: {}
         };
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
         const currentUser = getAuth().currentUser;
@@ -26,6 +27,7 @@ export const UserFirestore = {
                 const userData = userDoc.docs[0].data();
                 result.isAdmin = userData.isAdmin || false;
                 const disabled = userData.disabled;
+                result.userData = userData;
                 if (disabled) {
                     result.status = 'error';
                     result.message = useAppStore().getMessageMaster.AUTH.BLOCKED;

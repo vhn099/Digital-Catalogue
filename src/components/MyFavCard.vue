@@ -20,7 +20,7 @@ defineProps({
 /* FUNCTION START */
 const deckRouting = () => {
     router.push({
-        name: 'desks'
+        name: 'decks'
     });
 }
 /* FUNCTION END */
