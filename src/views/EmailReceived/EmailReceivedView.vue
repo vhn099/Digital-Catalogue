@@ -11,7 +11,7 @@ import Textarea from "primevue/textarea";
 import Toast from "primevue/toast";
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import Tag from 'primevue/tag';
@@ -108,7 +108,6 @@ const resetFormData = () => {
 const closeDrawer = () => {
     visible.value = false;
     view.value = false;
-    resetFormData();
 };
 
 const getEmails = async () => {
@@ -143,6 +142,12 @@ const viewRow = (data) => {
     visible.value = true;
     view.value = true;
 };
+watch(visible, () => {
+    if (!visible.value) {
+        resetFormData();
+    }
+});
+
 /* FUNCTIONS */
 
 </script>
@@ -151,7 +156,7 @@ const viewRow = (data) => {
     <div class="">
         <!-- <Button label="Show" @click="visible = true" /> -->
 
-        <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "Preview email"'
+        <Dialog v-model:visible="visible" modal :header='"Preview email"'
             :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
                 <div class="form-container">
