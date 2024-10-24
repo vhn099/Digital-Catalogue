@@ -37,7 +37,6 @@ export const UserFirestore = {
         const result = {
             status: 'success',
             message: '',
-            isAdmin: false,
             userData: {}
         };
         const db = collection(getFirestore(), useAppStore().getUsersCollection);

@@ -49,7 +49,7 @@ const filters = ref({
     <div class="">
         <div class="flex flex-col table-section">
             <div class="card">
-                <DataTable datakey="id" :value="users" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
+                <DataTable datakey="id" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
                     tableStyle="width: 100%"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" ref="datatable" :filters="filters"

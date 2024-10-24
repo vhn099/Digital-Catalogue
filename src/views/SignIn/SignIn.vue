@@ -204,7 +204,7 @@ const handleSubmit = async () => {
         }).catch(error => {
             let message = error.message;
             if (error.code === 'auth/invalid-credential') {
-                message = 'Invalid username/password'
+                message = 'Username or Password entered is incorrect. Please try again'
             }
             toast.add({
                 severity: 'error',

@@ -16,6 +16,7 @@ import MyProfile from '@/views/MyProfile/MyProfile.vue'
 import MyFavorite from '@/views/MyFavorite/MyFavorite.vue'
 import { nextTick } from 'vue'
 import AdminFavorite from '@/views/AdminFavorite/AdminFavorite.vue'
+import { COMMON_FUNCTIONS } from '@/lib/Common'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -168,13 +169,17 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const currentUser = UserFirestore.getCookie("user-auth"); // Check custom authen of users.
+  const cookie = UserFirestore.getCookie("user-auth");
+  let currentUser = "";
+  if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+    currentUser = JSON.parse(cookie); // Check custom authen of users.
+  }
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
   const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
   if (requireAuth && !currentUser) { // User is not authen will be redirected to sign in page
     next('/sign-in');
-  } else if (requireAuth && requireAdmin && !currentUser.isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
+  } else if (requireAuth && requireAdmin && !currentUser.userData.isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
     next('/home');
   } else if (currentUser && !requireAuth) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
     next('/home');

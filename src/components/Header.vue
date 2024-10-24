@@ -12,7 +12,7 @@
             <span class="my-nav-text">Innovation Portal</span>
         </div>
         <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1 my-nav-3">
-            <Menubar :model="items" class="admin-menu" v-if="currentUser.isAdmin"/>
+            <Menubar :model="items" class="admin-menu" v-if="currentUser.userData.isAdmin"/>
             <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
             <img draggable="false" width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
@@ -27,7 +27,7 @@ import InputText from 'primevue/inputtext';
 import Avatar from 'primevue/avatar';
 import Menubar from 'primevue/menubar';
 
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import router from '@/router';
 import { UserFirestore } from '@/lib/User';
 import { COMMON_FUNCTIONS } from '@/lib/Common';
@@ -112,18 +112,19 @@ const items = ref([
 ]);
 
 /* FUNCTION START */
-onMounted(async () => {
-    const cookie = UserFirestore.getCookie("user-auth");
-    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
-        currentUser.value = JSON.parse(cookie);
-    }
-});
 const routing = (routeName) => {
     router.push({
         name: routeName
     })
 }
 /* FUNCTION END */
+
+onBeforeMount(() => {
+    const cookie = UserFirestore.getCookie("user-auth");
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        currentUser.value = JSON.parse(cookie);
+    }
+});
 </script>
 
 <style scoped>

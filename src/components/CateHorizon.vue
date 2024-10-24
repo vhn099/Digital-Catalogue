@@ -102,9 +102,6 @@ const categoryRouting = () => {
   })
 }
 /* FUNCTION END */
-watch(cards, () => {
-  console.log(inner.value.scrollWidth);
-});
 
 // computed({})
 
