@@ -171,15 +171,25 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const cookie = UserFirestore.getCookie("user-auth");
   let currentUser = "";
+  let disabled = false;
+  let isAdmin = false;
   if (COMMON_FUNCTIONS.isJSONString(cookie)) {
     currentUser = JSON.parse(cookie); // Check custom authen of users.
+    if (currentUser.userData) {
+      disabled = currentUser.userData.disabled || false;
+      isAdmin = currentUser.userData.isAdmin || false;
+    }
   }
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
   const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
+  if (disabled) {
+    next('sign-in');
+  }
+
   if (requireAuth && !currentUser) { // User is not authen will be redirected to sign in page
     next('/sign-in');
-  } else if (requireAuth && requireAdmin && !currentUser.userData.isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
+  } else if (requireAuth && requireAdmin && !isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
     next('/home');
   } else if (currentUser && !requireAuth) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
     next('/home');

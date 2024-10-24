@@ -29,7 +29,8 @@ const formFields = reactive({
     lastname: '',
     password: '',
     confirmPassword: '',
-    isAdmin: false
+    isAdmin: false,
+    deactive: ['deactive'],
 });
 
 /* COMPUTED VALUES */
@@ -76,6 +77,13 @@ const tableColumns = [
     {
         field: 'isAdmin',
         label: 'Admin',
+        styles: {
+
+        }
+    },
+    {
+        field: 'disabled',
+        label: "Deactivated",
         styles: {
 
         }
@@ -130,6 +138,7 @@ const resetFormData = () => {
     formFields.password = '';
     formFields.confirmPassword = '';
     formFields.isAdmin = false;
+    formFields.deactive = [];
 };
 const closeDrawer = () => {
     visible.value = false;
@@ -162,7 +171,8 @@ const getUsers = async () => {
             email: data.email,
             firstname: data.firstname || '',
             lastname: data.lastname || '',
-            isAdmin: data.isAdmin,
+            isAdmin: data.isAdmin ? "YES" : "NO",
+            disabled: data.disabled ? "YES" : "NO",
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
             updated: data.updated ? data.updated.toDate().toLocaleString() : '',
@@ -251,7 +261,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-    <LoadingSpinner v-if="spinner"/>
+    <LoadingSpinner v-if="spinner" />
     <Toast />
     <ConfirmDialog />
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
@@ -298,11 +308,20 @@ onMounted(async () => {
                         v$.confirmPassword.$errors[0].$message }}</small>
                 </div>
 
+                <div class="flex justify-center mt-3" v-if="edit">
+                    <div class="flex items-center">
+                        <Checkbox v-model="formFields.deactive" inputId="deactive" name="deactive" value="deactive" />
+
+                        <label for="deactive" class="ml-2"> Deactive ? </label>
+                    </div>
+                    
+                </div>
+                
+
                 <div class="flex items-center mt-3">
                     <ToggleSwitch v-model="formFields.isAdmin">
                         <template #handle="{ checked }">
-                            <i
-                                :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
+                            <i :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
                         </template>
                     </ToggleSwitch>
 
@@ -347,15 +366,14 @@ onMounted(async () => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                         <template #body="slotProps">
-                            <p v-if="column.field === 'isAdmin'" style="text-align: center;">{{ slotProps.data[column.field] ? 'Yes' : 'No' }}</p>
-                            <p v-else>{{ slotProps.data[column.field] }}</p>
+                            <p>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
                     <Column header="Actions">
                         <template #body="{ data }">
                             <div class="actions">
-                                <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
-                                    severity="warn" />
+                                <!-- <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
+                                    severity="warn" /> -->
                                 <Button icon="pi pi-pencil" aria-label="Update" @click="editRow(data)" rounded />
                             </div>
                         </template>
@@ -421,5 +439,9 @@ onMounted(async () => {
 .table-actions {
     display: flex;
     justify-content: center;
+}
+
+.items-center {
+    align-items: center;
 }
 </style>
