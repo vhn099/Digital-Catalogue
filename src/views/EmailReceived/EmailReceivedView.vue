@@ -39,7 +39,7 @@ const tableColumns = [
         field: 'email',
         label: 'Email',
         styles: {
-            maxWidth: "20%",
+            width: "20%",
             wordWrap: "break-word",
         }
     },
@@ -62,6 +62,7 @@ const tableColumns = [
         label: 'Message',
         styles: {
             maxWidth: "671px",
+            // width: "25%"
         }
     },
     // {
