@@ -29,10 +29,17 @@ const formFields = reactive({
 
 const tableColumns = [
     {
+        field: 'created',
+        label: 'Created On',
+        styles: {
+            width: "15%"
+        }
+    },
+    {
         field: 'email',
         label: 'Email',
         styles: {
-            maxWidth: "300px",
+            maxWidth: "20%",
             wordWrap: "break-word",
         }
     },
@@ -40,45 +47,38 @@ const tableColumns = [
         field: 'first_name',
         label: 'First Name',
         styles: {
-            width: "8%"
+            width: "10%"
         }
     },
     {
         field: 'last_name',
         label: 'Last Name',
         styles: {
-            width: "8%"
+            width: "10%"
         }
     },
     {
         field: 'message',
         label: 'Message',
         styles: {
-            maxWidth: "500px",
+            maxWidth: "671px",
         }
     },
-    {
-        field: 'receiver',
-        label: 'Receiver',
-        styles: {
-            // width: "10%",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            wordWrap: "break-word",
-            // overFlow: "hidden",
-            overflow: "hidden"
-        }
-    },
+    // {
+    //     field: 'receiver',
+    //     label: 'Receiver',
+    //     styles: {
+    //         // width: "10%",
+    //         whiteSpace: "nowrap",
+    //         textOverflow: "ellipsis",
+    //         wordWrap: "break-word",
+    //         // overFlow: "hidden",
+    //         overflow: "hidden"
+    //     }
+    // },
     {
         field: 'status',
-        label: 'status',
-        styles: {
-            width: "10%"
-        }
-    },
-    {
-        field: 'created',
-        label: 'Created On',
+        label: 'Status',
         styles: {
             width: "10%"
         }
@@ -156,8 +156,8 @@ watch(visible, () => {
     <div class="">
         <!-- <Button label="Show" @click="visible = true" /> -->
 
-        <Dialog v-model:visible="visible" modal :header='"Preview email"'
-            :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <Dialog v-model:visible="visible" modal :header='"Preview email"' :style="{ width: '50vw' }"
+            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
                 <div class="form-container">
                     <div class="flex">
@@ -234,7 +234,7 @@ watch(visible, () => {
                     :paginator="true">
                     <template #header>
                         <div class="header-table">
-                            <span class="table-title">List Emails</span>
+                            <span class="table-title">Received Messages</span>
                             <div class="table-actions gap-2">
 
                                 <div>
@@ -252,7 +252,7 @@ watch(visible, () => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                     </Column>
-                    <Column header="Actions">
+                    <Column header="Actions" style="width: 5%;">
                         <template #body="{ data }">
                             <div class="actions">
                                 <Button icon="pi pi-eye" aria-label="Update" @click="viewRow(data)" rounded />
@@ -341,7 +341,7 @@ watch(visible, () => {
     height: 90px !important;
 }
 
-:deep(.p-datatable-tbody tr td:nth-child(4)) {
+:deep(.p-datatable-tbody tr td:nth-child(5)) {
     height: 90px !important;
     display: -webkit-box;
     -webkit-line-clamp: 3;
