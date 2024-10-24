@@ -77,7 +77,7 @@ const items = ref([
                 }
             },
             {
-                label: 'Received emails',
+                label: 'Received Messages',
                 icon: 'pi pi-inbox',
                 command: () => {
                     router.push({
