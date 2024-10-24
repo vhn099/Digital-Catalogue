@@ -14,6 +14,7 @@ import { useAppStore } from '@/stores';
 import { auth } from '@/main';
 // Reset Link sent
 import MessagePage from '@/components/MessagePage.vue';
+import { COMMON_FUNCTIONS } from '@/lib/Common';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageBody = 'login';
 const messagePageIconCSS = {
@@ -38,7 +39,11 @@ onMounted(async () => {
     
     email.value = getAuth().currentUser.email;
     useAppStore().setmail(email.value);
-    const user = await UserFirestore.getCurrentUser();
+    const cookie = UserFirestore.getCookie("user-auth");
+    let user = '';
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        user = JSON.parse(cookie);
+    }
     firstname.value = user.userData.firstname;
     lastName.value = user.userData.lastname;
     const script = document.createElement('script');

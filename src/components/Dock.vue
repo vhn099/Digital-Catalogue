@@ -1,7 +1,7 @@
 <template>
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
-            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" draggable="false"/>
+            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" draggable="false" />
             <span> {{ item.label }}</span>
         </template>
     </Dock>
@@ -18,6 +18,7 @@ import SupportIcon from '@/assets/img/homepage/support.png';
 import LogoutIcon from '@/assets/img/homepage/logout.png';
 
 import { ref } from "vue";
+import { UserFirestore } from '@/lib/User';
 
 const items = ref([
     {
@@ -61,9 +62,12 @@ const items = ref([
         icon: LogoutIcon,
         eventHandler: async () => {
             await signOut(getAuth());
-            router.push({
-                name: 'signin'
-            });
+            UserFirestore.setCookie("user-auth", "", 0);
+            setTimeout(() => {
+                router.push({
+                    name: 'signin'
+                });
+            }, 200);
         }
     }
 ]);

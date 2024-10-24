@@ -30,6 +30,7 @@ import Menubar from 'primevue/menubar';
 import { onMounted, ref } from "vue";
 import router from '@/router';
 import { UserFirestore } from '@/lib/User';
+import { COMMON_FUNCTIONS } from '@/lib/Common';
 const checked = ref(false);
 const currentUser = ref({});
 
@@ -112,7 +113,10 @@ const items = ref([
 
 /* FUNCTION START */
 onMounted(async () => {
-    currentUser.value = await UserFirestore.getCurrentUser();
+    const cookie = UserFirestore.getCookie("user-auth");
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        currentUser.value = JSON.parse(cookie);
+    }
 });
 const routing = (routeName) => {
     router.push({
