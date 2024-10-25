@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/Home/HomeView.vue'
 import SignIn from '../views/SignIn/SignIn.vue'
 import ContactView from '../views/ContactUs/ContactView.vue'
+import SearchView from '../views/SearchPage/SearchPage.vue'
 import UserView from '../views/User/UserView.vue'
 import Decks from '../views/Decks/Decks.vue'
 import Category from '../views/Category/Category.vue'
@@ -46,8 +47,7 @@ const router = createRouter({
       meta: {
         pageTitle: "Sign In",
       }
-    },
-    {
+    },{
       path: '/contact-us',
       name: 'contactus',
       component: ContactView,
@@ -56,8 +56,16 @@ const router = createRouter({
         pageTitle: 'Contact Us',
         adminSite: false
       }
-    },
-    {
+    },{
+      path: '/search',
+      name: 'search',
+      component: SearchView,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Search',
+        adminSite: false
+      }
+    },{
       path: '/admin/users',
       name: 'adminusers',
       component: UserView,
