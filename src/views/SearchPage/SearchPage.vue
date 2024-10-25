@@ -64,8 +64,14 @@ const sectionText = "Decks";
 </template>
 
 <style scoped>
+@media (max-width: 992px) {
+    .search-area {
+        width: 100% !important;
+    }
+}
+
 .search-area {
-    width: 80%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
