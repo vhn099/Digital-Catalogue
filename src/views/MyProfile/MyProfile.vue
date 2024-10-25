@@ -36,7 +36,7 @@ const siteKey = '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu';
 /* REF DEFINITION END */
 
 onMounted(async () => {
-    
+
     email.value = getAuth().currentUser.email;
     useAppStore().setmail(email.value);
     const cookie = UserFirestore.getCookie("user-auth");
@@ -107,8 +107,8 @@ watch(isResetPassWord, () => {
 
 <template>
     <DockItem></DockItem>
-    <Dialog v-model:visible="isResetPassWord" modal :header='isSendLink ? " " : "Forgot You Password?"' :style="{ width: '20vw' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Dialog v-model:visible="isResetPassWord" modal :header='isSendLink ? " " : "Forgot You Password?"'
+        :style="{ width: '30vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-container">
 
             <div class="form-container" v-if="!isSendLink">
@@ -121,9 +121,11 @@ watch(isResetPassWord, () => {
                 </div>
                 <small id="error_recaptcha" class="error-messages"></small>
             </div>
-            <div class="flex items-center mt-3 gap-4" v-if="!isSendLink">
-                <Button type="button" label="Send Reset Link" @click="sendLink()" />
-                <Button type="button" label="Cancel" severity="warn" icon="pi pi-times" @click="closeDrawer()" />
+            <div class="button-reset-pass" v-if="!isSendLink">
+                <div class="flex mt-3 gap-4">
+                    <Button type="button" label="Send Reset Link" @click="sendLink()" />
+                    <Button type="button" label="Cancel" severity="warn" icon="pi pi-times" @click="closeDrawer()" />
+                </div>
             </div>
             <div class="close-router" v-if="isSendLink">
                 <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS" :pageBody="messagePageBody" />
@@ -222,18 +224,27 @@ watch(isResetPassWord, () => {
     font-size: 12px;
     margin-bottom: 4px;
 }
+
 .close {
     color: gray;
     font-size: 14px;
     font-weight: 700;
     font-style: italic;
     text-decoration: underline;
+    padding-top: 25px;
 }
+
 .close-router {
     padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+}
+
+.button-reset-pass {
+    display: flex;
+    /* justify-content: space-between; */
+    justify-content: space-around;
 }
 </style>

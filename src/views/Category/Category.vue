@@ -53,9 +53,6 @@ const getCategories = async () => {
 
       <SectionItem :title="sectionTitle" :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
 
-
-      <SectionItem></SectionItem>
-
       <div class="card-container">
         <CateCardItem v-for="data in categories"  :data="data"></CateCardItem>
       </div>

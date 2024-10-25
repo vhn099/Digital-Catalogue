@@ -12,9 +12,16 @@ defineProps({
     description: {
         type: String,
     },
+    deck_img: {
+        type: String,
+    },
     isnew: {
-        type: Boolean
-    }
+        type: Boolean,
+    },
+    tag_arr: {
+        type: Array,
+    },
+
 });
 
 /* FUNCTION START */
@@ -30,24 +37,22 @@ const deckRouting = () => {
     <div class="fav-canva">
         <Card style="width: 25rem; overflow: hidden" v-if="!isnew">
             <template #header>
-                <img alt="user header" src="../assets/img/demo/peroni.png" draggable="false"/>
+                <img alt="user header" :src="deck_img" draggable="false" width="400" height="256" />
             </template>
             <template #title>{{ title }}</template>
             <template #subtitle>
                 <div class="fav-tag">
-                    <Tag severity="secondary" value="#news"></Tag>
-                    <Tag severity="secondary" value="#news"></Tag>
-                    <Tag severity="secondary" value="#news"></Tag>
+                    <Tag severity="secondary" v-for="tag in tag_arr" :key="tag" :value='"#" + tag'></Tag>
                 </div>
 
             </template>
-            <template>
+            <template #content>
                 <p class="m-0">
                     {{ description }}
                 </p>
             </template>
             <template #footer>
-                <Button icon="pi pi-trash" severity="warn" class="w-full" />
+                <Button icon="pi pi-trash" severity="warn" class="w-full" @click="deleteFav()" />
             </template>
         </Card>
 

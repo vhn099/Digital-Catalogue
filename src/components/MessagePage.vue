@@ -21,7 +21,7 @@ defineProps({
 
 <template>
     <div class="message-container">
-        <p class="page-title">{{ title }}</p>
+        <p v-if="title" class="page-title">{{ title }}</p>
         <i :class="iconName" :style="{ ...iconStyle }"></i>
         <div class="page-body-container">
             <ContactUsSuccessPage v-if="pageBody === 'contact'"></ContactUsSuccessPage>

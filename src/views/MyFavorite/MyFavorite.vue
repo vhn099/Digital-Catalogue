@@ -5,7 +5,7 @@ import SectionItem from '../../components/Section.vue'
 import MyFavCardItem from '../../components/MyFavCard.vue';
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 import { query, collection, getDocs, where } from "firebase/firestore";
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { db } from '@/main';
 import { useAppStore } from '@/stores';
 import { getAuth } from 'firebase/auth';
@@ -16,6 +16,8 @@ const sectionIcon = FavoriteBlackIcon;
 const sectionText = "My Favorite";
 const favorites = ref();
 const email = ref('');
+const decks = ref();
+const isDeleteFav = ref(false);
 
 const getFavorites = async () => {
     const favoriteList = [];
@@ -33,34 +35,33 @@ const getFavorites = async () => {
         });
         return favoriteList;
     } catch (error) {
-        console.error('Error checking email:', error);
+        console.error('Error:', error);
         return false;
     }
 
 };
 const getDeckInfo = async (arr) => {
+    const deckList = [];
     for (let i in arr) {
-        const deckList = [];
-        console.info('deckID: ' + arr[i].deckID);
         const docRef = doc(db, 'decks', arr[i].deckID);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            console.log(docSnap.data());
-        } else {
-            console.log('No such document!');
-        }
-
-        // const deckTable = collection(db, 'decks');
-        // const docRef = getDoc(doc(deckTable, arr[i].deckID));
-        // console.info('Error checking email: ' + docRef.data);
+            const object = {
+                deck_image: docSnap.data().deck_highlight || '',
+                deck_name: docSnap.data().title || '',
+                deck_description: docSnap.data().detail_description || '',
+                deck_tag: docSnap.data().tag || '',
+            };
+            //console.log(object);
+            deckList.push(object);
+        } 
     }
+    return deckList;
 };
 onMounted(async () => {
     email.value = getAuth().currentUser.email;
-    //useAppStore().setmail(email.value);
     favorites.value = await getFavorites();
-    getDeckInfo(favorites.value);
-    //console.log('123:' + useAppStore().getUserEmailReset);
+    decks.value = await getDeckInfo(favorites.value);
 
 });
 </script>
@@ -78,8 +79,8 @@ onMounted(async () => {
             <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
 
             <div class="fav-canva">
-                <div v-for="fav in favorites" :key="fav">
-                    <MyFavCardItem :title="fav.deckID" :description="fav.userID"></MyFavCardItem>
+                <div v-for="fav in decks" :key="fav">
+                    <MyFavCardItem :tag_arr="fav.deck_tag" :deck_img="fav.deck_image" :title="fav.deck_name" :description="fav.deck_description"></MyFavCardItem>
                 </div>
                 <MyFavCardItem :isnew="true"></MyFavCardItem>
             </div>

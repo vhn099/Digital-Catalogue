@@ -59,6 +59,7 @@ const messagePageIconCSS = {
   color: "#58DA67",
   fontWeight: "bold"
 };
+const messagePageHeader = "Get in touch with us to get the ball rolling";
 const messagePageBody = 'contact';
 
 function toggleDarkMode() {
@@ -116,7 +117,7 @@ async function submitForm() {
     <div class="col-11">
       <div class="flex">
         <div class="col-8">
-          <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
+          <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="messagePageHeader"/>
           <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
             <div class="flex">
