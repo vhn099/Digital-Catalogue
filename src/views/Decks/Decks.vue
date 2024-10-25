@@ -98,7 +98,7 @@ const selectedCategories = ref(['Marketing']);
 
           </div>
           <div class="filter-popover">
-            <Button type="button" icon="pi pi-sliders-h" @click="toggle" outlined />
+            <Button type="button" severity="secondary" icon="pi pi-sliders-h" @click="toggle" />
           </div>
         </div>
       </div>
@@ -191,5 +191,9 @@ const selectedCategories = ref(['Marketing']);
 :deep(.p-divider-horizontal:before) {
   /* border-color: #000; */
   border: 1px solid rgb(150 150 150 / 50%)
+}
+
+:deep(.p-button-secondary) {
+  border: 1px solid var(--p-select-border-color);
 }
 </style>
