@@ -7,8 +7,12 @@ import Presentation from '@/assets/img/icon/presentation.png';
 
 import Select from 'primevue/select';
 import Button from 'primevue/button';
-
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
 import Popover from 'primevue/popover';
+import Checkbox from 'primevue/checkbox';
+import Divider from 'primevue/divider';
 
 
 import { ref } from 'vue';
@@ -16,16 +20,10 @@ const sectionIcon = Presentation;
 const sectionText = "Decks";
 
 const op = ref();
-const members = ref([
-  { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
-  { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
-  { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
-]);
 
 const toggle = (event) => {
   op.value.toggle(event);
 }
-
 
 const selectedCity = ref();
 const cities = ref([
@@ -35,44 +33,51 @@ const cities = ref([
   { name: 'Most Favorited', code: 'IST' },
 ]);
 
+const categories = ref([
+  { name: "Accounting", key: "A" },
+  { name: "Marketing", key: "M" },
+  { name: "Production", key: "P" },
+  { name: "Research", key: "R" }
+]);
+
+const selectedCategories = ref(['Marketing']);
+
+
 </script>
 
 <template>
 
   <Popover ref="op">
-    <div class="flex flex-col gap-4 w-[25rem]">
-      <div>
-        <span class="font-medium block mb-2">Share this document</span>
-        <InputGroup>
-          <InputText value="https://primevue.org/12323ff26t2g243g423g234gg52hy25XADXAG3" readonly class="w-[25rem]">
-          </InputText>
-          <InputGroupAddon>
-            <i class="pi pi-copy"></i>
-          </InputGroupAddon>
-        </InputGroup>
+    <div class="custom-dropdown">
+      <div class="block-search">
+        <span class="filter-text">Filter</span>
       </div>
-      <div>
-        <span class="font-medium block mb-2">Invite Member</span>
-        <InputGroup>
-          <InputText disabled />
-          <Button label="Invite" icon="pi pi-users"></Button>
-        </InputGroup>
+      <Divider />
+
+      <div class="block-search">
+        <span class="filter-text">Search Tags</span>
+        <IconField>
+          <InputText v-model="value1" placeholder="Search" />
+          <InputIcon class="pi pi-search" variant="filled" />
+        </IconField>
       </div>
-      <div>
-        <span class="font-medium block mb-2">Team Members</span>
-        <ul class="list-none p-0 m-0 flex flex-col gap-4">
-          <li v-for="member in members" :key="member.name" class="flex items-center gap-2">
-            <img :src="`https://primefaces.org/cdn/primevue/images/avatar/${member.image}`" style="width: 32px" />
-            <div>
-              <span class="font-medium">{{ member.name }}</span>
-              <div class="text-sm text-surface-500 dark:text-surface-400">{{ member.email }}</div>
-            </div>
-            <div class="flex items-center gap-2 text-surface-500 dark:text-surface-400 ml-auto text-sm">
-              <span>{{ member.role }}</span>
-              <i class="pi pi-angle-down"></i>
-            </div>
-          </li>
-        </ul>
+      <Divider />
+
+      <div class="block-search">
+
+        <span class="filter-text">Category</span>
+        <div class="checkbox-area">
+          <div v-for="category of categories" :key="category.key" class="checkbox-item gap-2">
+            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.name" />
+            <label :for="category.key">{{ category.name }}</label>
+          </div>
+        </div>
+      </div>
+      <Divider />
+
+      <div class="block-search">
+        <a style="padding-right: 10px;" class="close" href="#" @click="">Clear</a>
+        <Button label="Save" />
       </div>
     </div>
   </Popover>
@@ -81,7 +86,6 @@ const cities = ref([
 
   <div class="flex">
     <div class="col-1">
-
     </div>
     <div class="col-11">
 
@@ -94,8 +98,7 @@ const cities = ref([
 
           </div>
           <div class="filter-popover">
-            <Button type="button" icon="pi pi-sliders-h" @click="toggle" />
-
+            <Button type="button" icon="pi pi-sliders-h" @click="toggle" outlined />
           </div>
         </div>
       </div>
@@ -130,13 +133,63 @@ const cities = ref([
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 
 .deck-filter {
   display: flex;
+
 }
 
-.deck-filter {
-  padding-top: 15px;
+.filter-text {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 36px;
+  text-align: center;
+}
+
+.close {
+  color: gray;
+  font-size: 14px;
+  font-weight: 700;
+  /* font-style: italic; */
+  text-decoration: underline;
+  padding-top: 25px;
+}
+
+.custom-dropdown {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-around; */
+  /* align-items: center; */
+}
+
+.block-search {
+  text-align: center;
+  padding: 10px 0;
+  /* gap: 5px; */
+}
+
+.checkbox-area {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  /* justify-content: start; */
+  /* padding: 10px; */
+}
+
+.checkbox-item {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+:deep(.p-divider-horizontal) {
+  margin: 0;
+}
+
+:deep(.p-divider-horizontal:before) {
+  /* border-color: #000; */
+  border: 1px solid rgb(150 150 150 / 50%)
 }
 </style>
