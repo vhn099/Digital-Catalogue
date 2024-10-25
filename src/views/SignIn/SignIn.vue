@@ -181,14 +181,15 @@ const handleSubmit = async () => {
     if (isValid) {
         if (typeof window.grecaptcha === 'undefined') {
             alert('reCAPTCHA is not loaded');
+            spinner.value = false;
             return;
         }
         const captchaResponse = grecaptcha.getResponse();
 
         if (!captchaResponse) {
             document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
+            spinner.value = false;
             return;
-
         }
         const username = formFields.username;
         const password = formFields.password;
