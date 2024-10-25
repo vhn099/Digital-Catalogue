@@ -20,13 +20,14 @@ import { FirebaseStorage } from "@/lib/Storage";
 import FileUpload from "primevue/fileupload";
 import Textarea from "primevue/textarea";
 import Select from "primevue/select";
+import 'primeicons/primeicons.css';
+import InputChips from "primevue/inputchips";
 
 const formFields = reactive({
     id: '',
     title: '',
     detail_description: '',
-    order: '',
-    category_id: '',
+    category_id: null,
     deck_highlight: '',
     deck_images: [],
     pdf: '',
@@ -63,13 +64,6 @@ const tableColumns = [
     {
         field: 'detail_description',
         label: 'Detail Description',
-        styles: {
-
-        }
-    },
-    {
-        field: 'order',
-        label: 'Order',
         styles: {
 
         }
@@ -173,9 +167,8 @@ const resetFormData = () => {
     formFields.id = '';
     formFields.title = '';
     formFields.detail_description = '';
-    formFields.category_id = '';
+    formFields.category_id = null;
     formFields.tag = '';
-    formFields.order = '';
     deck_highlight.value = null;
     deckHighlightPreview.value = null;
     deck_images.value = null;
@@ -214,7 +207,6 @@ const getDecks = async () => {
             id: deck.id,
             title: data.title,
             detail_description: data.detail_description,
-            order: data.order,
             category_id: data.category_id,
             category_name: categoryName,
             deck_highlight: data.deck_highlight,
@@ -239,7 +231,6 @@ const getCategories = async () => {
         const object = {
             id: category.id,
             name: data.name,
-            image: data.image,
         };
         categoryList.push(object);
     });
@@ -280,13 +271,13 @@ const submitForm = async () => {
     if (isValid || edit.value) {
         let deckHighlightImage = deckHighlightFile[0];
         let deckHighlightName = `${Math.floor(Math.random() * 60)}_${deckHighlightFile[0].name}_${new Date().toDateString()}`;
-        const deckHighlightURL = await FirebaseStorage.uploadFile(deckHighlightImage, deckHighlightName, 'deck/images');
+        const deckHighlightURL = await FirebaseStorage.uploadFile(deckHighlightName, deckHighlightImage, 'deck/images');
 
         let deckImagesURLs = [];
         for (let i = 0; i < deckImagesFile.length; i++) {
             let deckImagesImage = deckImagesFile[i];
             let deckImagesName = `${Math.floor(Math.random() * 60)}_${deckImagesFile[i].name}_${new Date().toDateString()}`;
-            const deckImagesURL = await FirebaseStorage.uploadFile(deckImagesImage, deckImagesName, 'deck/images');
+            const deckImagesURL = await FirebaseStorage.uploadFile(deckImagesName, deckImagesImage, 'deck/images');
             deckImagesURLs.push({
                 url: deckImagesURL,
                 name: deckImagesName,
@@ -295,7 +286,7 @@ const submitForm = async () => {
 
         let pdfFileUpload = pdfFile[0];
         let pdfFileUploadName = `${Math.floor(Math.random() * 60)}_${pdfFile[0].name}_${new Date().toDateString()}`;
-        const pdfFileUploadURL = await FirebaseStorage.uploadFile(pdfFileUpload, pdfFileUploadName, 'deck/pdf');
+        const pdfFileUploadURL = await FirebaseStorage.uploadFile(pdfFileUploadName, pdfFileUpload, 'deck/pdf');
 
         const deckFormData = getDeckFormData();
         let categoryID = deckFormData.category_id.id;
@@ -350,8 +341,10 @@ const editRow = (data) => {
     formFields.id = data.id;
     formFields.title = data.title;
     formFields.detail_description = data.detail_description;
-    formFields.order = data.order;
-    formFields.category_id = data.category_id;
+    formFields.category_id = {
+        id: data.category_id,
+        name: data.category_name,
+    };
     deckHighlightPreview.value = data.deck_highlight;
     formFields.deck_images = data.deck_images;
     formFields.pdf = data.pdf;
@@ -392,7 +385,7 @@ watch(visible, () => {
     <Toast />
     <div class="">
         <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Deck"'
-            :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            :style="{ width: '80vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <div class="form-container">
                 <form>
                     <div class="flex flex-col" v-if="edit">
@@ -482,9 +475,9 @@ watch(visible, () => {
 
                     <!-- Tag -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="tag">Tag <span class="required-icon">*</span></label>
-                        <InputText :fluid="true" placeholder="Tag" id="tag" v-model="formFields.tag"
-                            :invalid="v$.tag.$errors.length > 0" />
+                        <label class="form-label" for="tag">Tags <span class="required-icon">*</span></label>
+                        <InputChips v-model="formFields.tag" :invalid="v$.tag.$errors.length > 0" removable>
+                        </InputChips>
                         <small class="error-messages" v-if="v$.tag.$errors.length > 0">{{
                             v$.tag.$errors[0].$message }}</small>
                     </div>
@@ -539,9 +532,9 @@ watch(visible, () => {
                         <template #body="slotProps">
                             <img draggable="false" :src="slotProps.data[column.field]"
                                 v-if="column.field === 'deck_highlight'" width="64" />
-
-                                <!-- pi-file-pdf -->
-
+                            <p v-else-if="column.field === 'pdf'">
+                                <span v-if="slotProps.data[column.field]" class="pi pi-file-pdf"></span>
+                            </p>
                             <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
@@ -561,6 +554,15 @@ watch(visible, () => {
 </template>
 
 <style scoped>
+.fav-tag {
+    background: #999999C7;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    margin-right: 5px;
+    border-radius: 5px;
+}
+
 .form-label {
     margin-top: 10px;
 }

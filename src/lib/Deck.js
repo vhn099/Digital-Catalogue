@@ -64,6 +64,12 @@ export const DeckFirestore = {
         await updateDoc(doc(db, deckForm.id), {
           title: deckForm.title || "",
           detail_description: deckForm.detail_description || "",
+          category_id: deckForm.category_id || "",
+          deck_highlight: deckForm.deck_highlight || "",
+          deck_highlight_name: deckForm.deck_highlight_name || "",
+          deck_images: deckForm.deck_images || [],
+          pdf: deckForm.pdf || "",
+          tag: deckForm.tag || [],
           updated: deckForm.updated,
           updated_by: deckForm.updated_by,
         }).then((response) => {
