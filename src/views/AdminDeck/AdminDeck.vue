@@ -539,6 +539,9 @@ watch(visible, () => {
                         <template #body="slotProps">
                             <img draggable="false" :src="slotProps.data[column.field]"
                                 v-if="column.field === 'deck_highlight'" width="64" />
+
+                                <!-- pi-file-pdf -->
+
                             <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
