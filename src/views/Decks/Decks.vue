@@ -3,10 +3,10 @@
 import DockItem from '../../components/Dock.vue';
 import SectionItem from '../../components/Section.vue';
 import DeckItem from '../../components/DeckCard.vue';
-import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
+import Presentation from '@/assets/img/icon/presentation.png';
 
 import { ref } from 'vue';
-const sectionIcon = SupplyChainIcon;
+const sectionIcon = Presentation;
 const sectionText = "Decks";
 </script>
 
