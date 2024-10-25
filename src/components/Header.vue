@@ -13,7 +13,11 @@
         </div>
         <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1 my-nav-3">
             <Menubar :model="items" class="admin-menu" v-if="admin"/>
-            <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
+            <!-- <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" /> -->
+            <IconField>
+                        <InputText v-model="value1" placeholder="Search" />
+                        <InputIcon class="pi pi-search" variant="filled" />
+                    </IconField>
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
             <img draggable="false" width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
             <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
@@ -26,6 +30,9 @@
 import InputText from 'primevue/inputtext';
 import Avatar from 'primevue/avatar';
 import Menubar from 'primevue/menubar';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+
 
 import { onBeforeMount, onMounted, ref } from "vue";
 import router from '@/router';
