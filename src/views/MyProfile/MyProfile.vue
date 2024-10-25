@@ -134,7 +134,7 @@ watch(isResetPassWord, () => {
             </div>
         </div>
     </Dialog>
-    <div class="flex">
+    <div class="flex min-height-750">
         <div class="col-1">
 
         </div>

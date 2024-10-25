@@ -39,7 +39,7 @@ onMounted(() => {
   <DockItem></DockItem>
   <CarouselItem></CarouselItem>
 
-  <div class="flex">
+  <div class="flex min-height-750">
     <div class="col-1">
 
     </div>
