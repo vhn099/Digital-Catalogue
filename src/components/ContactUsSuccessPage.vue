@@ -7,7 +7,7 @@
     <div class="content-section">
         <p>
             We’ve received your details and our team will get back to you within 24-48 hours. Meanwhile, feel free to
-            explore more of our site, or contact us directly at support@example.com if you need immediate assistance.
+            explore more of our site, or contact us directly at info.au@admgroup.com if you need immediate assistance.
         </p>
 
     </div>
