@@ -16,12 +16,6 @@ defineProps({
     icon_text: {
         type: String,
     },
-    pageHeaderCSS: {
-        type: Object
-    },
-    pageHeader: {
-        type: String
-    },
     title: {
         type: String
     },
@@ -40,9 +34,6 @@ defineProps({
         <img :src="icon" width="25" height="25" draggable="false">
         <span>{{ icon_text }}</span>
     </div>
-    <span v-if="pageHeader" :style="{ ...pageHeaderCSS }">
-        {{ pageHeader }}
-    </span>
     <span class="my-second-line" v-if="title">
         {{ title }}
     </span>

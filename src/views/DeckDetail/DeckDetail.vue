@@ -5,17 +5,14 @@ import Galleria from 'primevue/galleria';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import { ref, onMounted } from "vue";
-import SectionIcon from '@/assets/img/homepage/support.png';
-
-import CapImage from '@/assets/img/carousel/CAP.png';
-import CarltonImage from '@/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png';
-import PepsiShirtImage from '@/assets/img/carousel/Pepsi_Shirt.png';
+import PresentationIcon from '@/assets/img/icon/presentation.png';
 
 onMounted(() => {
     
 });
-const sectionIcon = SectionIcon;
+const sectionIcon = PresentationIcon;
 const sectionText = "Deck";
+const deckDetailPageHeader = "Selected:";
 const isViewDeck = ref(false);
 
 const images = [
@@ -67,7 +64,7 @@ function viewDeck() {
 
         </div>
         <div class="col-11">
-            <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
+            <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="deckDetailPageHeader"></SectionItem>
 
             <!-- https://pdfobject.com/guide/quick-start.html -->
             <div v-if="!isViewDeck" class="deck-canva">

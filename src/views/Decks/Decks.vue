@@ -34,6 +34,7 @@ const cities = ref([
   { name: 'Latest Update', code: 'LDN' },
   { name: 'Most Favorited', code: 'IST' },
 ]);
+const deckSectionPageHeader = "Last Decks";
 
 </script>
 
@@ -87,7 +88,7 @@ const cities = ref([
 
       <!-- <SectionItem></SectionItem> -->
       <div class="deck-section-filter">
-        <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
+        <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="deckSectionPageHeader"></SectionItem>
         <div class="deck-filter gap-2">
           <div class="filter-input">
             <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="Sort By:" />
