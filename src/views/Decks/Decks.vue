@@ -89,9 +89,14 @@ const cities = ref([
       <div class="deck-section-filter">
         <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
         <div class="deck-filter gap-2">
-          <Select class="mt-1 pt-4" v-model="selectedCity" :options="cities" optionLabel="name"
-            placeholder="Sort By:" />
-          <Button class="mt-1 pt-4" type="button" icon="pi pi-sliders-h" @click="toggle" />
+          <div class="filter-input">
+            <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="Sort By:" />
+
+          </div>
+          <div class="filter-popover">
+            <Button type="button" icon="pi pi-sliders-h" @click="toggle" />
+
+          </div>
         </div>
       </div>
 
@@ -125,5 +130,13 @@ const cities = ref([
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.deck-filter {
+  display: flex;
+}
+
+.deck-filter {
+  padding-top: 15px;
 }
 </style>
