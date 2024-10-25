@@ -211,7 +211,7 @@ watch(isResetPassWord, () => {
 }
 
 .space-box {
-    height: 300px;
+    height: 400px;
 }
 
 .form-captcha {

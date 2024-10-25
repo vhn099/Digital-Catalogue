@@ -79,7 +79,7 @@ const position = 'left';
 .myDock {
     z-index: 99999;
     top: 150px !important;
-    height: inherit;
+    height: 600px;
     display: block;
 }
 
@@ -117,6 +117,5 @@ const position = 'left';
 :deep(.p-dock-item-link) span {
     font-size: 10px;
     font-weight: 700;
-
 }
 </style>
