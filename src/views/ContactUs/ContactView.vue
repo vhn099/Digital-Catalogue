@@ -120,7 +120,7 @@ async function submitForm() {
           <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="messagePageHeader"/>
           <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
-            <div class="flex">
+            <div class="flex pt-5">
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
                   <InputText id="in_label" :fluid="true" v-model="firstName" autocomplete="off" maxlength="20" />
@@ -162,7 +162,7 @@ async function submitForm() {
               process the personal information submitted above to provide you the content requested</span>
 
             <div class="flex">
-              <div class="flex-1 p-2 pb-4">
+              <div class="flex-1 p-2 pb-5">
                 <Button label="Submit" :fluid="true" @click="submitForm()" raised />
               </div>
               <div class="flex-1 p-2">
