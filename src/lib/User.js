@@ -67,8 +67,8 @@ export const UserFirestore = {
 
     async getUsers() {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
-        const userQuery = query(db, where("disabled", '==', false));
-        let snapshot = await getDocs(userQuery);
+        // const userQuery = query(db, where("disabled", '==', false));
+        let snapshot = await getDocs(db);
         return snapshot.docs;
     },
 
@@ -140,7 +140,12 @@ export const UserFirestore = {
         try {
             const docRef = getDoc(doc(db, userForm.id));
             if ((await docRef).exists()) {
+                let disabled = false;
+                if (userForm.deactive.length > 0) {
+                    disabled = true;
+                }
                 await updateDoc(doc(db, userForm.id), {
+                    disabled: disabled,
                     isAdmin: userForm.isAdmin || false,
                     firstname: userForm.firstname || "",
                     lastname: userForm.lastname || "",

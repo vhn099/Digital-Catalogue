@@ -24,6 +24,11 @@ export const useAppStore = defineStore("storeId", {
           CATEGORY_UPDATED: `Update category with name ${data} successfully`,
           CATEGORY_NOT_EXISTED: `Name ${data} is not existed`,
           CATEGORY_DELETED: "Delete category successfully",
+
+          DECK_CREATED: `Created deck with ${data}`,
+          DECK_UPDATED: `Update deck with name ${data} successfully`,
+          DECK_NOT_EXISTED: `Name ${data} is not existed`,
+          DECK_DELETED: "Delete deck successfully",
         }
       },
       ADMIN_SITE: {

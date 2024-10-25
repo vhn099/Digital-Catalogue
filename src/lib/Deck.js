@@ -14,29 +14,15 @@ import {
 
 import { useAppStore } from "@/stores";
 
-export const CategoryFirestore = {
-  async getCategoryName(id) {
-    const docSnap = await getDoc(
-      doc(getFirestore(), useAppStore().getCategoriesCollection, id)
-    );
-    if (docSnap.exists()) {
-      return docSnap.data().name;
-    } else {
-      return "Category does not exsist";
-    }
-  },
-
-  async getCategories() {
-    const db = collection(
-      getFirestore(),
-      useAppStore().getCategoriesCollection
-    );
+export const DeckFirestore = {
+  async getDecks() {
+    const db = collection(getFirestore(), useAppStore().getDecksCollection);
     let snapshot = await getDocs(db);
 
     return snapshot.docs;
   },
 
-  async createCategory(categoryForm) {
+  async createDeck(deckForm) {
     const result = {
       status: "success",
       message: "",
@@ -47,14 +33,14 @@ export const CategoryFirestore = {
       // Set user with custom sys_id in firestore
       const colRef = collection(
         getFirestore(),
-        useAppStore().getCategoriesCollection
+        useAppStore().getDecksCollection
       );
-      const dataObj = categoryForm;
+      const dataObj = deckForm;
 
       await addDoc(colRef, dataObj).then(async (response) => {
         result.message = useAppStore().getMessageMaster.DATA(
-          dataObj.name
-        ).CATEGORY_CREATED;
+          dataObj.title
+        ).DECK_CREATED;
       });
     } catch (error) {
       result.status = "error";
@@ -64,11 +50,8 @@ export const CategoryFirestore = {
     return result;
   },
 
-  async updateCategory(categoryForm) {
-    const db = collection(
-      getFirestore(),
-      useAppStore().getCategoriesCollection
-    );
+  async updateDeck(deckForm) {
+    const db = collection(getFirestore(), useAppStore().getDecksCollection);
     const result = {
       status: "success",
       message: "",
@@ -76,23 +59,22 @@ export const CategoryFirestore = {
     };
 
     try {
-      const docRef = getDoc(doc(db, categoryForm.id));
+      const docRef = getDoc(doc(db, deckForm.id));
       if ((await docRef).exists()) {
-        await updateDoc(doc(db, categoryForm.id), {
-          name: categoryForm.name || "",
-          image: categoryForm.image || "",
-          image_name: categoryForm.image_name || "",
-          updated: categoryForm.updated,
-          updated_by: categoryForm.updated_by,
+        await updateDoc(doc(db, deckForm.id), {
+          title: deckForm.title || "",
+          detail_description: deckForm.detail_description || "",
+          updated: deckForm.updated,
+          updated_by: deckForm.updated_by,
         }).then((response) => {
           result.message = useAppStore().getMessageMaster.DATA(
-            categoryForm.name
-          ).CATEGORY_UPDATED;
+            deckForm.title
+          ).DECK_UPDATED;
         });
       } else {
         result.message = useAppStore().getMessageMaster.DATA(
-          categoryForm.name
-        ).CATEGORY_NOT_EXISTED;
+          deckForm.title
+        ).DECK_NOT_EXISTED;
         result.status = "warning";
       }
     } catch (error) {
@@ -103,7 +85,7 @@ export const CategoryFirestore = {
     return result;
   },
 
-  async deleteCategory(id) {
+  async deleteDeck(id) {
     const result = {
       status: "success",
       message: "",
@@ -112,10 +94,9 @@ export const CategoryFirestore = {
 
     try {
       await deleteDoc(
-        doc(getFirestore(), useAppStore().getCategoriesCollection, id)
+        doc(getFirestore(), useAppStore().getDecksCollection, id)
       ).then((response) => {
-        result.message =
-          useAppStore().getMessageMaster.DATA("").CATEGORY_DELETED;
+        result.message = useAppStore().getMessageMaster.DATA("").DECK_DELETED;
       });
     } catch (error) {
       result.status = "error";

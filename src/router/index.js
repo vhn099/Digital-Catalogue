@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/Home/HomeView.vue'
 import SignIn from '../views/SignIn/SignIn.vue'
 import ContactView from '../views/ContactUs/ContactView.vue'
+import SearchView from '../views/SearchPage/SearchPage.vue'
 import UserView from '../views/User/UserView.vue'
 import Decks from '../views/Decks/Decks.vue'
 import Category from '../views/Category/Category.vue'
@@ -46,8 +47,7 @@ const router = createRouter({
       meta: {
         pageTitle: "Sign In",
       }
-    },
-    {
+    },{
       path: '/contact-us',
       name: 'contactus',
       component: ContactView,
@@ -56,8 +56,16 @@ const router = createRouter({
         pageTitle: 'Contact Us',
         adminSite: false
       }
-    },
-    {
+    },{
+      path: '/search',
+      name: 'search',
+      component: SearchView,
+      meta: {
+        requireAuth: true,
+        pageTitle: 'Search',
+        adminSite: false
+      }
+    },{
       path: '/admin/users',
       name: 'adminusers',
       component: UserView,
@@ -171,15 +179,25 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const cookie = UserFirestore.getCookie("user-auth");
   let currentUser = "";
+  let disabled = false;
+  let isAdmin = false;
   if (COMMON_FUNCTIONS.isJSONString(cookie)) {
     currentUser = JSON.parse(cookie); // Check custom authen of users.
+    if (currentUser.userData) {
+      disabled = currentUser.userData.disabled || false;
+      isAdmin = currentUser.userData.isAdmin || false;
+    }
   }
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
   const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
+  if (disabled) {
+    next('sign-in');
+  }
+
   if (requireAuth && !currentUser) { // User is not authen will be redirected to sign in page
     next('/sign-in');
-  } else if (requireAuth && requireAdmin && !currentUser.userData.isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
+  } else if (requireAuth && requireAdmin && !isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
     next('/home');
   } else if (currentUser && !requireAuth) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
     next('/home');

@@ -19,6 +19,7 @@ import { useAppStore } from '@/stores';
 import { UserFirestore } from '@/lib/User';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
     fontSize: "62px",
@@ -37,6 +38,7 @@ const formFields = reactive({
 const formForgotPW = reactive({
     emailInput: ''
 });
+const spinner = ref(false);
 const isSignIn = ref(true);
 const isForgotPassword = ref(false);
 const isSendLink = ref(false);
@@ -95,11 +97,12 @@ async function sendLink() {
             return;
         }
         const emailExists = await CheckValitedEmail(formForgotPW.emailInput);
+        const currentDomain = window.location.origin;
 
         if (emailExists) {
             try {
                 const actionCodeSettings = {
-                    url: 'http://localhost:3000/sign-in',
+                    url: `${currentDomain}/sign-in`, // Make sure this domain flexible on local and firebase hosting.
                     handleCodeInApp: true,
                 };
                 const x = await sendPasswordResetEmail(auth, formForgotPW.emailInput, actionCodeSettings);
@@ -173,18 +176,20 @@ const renderRecaptcha = (id) => {
 };
 
 const handleSubmit = async () => {
+    spinner.value = true;
     const isValid = await v$.value.$validate();
     if (isValid) {
         if (typeof window.grecaptcha === 'undefined') {
             alert('reCAPTCHA is not loaded');
+            spinner.value = false;
             return;
         }
         const captchaResponse = grecaptcha.getResponse();
 
         if (!captchaResponse) {
             document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
+            spinner.value = false;
             return;
-
         }
         const username = formFields.username;
         const password = formFields.password;
@@ -216,6 +221,7 @@ const handleSubmit = async () => {
     } else {
         console.log('Invalid form');
     }
+    spinner.value = false;
 };
 const focusPassword = () => {
     document.getElementById('password').firstChild.focus()
@@ -236,6 +242,7 @@ onMounted(async () => {
 
 <template>
     <Toast />
+    <LoadingSpinner v-if="spinner"/>
     <div class="center-container">
         <div class="login-container">
             <!-- Left side - Login Form -->
