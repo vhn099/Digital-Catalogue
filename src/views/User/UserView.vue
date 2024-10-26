@@ -160,8 +160,7 @@ const getUserFormData = () => {
         userForm.created_by = getAuth().currentUser.email;
     }
     return userForm;
-}
-
+};
 const getUsers = async () => {
     const userList = [];
     (await UserFirestore.getUsers()).forEach(user => {

@@ -4,14 +4,14 @@
         :showIndicatorsOnItem="inside" :indicatorsPosition="position">
         <template #item="slotProps">
 
-            <div class="slideshow-canva">
+            <div class="slideshow-canva" :style="{backgroundColor: `${slotProps.item.background_color}`}">
                 <div class="slideshow-text">
-                    <span class="line-1">New Collection Just In!</span>
-                    <span class="line-2">Get Yours Now with an Exclusive Discount!</span>
+                    <span class="line-1">{{ slotProps.item.banner_title }}</span>
+                    <span class="line-2">{{ slotProps.item.banner_description }}</span>
                     <Button @click="viewDeck" label="View Deck" />
                 </div>
                 <div class="slideshow-image">
-                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.itemImageSrc" />
+                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.image" />
                 </div>
             </div>
 
@@ -115,7 +115,6 @@ onMounted(async () => {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    background: linear-gradient(90deg, #FC3134 0%, #7B0E0F 100%);
 }
 
 .slideshow-text {

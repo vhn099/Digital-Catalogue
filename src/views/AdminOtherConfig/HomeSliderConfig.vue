@@ -3,20 +3,27 @@ import { OtherConfigFirestore } from '@/lib/OtherConfig';
 import { FilterMatchMode } from '@primevue/core';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import { getAuth } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import Button from 'primevue/button';
 import ColorPicker from 'primevue/colorpicker';
 import Column from 'primevue/column';
+import ConfirmDialog from 'primevue/confirmdialog';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
 import FileUpload from 'primevue/fileupload';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
+import Toast from 'primevue/toast';
+import { useConfirm } from 'primevue/useconfirm';
+import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 const tableColumns = [
     {
-        field: 'img',
+        field: 'image',
         label: 'Image',
         styles: {
 
@@ -76,22 +83,25 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const datatable = ref();
-const homeSliders = ref();
+const homeSliders = ref([]);
 const visible = ref();
 const edit = ref();
 const formFields = reactive({
     id: '',
     banner_title: '',
     banner_description: '',
-    background_color: "#ff0000",
+    background_color: "ff0000",
     deck_id: '',
     order: 0
 });
 const imagePreviewer = ref(null);
+const image = ref(null);
 /* REF DEFINITION END */
 
 const v$ = useVuelidate(rules, formFields);
 const imageV$ = useVuelidate(imageRule, { imagePreviewer });
+const toast = useToast();
+const confirm = useConfirm();
 
 /* FUNCTIONS START */
 const openModal = () => {
@@ -102,12 +112,83 @@ const closeModal = () => {
     visible.value = false;
     edit.value = false;
 };
+const getSliderFormData = () => {
+    const sliderForm = {};
+    Object.keys(formFields).forEach(key => {
+        sliderForm[key] = formFields[key];
+    });
+    sliderForm.updated = Timestamp.now().toDate();
+    sliderForm.updated_by = getAuth().currentUser.email;
+    if (!edit.value) {
+        sliderForm.created = Timestamp.now().toDate();
+        sliderForm.created_by = getAuth().currentUser.email;
+    }
+    const imageFile = image.value.files;
+    sliderForm.image = {};
+    if (imageFile.length != 0) {
+        sliderForm.image.image_data = imageFile[0],
+            sliderForm.image.image_name = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
+    }
+    return sliderForm;
+};
+const deleteRow = (data) => {
+    confirm.require({
+        message: 'Do you want to delete this slider ?',
+        header: 'ATTENTION',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: async () => {
+            emits('setLoading', true);
+            const result = await OtherConfigFirestore.deleteSlider(data.id, data.image_name);
+            emits('setLoading', false);
+            toast.add({
+                summary: 'System Message',
+                severity: result.status,
+                detail: result.message,
+                life: 3000 // 3s
+            });
+            homeSliders.value = homeSliders.value.filter(slider => {
+                return slider.id !== data.id;
+            });
+        },
+        reject: () => {
+
+        }
+    })
+};
 const submitForm = async () => {
+    emits('setLoading', true);
     const isValid = await v$.value.$validate();
     const imageValid = await imageV$.value.$validate();
-    if (isValid) {
-        console.log("WORKED");
+    if (isValid && imageValid) {
+        let result = {};
+        const formData = getSliderFormData();
+        if (edit.value) {
+            // result = await OtherConfigFirestore.updateUser(formData);
+        } else {
+            result = await OtherConfigFirestore.addSliders(formData);
+        }
+        toast.add({
+            summary: 'System Message',
+            severity: result.status,
+            detail: result.message,
+            life: 3000 // 3s
+        });
+        if (result.status === 'success') {
+            // resetFormData();
+            visible.value = false;
+            // categories.value = await getCategories();
+        }
     }
+    emits('setLoading', false);
 };
 const getHomeSliders = async () => {
     const sliderList = [];
@@ -116,6 +197,7 @@ const getHomeSliders = async () => {
         const object = {
             id: slider.id,
             image: data.image,
+            image_name: data.image_name,
             banner_title: data.banner_title,
             banner_description: data.banner_description,
             order: data.order,
@@ -144,9 +226,13 @@ const onFileSelected = (event) => {
 onMounted(async () => {
     homeSliders.value = await getHomeSliders();
 });
+
+const emits = defineEmits(['setLoading']);
 </script>
 
 <template>
+    <Toast />
+    <ConfirmDialog />   
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Slider"'
         :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-container">
@@ -158,7 +244,8 @@ onMounted(async () => {
 
                 <div class="flex flex-col">
                     <label class="form-label" for="banner_title">Image<span class="required-icon">*</span></label>
-                    <img draggable="false" v-if="imagePreviewer" :src="imagePreviewer" alt="Image" width="64" />
+                    <img draggable="false" v-if="imagePreviewer" :src="imagePreviewer" alt="Image" width="64"
+                        height="64" style="object-fit: contain;" />
                     <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="1000000"
                         accept="image/*" />
                     <small class="error-messages" v-if="imageV$.imagePreviewer.$errors.length > 0">{{
@@ -177,7 +264,7 @@ onMounted(async () => {
                     <label class="form-label" for="banner_description">Line 2<span
                             class="required-icon">*</span></label>
                     <InputText :fluid="true" placeholder="Line 2" id="banner_description"
-                        v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0"/>
+                        v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0" />
                     <small class="error-messages" v-if="v$.banner_title.$errors.length > 0">{{
                         v$.banner_description.$errors[0].$message }}</small>
                 </div>
@@ -185,6 +272,12 @@ onMounted(async () => {
                 <div class="flex flex-col">
                     <label class="form-label" for="background_color">Background Color</label>
                     <ColorPicker id="background_color" v-model="formFields.background_color" />
+                </div>
+
+                <div class="flex flex-col">
+                    <label class="form-label" for="order">Order</label>
+                    <InputNumber id="order" inputId="order" :min="0" :max="1000" v-model="formFields.order"
+                        mode="decimal" :fluid="false" />
                 </div>
             </form>
 
@@ -222,14 +315,15 @@ onMounted(async () => {
         <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
             :style="{ ...column.styles }">
             <template #body="slotProps">
-                <p>{{ slotProps.data[column.field] }}</p>
+                <img draggable="false" :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64" />
+                <p v-else>{{ slotProps.data[column.field] }}</p>
             </template>
         </Column>
         <Column header="Actions">
             <template #body="{ data }">
                 <div class="actions">
-                    <!-- <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
-                                    severity="warn" /> -->
+                    <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
+                                    severity="warn" />
                     <Button icon="pi pi-pencil" aria-label="Update" rounded />
                 </div>
             </template>

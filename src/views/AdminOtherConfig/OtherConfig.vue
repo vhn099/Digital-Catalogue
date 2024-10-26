@@ -1,4 +1,5 @@
 <script setup>
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ColorPicker from 'primevue/colorpicker';
 import Tab from 'primevue/tab';
 import TabList from 'primevue/tablist';
@@ -28,13 +29,20 @@ const tabs = ref([
         }
     }
 ]);
-const color = ref();
+const spinner = ref(false);
 
 /* REF DEFINITION END */
+
+/* FUNCTIONS START */
+const setLoading = (value) => {
+    spinner.value = value;
+}
+/* FUNCTIONS END */
 
 </script>
 
 <template>
+    <LoadingSpinner v-if="spinner"/>
     <div class="card">
         <Tabs value="0">
             <TabList>
@@ -42,7 +50,7 @@ const color = ref();
             </TabList>
             <TabPanels>
                 <TabPanel v-for="tab in tabs" :key="tab.content.tabId" :value="tab.value">
-                    <component v-bind:is="tab.content.component" :key="tab.content.tabId"/>
+                    <component @setLoading="setLoading" v-bind:is="tab.content.component" :key="tab.content.tabId"/>
                 </TabPanel>
             </TabPanels>
         </Tabs>

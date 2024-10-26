@@ -30,6 +30,10 @@ export const useAppStore = defineStore("storeId", {
           DECK_UPDATED: `Update deck with name ${data} successfully`,
           DECK_NOT_EXISTED: `Name ${data} is not existed`,
           DECK_DELETED: "Delete deck successfully",
+
+          SLIDER_CREATED: "Created slider successfully",
+          IMAGE_SLIDER_ERROR: `No images were found during the upload process`,
+          SLIDER_DELETED: "Deleted slider successfully"
         }
       },
       ADMIN_SITE: {

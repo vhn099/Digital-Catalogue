@@ -36,7 +36,6 @@ function prev() {
 };
 
 function moveLeft() {
-  console.log(innerStyles)
   innerStyles.value = {
     transform: `translateX(-${step.value})
                     translateX(-${step.value})`
@@ -92,7 +91,6 @@ async function getCategories() {
     categoryList.push(object);
   });
 
-  // console.log('categoryList', categoryList);
   return categoryList;
 };
 
