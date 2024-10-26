@@ -176,6 +176,10 @@ onMounted(async () => {
   cursor: pointer;
 }
 
+.card:hover{
+  background-color: var(--p-button-secondary-hover-background);
+}
+
 
 .cate-item {
   width: 100%;
