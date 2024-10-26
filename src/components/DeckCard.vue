@@ -78,6 +78,7 @@ const backgroundImage = (img) => {
     font-weight: 600;
     margin-left: 5px;
     border-radius: 25px;
+    cursor: pointer;
 }
 
 .deck-name {
@@ -85,6 +86,12 @@ const backgroundImage = (img) => {
     font-weight: 500;
     line-height: 54px;
     cursor: pointer;
+    padding: 0 10px;
+}
+
+.deck-name:hover {
+    background-color: rgba(115, 38, 217, 0.1);
+    border-radius: 20px;
 }
 
 .my-card-deck {
