@@ -78,7 +78,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/decks',
+      path: '/decks/:cateID?',
       name: 'decks',
       component: Decks,
       meta: {

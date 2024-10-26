@@ -20,6 +20,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
+import router from '@/router';
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
@@ -62,9 +63,9 @@ const favoriteFn = async (id) => {
   console.log('called' + id);
 };
 
-const getDecks = async () => {
+const getDecks = async (cateID) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getDecks();
+  const decksSnapshot = await DeckFirestore.getDecks(cateID);
   for (const deck of decksSnapshot) {
     const data = deck.data();
     const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
@@ -90,9 +91,10 @@ const getDecks = async () => {
 };
 
 onMounted(async () => {
-    email.value = getAuth().currentUser.email;
+  email.value = getAuth().currentUser.email;
+  const { params } = router.currentRoute.value; // open from category
 
-  const decks = await getDecks();
+  const decks = await getDecks(params.cateID);
   for (let i = 0; i < decks.length; i++) {
     if (i < 2) {
       top_decks.value.push(decks[i]);

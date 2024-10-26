@@ -27,9 +27,12 @@ export const DeckFirestore = {
     }
   },
 
-  async getDecks() {
+  async getDecks(cateID) {
     const db = collection(getFirestore(), useAppStore().getDecksCollection);
-    let snapshot = await getDocs(query(db, orderBy('updated', 'desc')));
+    const docQuery = cateID
+      ? query(db, orderBy("updated", "desc"), where("category_id", "==", cateID))
+      : query(db, orderBy("updated", "desc"));
+    let snapshot = await getDocs(docQuery);
 
     return snapshot.docs;
   },
