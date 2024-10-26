@@ -119,10 +119,33 @@ const position = 'left';
 }
 
 
-:deep(.p-dock-item-link) img:hover {
+/* Cực khổ vãi cái lồn, xin đừng đụng vào CSS này */
+:deep(.p-dock-list) li:nth-child(1):hover img {
     background-color: #7326D9;
     border-radius: 50px;
+    content: url('../assets/img/icon/home_white.png');
 }
+:deep(.p-dock-list) li:nth-child(2):hover img {
+    background-color: #7326D9;
+    border-radius: 50px;
+    content: url('../assets/img/icon/supply-chain_white.png');
+}
+:deep(.p-dock-list) li:nth-child(3):hover img {
+    background-color: #7326D9;
+    border-radius: 50px;
+    content: url('../assets/img/icon/presentation_white.png');
+}
+:deep(.p-dock-list) li:nth-child(4):hover img {
+    background-color: #7326D9;
+    border-radius: 50px;
+    content: url('../assets/img/icon/support_white.png');
+}
+:deep(.p-dock-list) li:nth-child(5):hover img {
+    background-color: #7326D9;
+    border-radius: 50px;
+    content: url('../assets/img/icon/logout_white.png');
+}
+
 
 
 :deep(.p-dock-item-link) span {
