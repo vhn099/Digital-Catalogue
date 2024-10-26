@@ -28,6 +28,7 @@ export const OtherConfigFirestore = {
                     banner_title: sliderForm.banner_title,
                     banner_description: sliderForm.banner_description,
                     background_color: `#${sliderForm.background_color}`,
+                    deck_id: sliderForm.deck_id,
                     order: sliderForm.order,
                     created: sliderForm.created,
                     created_by: sliderForm.created_by,
@@ -48,6 +49,9 @@ export const OtherConfigFirestore = {
         }
 
         return result;
+    },
+    updateSlider: async (formData) => {
+
     },
     deleteSlider: async (id, image_name) => {
         const result = {

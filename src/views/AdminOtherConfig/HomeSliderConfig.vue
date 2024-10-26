@@ -1,4 +1,5 @@
 <script setup>
+import { DeckFirestore } from '@/lib/Deck';
 import { OtherConfigFirestore } from '@/lib/OtherConfig';
 import { FilterMatchMode } from '@primevue/core';
 import useVuelidate from '@vuelidate/core';
@@ -16,10 +17,12 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
 import Toast from 'primevue/toast';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
+import _ from 'lodash';
 
 const tableColumns = [
     {
@@ -84,6 +87,7 @@ const filters = ref({
 });
 const datatable = ref();
 const homeSliders = ref([]);
+const decks = ref([]);
 const visible = ref();
 const edit = ref();
 const formFields = reactive({
@@ -91,9 +95,9 @@ const formFields = reactive({
     banner_title: '',
     banner_description: '',
     background_color: "ff0000",
-    deck_id: '',
     order: 0
 });
+const selectedDeck = ref();
 const imagePreviewer = ref(null);
 const image = ref(null);
 /* REF DEFINITION END */
@@ -125,6 +129,9 @@ const getSliderFormData = () => {
     }
     const imageFile = image.value.files;
     sliderForm.image = {};
+    if (!_.isEmpty(selectedDeck.value) && _.isArray(selectedDeck.value)) {
+        sliderForm.deck_id = selectedDeck.value[0].code;
+    }
     if (imageFile.length != 0) {
         sliderForm.image.image_data = imageFile[0],
             sliderForm.image.image_name = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
@@ -155,14 +162,41 @@ const deleteRow = (data) => {
                 detail: result.message,
                 life: 3000 // 3s
             });
-            homeSliders.value = homeSliders.value.filter(slider => {
-                return slider.id !== data.id;
-            });
+            // homeSliders.value = homeSliders.value.filter(slider => {
+            //     return slider.id !== data.id;
+            // });
         },
         reject: () => {
 
         }
     })
+};
+
+const resetFormData = () => {
+    formFields.id = '';
+    formFields.background_color = "ff0000";
+    formFields.banner_description = "";
+    formFields.banner_title = "";
+    formFields.order = 0;
+
+    imagePreviewer.value = null;
+};
+const editRow = (data) => {
+    formFields.id = data.id;
+    formFields.banner_title = data.banner_title;
+    formFields.banner_description = data.banner_description;
+    formFields.background_color = data.background_color;
+    if (data.deck_id) {
+        selectedDeck.value = decks.value.filter(deck => deck.id === data.deck_id);
+    } else {
+        selectedDeck.value = [];
+    }
+
+    formFields.order = data.order;
+    imagePreviewer.value = data.image;
+
+    visible.value = true;
+    edit.value = true;
 };
 const submitForm = async () => {
     emits('setLoading', true);
@@ -172,7 +206,7 @@ const submitForm = async () => {
         let result = {};
         const formData = getSliderFormData();
         if (edit.value) {
-            // result = await OtherConfigFirestore.updateUser(formData);
+            result = await OtherConfigFirestore.updateSlider(formData);
         } else {
             result = await OtherConfigFirestore.addSliders(formData);
         }
@@ -183,7 +217,7 @@ const submitForm = async () => {
             life: 3000 // 3s
         });
         if (result.status === 'success') {
-            // resetFormData();
+            resetFormData();
             visible.value = false;
             // categories.value = await getCategories();
         }
@@ -211,6 +245,17 @@ const getHomeSliders = async () => {
     });
     return sliderList;
 };
+const getDecks = async () => {
+    const deckList = [];
+    (await DeckFirestore.getDecks()).forEach(deck => {
+        const data = deck.data();
+        deckList.push({
+            name: data.title,
+            code: deck.id
+        });
+    });
+    return deckList;
+}
 const onFileSelected = (event) => {
     const file = event.files[0];
     const reader = new FileReader();
@@ -225,6 +270,13 @@ const onFileSelected = (event) => {
 
 onMounted(async () => {
     homeSliders.value = await getHomeSliders();
+    decks.value = await getDecks();
+});
+
+watch(visible, () => {
+    if (!visible) {
+        resetFormData();
+    }
 });
 
 const emits = defineEmits(['setLoading']);
@@ -232,7 +284,7 @@ const emits = defineEmits(['setLoading']);
 
 <template>
     <Toast />
-    <ConfirmDialog />   
+    <ConfirmDialog />
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Slider"'
         :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-container">
@@ -270,8 +322,16 @@ const emits = defineEmits(['setLoading']);
                 </div>
 
                 <div class="flex flex-col">
+                    <label class="form-label" for="banner_description">Linked Deck</label>
+                    <Select id="deck_id" v-model="selectedDeck" :options="decks" showClear optionLabel="name" />
+                </div>
+
+                <div class="flex flex-col">
                     <label class="form-label" for="background_color">Background Color</label>
-                    <ColorPicker id="background_color" v-model="formFields.background_color" />
+                    <div class="flex items-center">
+                        <ColorPicker id="background_color" v-model="formFields.background_color" />
+                        <InputText style="width: 115px" class="ml-2" v-model="formFields.background_color" />
+                    </div>
                 </div>
 
                 <div class="flex flex-col">
@@ -322,9 +382,8 @@ const emits = defineEmits(['setLoading']);
         <Column header="Actions">
             <template #body="{ data }">
                 <div class="actions">
-                    <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
-                                    severity="warn" />
-                    <Button icon="pi pi-pencil" aria-label="Update" rounded />
+                    <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded severity="warn" />
+                    <Button icon="pi pi-pencil" aria-label="Update" rounded @click="editRow(data)" />
                 </div>
             </template>
         </Column>
