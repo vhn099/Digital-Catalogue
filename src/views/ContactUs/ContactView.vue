@@ -109,7 +109,7 @@ async function submitForm() {
 
 <template>
   <DockItem></DockItem>
-  <div class="flex">
+  <div class="flex min-height-750">
     <div class="col-1">
 
     </div>
@@ -119,7 +119,7 @@ async function submitForm() {
           <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="messagePageHeader"/>
           <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
-            <div class="flex">
+            <div class="flex pt-5">
               <div class="flex-1 p-2">
                 <FloatLabel variant="in">
                   <InputText id="in_label" :fluid="true" v-model="firstName" autocomplete="off" maxlength="20" />
@@ -153,7 +153,7 @@ async function submitForm() {
                 <label for="in_label">Message here</label>
               </FloatLabel>
             </div>
-            <span class="p-2 span-text">admgroup.com is committed to protecting and respecting your privacy, and we’ll
+            <span class="p-2 pt-4 pb-4 span-text">admgroup.com is committed to protecting and respecting your privacy, and we’ll
               only use your personal
               information to administer your account and to provide the products and services you requested from us.
               From time to time, we would like to contact you about our products and services, as well as other content
@@ -161,7 +161,7 @@ async function submitForm() {
               process the personal information submitted above to provide you the content requested</span>
 
             <div class="flex">
-              <div class="flex-1 p-2">
+              <div class="flex-1 p-2 pb-5">
                 <Button label="Submit" :fluid="true" @click="submitForm()" raised />
               </div>
               <div class="flex-1 p-2">

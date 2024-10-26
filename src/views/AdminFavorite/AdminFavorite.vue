@@ -47,7 +47,7 @@ const filters = ref({
 
 <template>
     <div class="">
-        <div class="flex flex-col table-section">
+        <div class="flex flex-col table-section min-height-750">
             <div class="card">
                 <DataTable datakey="id" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
                     tableStyle="width: 100%"

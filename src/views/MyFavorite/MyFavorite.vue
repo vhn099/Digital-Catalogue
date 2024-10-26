@@ -76,7 +76,7 @@ onMounted(async () => {
 <template>
     <DockItem></DockItem>
 
-    <div class="flex">
+    <div class="flex min-height-750">
         <div class="col-1">
 
         </div>

@@ -102,14 +102,16 @@ onMounted(async () => {
 
   <DockItem></DockItem>
 
-  <div class="flex">
+  <div class="flex min-height-750">
     <div class="col-1">
     </div>
     <div class="col-11">
 
       <!-- <SectionItem></SectionItem> -->
       <div class="deck-section-filter">
-        <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="deckSectionPageHeader"></SectionItem>
+        <div>
+          <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="deckSectionPageHeader"></SectionItem>
+        </div>
         <div class="deck-filter gap-2">
           <div class="filter-input">
             <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="Sort By:" />
