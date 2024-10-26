@@ -457,6 +457,18 @@ onMounted(async () => {
     }
 }
 
+@media (max-width: 500px) {
+    .login-container {
+        flex-direction: column;
+        height: auto;
+        width: 100%;
+    }
+
+    .image-container {
+        height: 200px;
+    }
+}
+
 .back-router {
     padding-top: 20px;
     text-align: center;
