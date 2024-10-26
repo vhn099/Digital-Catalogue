@@ -30,7 +30,7 @@ import Chip from 'primevue/chip';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import router from '@/router';
-import { computed, defineEmits } from 'vue';
+// import { computed, defineEmits } from 'vue';
 
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 
