@@ -92,7 +92,8 @@ const backgroundImage = (img) => {
 }
 
 .deck-name:hover {
-    background-color: rgba(115, 38, 217, 0.1);
+    /* background-color: rgba(115, 38, 217, 0.1); */
+    background-color: var(--p-button-secondary-hover-background);
     border-radius: 20px;
 }
 
