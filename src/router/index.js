@@ -9,7 +9,7 @@ import Category from '../views/Category/Category.vue'
 import { UserFirestore } from '@/lib/User'
 import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
 import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
-import AdminContactEmail from '@/views/ContactEmail/OtherConfig.vue'
+import AdminOtherConfig from '@/views/AdminOtherConfig/OtherConfig.vue'
 import AdminEmailReceived from '@/views/EmailReceived/EmailReceivedView.vue'
 import { getAuth } from 'firebase/auth'
 import DeckDetail from '@/views/DeckDetail/DeckDetail.vue'
@@ -56,7 +56,8 @@ const router = createRouter({
         pageTitle: 'Contact Us',
         adminSite: false
       }
-    },{
+    },
+    {
       path: '/search',
       name: 'search',
       component: SearchView,
@@ -65,7 +66,8 @@ const router = createRouter({
         pageTitle: 'Search',
         adminSite: false
       }
-    },{
+    },
+    {
       path: '/admin/users',
       name: 'adminusers',
       component: UserView,
@@ -118,10 +120,10 @@ const router = createRouter({
     {
       path: '/admin/otherconfig',
       name: 'otherconfig',
-      component: AdminContactEmail,
+      component: AdminOtherConfig,
       meta: {
         requireAuth: true,
-        pageTitle: 'Contact Email Management',
+        pageTitle: 'Other Configs Management',
         adminSite: true
       }
     },

@@ -412,6 +412,7 @@ onMounted(async () => {
     border-radius: 5px;
 }
 
+/* DATATABLE CSS START */
 .table-section {
     padding: 20px;
 }
@@ -440,6 +441,7 @@ onMounted(async () => {
     display: flex;
     justify-content: center;
 }
+/* DATATABLE CSS END */
 
 .items-center {
     align-items: center;

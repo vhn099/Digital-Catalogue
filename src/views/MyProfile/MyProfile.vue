@@ -85,11 +85,13 @@ async function sendLink() {
         return;
     }
     try {
+        const currentDomain = window.location.origin;
         const actionCodeSettings = {
-            url: 'http://localhost:3000/sign-in',
+            url: `${currentDomain}/sign-in`,
             handleCodeInApp: true,
         };
         const x = await sendPasswordResetEmail(auth, email.value, actionCodeSettings);
+        // UserFirestore.setCookie("user-auth", "", 0);
     } catch (error) {
         console.log('Error: ' + error.message);
     }

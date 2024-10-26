@@ -1,6 +1,5 @@
 <template>
-
-    <Galleria :value="images" :numVisible="5" containerStyle="max-width: 100%; height: 425px" :showThumbnails="false"
+    <Galleria :value="sliders" :numVisible="5" containerStyle="max-width: 100%; height: 425px" :showThumbnails="false"
         :showIndicators="true" :circular="true" :autoPlay="true" :transitionInterval="3000"
         :showIndicatorsOnItem="inside" :indicatorsPosition="position">
         <template #item="slotProps">
@@ -34,24 +33,28 @@ import router from "@/router";
 import CapImage from '@/assets/img/carousel/CAP.png';
 import CarltonImage from '@/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png';
 import PepsiShirtImage from '@/assets/img/carousel/Pepsi_Shirt.png';
+import { OtherConfigFirestore } from "@/lib/OtherConfig";
 
 const position = ref('bottom');
-const images = [
-    {
-        itemImageSrc: CapImage,
-        alt: 'Description for Image 1',
-        title: 'Title 1'
-    }, {
-        itemImageSrc: CarltonImage,
-        alt: 'Description for Image 1',
-        title: 'Title 2'
-    }, {
-        itemImageSrc: PepsiShirtImage,
-        alt: 'Description for Image 1',
-        title: 'Title 3',
-        backgroundColor: ''
-    }
-];
+// const images = [
+//     {
+//         itemImageSrc: CapImage,
+//         alt: 'Description for Image 1',
+//         title: 'Title 1'
+//     },
+//     {
+//         itemImageSrc: CarltonImage,
+//         alt: 'Description for Image 1',
+//         title: 'Title 2'
+//     },
+//     {
+//         itemImageSrc: PepsiShirtImage,
+//         alt: 'Description for Image 1',
+//         title: 'Title 3',
+//         backgroundColor: ''
+//     }
+// ];
+const sliders = ref();
 const inside = ref(true);
 
 /* FUNCTIONS START */
@@ -60,8 +63,26 @@ const viewDeck = () => {
         name: 'decks'
     });
 };
+const getHomeSliders = async () => {
+    const sliderList = [];
+    (await OtherConfigFirestore.getHomeSliders()).forEach(slider => {
+        const data = slider.data();
+        const object = {
+            image: data.image,
+            banner_title: data.banner_title,
+            banner_description: data.banner_description,
+            background_color: data.background_color,
+        };
+        sliderList.push(object);
+    });
+    return sliderList;
+};
 /* FUNCTIONS END */
 
+
+onMounted(async () => {
+    sliders.value = await getHomeSliders();
+});
 </script>
 
 <style scoped>

@@ -18,11 +18,15 @@ import { onMounted, ref } from 'vue';
 import { db } from '@/main';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { DeckFirestore } from '@/lib/Deck';
+import { CategoryFirestore } from '@/lib/Category';
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
 
 const op = ref();
+const top_decks = ref([]);
+const normal_decks = ref([]);
 
 const toggle = (event) => {
   op.value.toggle(event);
@@ -58,8 +62,44 @@ const favoriteFn = async (id) => {
   console.log('called' + id);
 };
 
+const getDecks = async () => {
+  const deckList = [];
+  const decksSnapshot = await DeckFirestore.getDecks();
+  for (const deck of decksSnapshot) {
+    const data = deck.data();
+    const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
+    const object = {
+      id: deck.id,
+      title: data.title,
+      detail_description: data.detail_description,
+      category_id: data.category_id,
+      category_name: categoryName,
+      deck_highlight: data.deck_highlight,
+      deck_images: data.deck_images,
+      pdf: data.pdf,
+      tag: data.tag,
+      created: data.created ? data.created.toDate().toLocaleString() : '',
+      created_by: data.created_by || '',
+      updated: data.updated ? data.updated.toDate().toLocaleString() : '',
+      updated_by: data.updated_by || ''
+    };
+    deckList.push(object);
+  }
+
+  return deckList;
+};
+
 onMounted(async () => {
     email.value = getAuth().currentUser.email;
+
+  const decks = await getDecks();
+  for (let i = 0; i < decks.length; i++) {
+    if (i < 2) {
+      top_decks.value.push(decks[i]);
+    } else {
+      normal_decks.value.push(decks[i]);
+    }
+  }
 });
 </script>
 
@@ -124,22 +164,10 @@ onMounted(async () => {
       </div>
 
       <div class="card top-line">
-        <DeckItem @callFavoriteFn="favoriteFn"></DeckItem>
-        <DeckItem></DeckItem>
+        <DeckItem v-for="top_deck in top_decks" :data="top_deck" @callFavoriteFn="favoriteFn"></DeckItem>
       </div>
       <div class="card normal-line">
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
-        <DeckItem></DeckItem>
+        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
       </div>
     </div>
 
