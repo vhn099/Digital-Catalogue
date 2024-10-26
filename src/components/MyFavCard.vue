@@ -4,7 +4,7 @@ import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import router from '@/router';
-// import { defineEmits } from 'vue';
+import { defineEmits } from 'vue';
 
 defineProps({
     fav_id: {
