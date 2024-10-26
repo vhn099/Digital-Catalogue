@@ -4,8 +4,12 @@ import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import router from '@/router';
+import { defineEmits } from 'vue';
 
 defineProps({
+    fav_id: {
+        type: String,
+    },
     title: {
         type: String,
     },
@@ -30,6 +34,12 @@ const deckRouting = () => {
         name: 'decks'
     });
 }
+
+const emit = defineEmits(['callFunction']);
+
+const callDeleteFav = (id) => {
+  emit('callFunction', id);
+};
 /* FUNCTION END */
 </script>
 
@@ -52,7 +62,7 @@ const deckRouting = () => {
                 </p>
             </template>
             <template #footer>
-                <Button icon="pi pi-trash" severity="warn" class="w-full" @click="deleteFav()" />
+                <Button icon="pi pi-trash" severity="warn" class="w-full" @click="callDeleteFav(fav_id)" />
             </template>
         </Card>
 

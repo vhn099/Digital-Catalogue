@@ -49,3 +49,7 @@ body,html {
   display: flex;
   flex-wrap: wrap;
 }
+
+.min-height-750 {
+  min-height: 750px;
+}

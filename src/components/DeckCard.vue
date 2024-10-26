@@ -1,22 +1,19 @@
 <template>
     <div class="col">
-        <div class="my-card-deck">
+        <div class="my-card-deck" :style="backgroundImage(data.deck_highlight)" :key="data.id">
             <div class="deck-date">
-                <Chip label="Oct 2024" />
+                <Chip :label="data.created" />
             </div>
             <div class="deck-info">
                 <div class="deck-info-desc">
-                    <span class="deck-name" @click="routingDeck">Placeholder for the title of deck 1</span>
+                    <span class="deck-name" @click="routingDeck(data.id)">{{ data.title }}</span>
                     <div class="deck-tag gap-2">
-                        <Tag severity="secondary" value="#news"></Tag>
-                        <Tag severity="secondary" value="#news"></Tag>
-                        <Tag severity="secondary" value="#news"></Tag>
-                        <Tag severity="secondary" value="#news"></Tag>
+                        <Tag v-for="t in data.tag" severity="secondary" :value="'#' + t"></Tag>
                     </div>
                 </div>
                 <div class="deck-info-like">
                     <div class="button-like">
-                        <Button severity="secondary" label="Favourite" @click="favoriteRouting">
+                        <Button severity="secondary" label="Favourite" @click="favoriteFn('5KGLQrFEKbZBUmAcEYpd')">
                             <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" />
                             <label>Favourite</label>
                         </Button>
@@ -33,21 +30,35 @@ import Chip from 'primevue/chip';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import router from '@/router';
+import { computed, defineEmits } from 'vue';
 
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 
+defineProps({
+    data: {
+        type: Object,
+    }
+});
+
 /* FUNCTION START */
-const routingDeck = () => {
+const routingDeck = (deckID) => {
     router.push({
         name: 'deckdetail',
-        params: { id: 1 }
+        params: { id: deckID }
     });
 }
 
-const favoriteRouting = () => {
-    router.push({
-        name: 'myfavorite'
-    })
+const emit = defineEmits(['callFavoriteFn']);
+
+const favoriteFn = (id) => {
+  emit('callFavoriteFn', id);
+};
+
+const backgroundImage = (img) => {
+   return {
+     'background-image': `url(${img})`,
+     'background-size': 'cover'
+   }
 }
 /* FUNCTION END */
 </script>
@@ -81,7 +92,6 @@ const favoriteRouting = () => {
     min-width: 365px;
     background-color: bisque;
     border-radius: 10px;
-    background-image: url("../assets/img/demo/peroni.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

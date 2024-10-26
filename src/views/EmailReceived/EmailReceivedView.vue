@@ -225,7 +225,7 @@ watch(visible, () => {
         <Drawer v-model:visible="visible" header="USER FORM" class="w-30rem" position="right">
             
         </Drawer> -->
-        <div class="flex flex-col table-section">
+        <div class="flex flex-col table-section min-height-750">
             <!-- <Button class="add-user" @click="openDrawer">Add User</Button> -->
             <div class="card">
                 <DataTable datakey="id" :value="users" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"

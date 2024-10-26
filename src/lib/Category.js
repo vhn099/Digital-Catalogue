@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  orderBy,
   query,
   setDoc,
   updateDoc,
@@ -31,7 +32,7 @@ export const CategoryFirestore = {
       getFirestore(),
       useAppStore().getCategoriesCollection
     );
-    let snapshot = await getDocs(db);
+    let snapshot = await getDocs(query(db, orderBy('updated', 'desc')));
 
     return snapshot.docs;
   },
