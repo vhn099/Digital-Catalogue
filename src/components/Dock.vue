@@ -1,7 +1,10 @@
 <template>
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
-            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" draggable="false" />
+            <!-- <div> -->
+                <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon"
+                    draggable="false" />
+            <!-- </div> -->
             <span> {{ item.label }}</span>
         </template>
     </Dock>
@@ -111,8 +114,16 @@ const position = 'left';
 }
 
 :deep(.p-dock-item-link) img {
-    height: 50%;
+    height: 80%;
+    padding: 5px;
 }
+
+
+:deep(.p-dock-item-link) img:hover {
+    background-color: #7326D9;
+    border-radius: 50px;
+}
+
 
 :deep(.p-dock-item-link) span {
     font-size: 10px;
