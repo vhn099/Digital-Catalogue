@@ -10,9 +10,9 @@ import { db } from '@/main';
 import { getAuth } from 'firebase/auth';
 const sectionIcon = FavoriteBlackIcon;
 const sectionText = "My Favorite";
-const favorites = ref();
+const favorites = ref([]);
 const email = ref('');
-const decks = ref();
+const decks = ref([]);
 
 const deleteFav = async (id) => {
     const documentRef = doc(db, 'favorite', id);
@@ -25,7 +25,6 @@ const deleteFav = async (id) => {
 };
 
 const getFavorites = async () => {
-    const favoriteList = [];
     const favoriteTable = collection(db, 'favorite');
     const q = query(favoriteTable, where('userID', '==', email.value));
     try {
@@ -34,12 +33,12 @@ const getFavorites = async () => {
             const data = obj.data();
             const object = {
                 favID: obj.id,
-                userID: data.userID || '',
+                //userID: data.userID || '',
                 deckID: data.deckID || '',
             };
-            favoriteList.push(object);
+            favorites.value.push(object);
         });
-        return favoriteList;
+        //return favoriteList;
     } catch (error) {
         console.error('Error:', error);
         return false;
@@ -47,29 +46,28 @@ const getFavorites = async () => {
 
 };
 const getDeckInfo = async (arr) => {
-    const deckList = [];
-    for (let i in arr) {
-        const docRef = doc(db, 'decks', arr[i].deckID);
+    const promises = arr.map(async (fav) => {
+        const docRef = doc(db, 'decks', fav.deckID);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            const object = {
-                fav_id: arr[i].favID,
+            const obj = {
+                fav_id: fav.favID,
                 deck_image: docSnap.data().deck_highlight || '',
                 deck_name: docSnap.data().title || '',
                 deck_description: docSnap.data().detail_description || '',
                 deck_tag: docSnap.data().tag || '',
-            };
-            //console.log(object);
-            deckList.push(object);
+            }
+            decks.value.push(obj);
         }
-    }
-    return deckList;
+    });
+    // const results = await Promise.all(promises);
+    // decks.value = results.filter(doc => doc !== null);
 };
 
 onMounted(async () => {
     email.value = getAuth().currentUser.email;
-    favorites.value = await getFavorites();
-    decks.value = await getDeckInfo(favorites.value);
+    await getFavorites();
+    getDeckInfo(favorites.value);
 });
 </script>
 
