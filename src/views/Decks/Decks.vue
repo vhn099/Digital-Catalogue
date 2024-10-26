@@ -14,8 +14,11 @@ import Popover from 'primevue/popover';
 import Checkbox from 'primevue/checkbox';
 import Divider from 'primevue/divider';
 
+import { onMounted, ref } from 'vue';
+import { db } from '@/main';
+import { collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
-import { ref } from 'vue';
 const sectionIcon = Presentation;
 const sectionText = "Decks";
 
@@ -42,8 +45,22 @@ const categories = ref([
 ]);
 
 const selectedCategories = ref(['Marketing']);
+const favRecord = ref({
+  userID:'',
+  deckID: '',
+});
+const email = ref('');
 
+const favoriteFn = async (id) => {
+  favRecord.value.userID = email.value;
+  favRecord.value.deckID = id;
+  await addDoc(collection(db, 'favorite'), favRecord.value);
+  console.log('called' + id);
+};
 
+onMounted(async () => {
+    email.value = getAuth().currentUser.email;
+});
 </script>
 
 <template>
@@ -105,7 +122,7 @@ const selectedCategories = ref(['Marketing']);
       </div>
 
       <div class="card top-line">
-        <DeckItem></DeckItem>
+        <DeckItem @callFavoriteFn="favoriteFn"></DeckItem>
         <DeckItem></DeckItem>
       </div>
       <div class="card normal-line">

@@ -87,7 +87,6 @@ async function submitForm() {
     bodyReq.value.message.lastName = lastName;
     bodyReq.value.message.email = formFields.userEmail;
 
-    console.log(bodyReq.value);
     try {
       await addDoc(collection(db, 'mail'), bodyReq.value);
       //alert('Feedback sent successfully!');

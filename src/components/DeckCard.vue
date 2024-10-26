@@ -16,7 +16,7 @@
                 </div>
                 <div class="deck-info-like">
                     <div class="button-like">
-                        <Button severity="secondary" label="Favourite" @click="favoriteRouting">
+                        <Button severity="secondary" label="Favourite" @click="favoriteFn('5KGLQrFEKbZBUmAcEYpd')">
                             <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" />
                             <label>Favourite</label>
                         </Button>
@@ -33,6 +33,7 @@ import Chip from 'primevue/chip';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import router from '@/router';
+import { defineEmits } from 'vue';
 
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 
@@ -44,11 +45,11 @@ const routingDeck = () => {
     });
 }
 
-const favoriteRouting = () => {
-    router.push({
-        name: 'myfavorite'
-    })
-}
+const emit = defineEmits(['callFavoriteFn']);
+
+const favoriteFn = (id) => {
+  emit('callFavoriteFn', id);
+};
 /* FUNCTION END */
 </script>
 
