@@ -4,7 +4,8 @@ export const useAppStore = defineStore("storeId", {
     collections: {
       users: "users",
       categories: "category",
-      decks: 'decks'
+      decks: 'decks',
+      home_slider: 'home_slider'
     },
     MessageMaster: {
       AUTH: {
@@ -54,6 +55,9 @@ export const useAppStore = defineStore("storeId", {
     },
     getUserEmailReset: (state) => {
       return state.DATA.USER_EMAIL_RESET;
+    },
+    getHomeSliderCollection: (state) => {
+      return state.collections.home_slider
     }
   },
   actions: {

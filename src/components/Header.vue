@@ -3,8 +3,8 @@
     <div class="flex myNav">
         <div class="flex-1 flex align-items-center m-2 px-5 py-1 my-nav-1">
             <div class="my-logo">
-                <img draggable="false" style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }" alt="logo"
-                    src="../assets/img/logo.png" />
+                <img draggable="false" style="cursor: pointer;" @click="() => { router.push({ name: 'home' }) }"
+                    alt="logo" src="../assets/img/logo.png" />
             </div>
         </div>
 
@@ -12,14 +12,15 @@
             <span class="my-nav-text">Innovation Portal</span>
         </div>
         <div class="flex-1 flex gap-3 align-items-center justify-content-end m-2 px-5 py-1 my-nav-3">
-            <Menubar :model="items" class="admin-menu" v-if="admin"/>
+            <Menubar :model="items" class="admin-menu" v-if="admin" />
             <!-- <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" /> -->
             <IconField>
-                        <InputText v-model="value1" placeholder="Search" />
-                        <InputIcon class="pi pi-search" variant="filled" />
-                    </IconField>
+                <InputText v-model="inputSearch" placeholder="Search" v-on:keyup.enter="searchData" />
+                <InputIcon class="pi pi-search" variant="filled" @click="searchData" style="cursor: pointer;"/>
+            </IconField>
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
-            <img draggable="false" width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;" fill="none" src="../assets/img/icon/favorite_white.png" />
+            <img draggable="false" width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;"
+                fill="none" src="../assets/img/icon/favorite_white.png" />
             <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
         </div>
     </div>
@@ -34,13 +35,16 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 
-import { onBeforeMount, onMounted, ref } from "vue";
+import { nextTick, onBeforeMount, onMounted, ref } from "vue";
 import router from '@/router';
 import { UserFirestore } from '@/lib/User';
 import { COMMON_FUNCTIONS } from '@/lib/Common';
-const checked = ref(false);
+
+/* REF DEFINITIONS START */
 const currentUser = ref({});
 const admin = ref(false);
+const inputSearch = ref("");
+/* REF DEFINITION END */
 
 const items = ref([
     {
@@ -124,7 +128,13 @@ const routing = (routeName) => {
     router.push({
         name: routeName
     })
-}
+};
+const searchData = () => {
+    router.push({
+        name: 'search',
+        query: { query: inputSearch.value }
+    });
+};
 /* FUNCTION END */
 
 onBeforeMount(() => {

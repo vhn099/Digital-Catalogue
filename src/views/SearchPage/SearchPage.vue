@@ -4,19 +4,30 @@ import DockItem from '../../components/Dock.vue';
 import SectionItem from '../../components/Section.vue';
 import DeckItem from '../../components/DeckCard.vue';
 import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
-// import IconField from 'primevue/iconField';
-// import InputText from 'primevue/inputtext';
-// import InputIcon from 'primevue/inputIcon';
-
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 
 
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import router from '@/router';
 const sectionIcon = SupplyChainIcon;
 const sectionText = "Decks";
+
+const inputSearch = ref("");
+
+/* FUNCTION START */
+onMounted(() => {
+    const { query } = router.currentRoute.value;
+    inputSearch.value = query.query;
+})
+
+watch(() => router.currentRoute.value.query, () => {
+    const { query } = router.currentRoute.value;
+    inputSearch.value = query.query;
+});
+/* FUNCTION END */
 </script>
 
 <template>
@@ -37,7 +48,7 @@ const sectionText = "Decks";
                 </div>
                 <div class="input-field">
                     <IconField>
-                        <InputText v-model="value1" placeholder="Search" />
+                        <InputText v-model="inputSearch" placeholder="Search" />
                         <InputIcon class="pi pi-search" variant="filled" />
                     </IconField>
                 </div>
