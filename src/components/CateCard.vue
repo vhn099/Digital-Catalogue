@@ -1,5 +1,5 @@
 <template>
-    <div class="cate-card-box" :key="data.id" @click="deckRouting">
+    <div class="cate-card-box" :key="data.id" @click="deckRouting(data.id)">
         <div class="cate-card-image">
 
             <img draggable="false" width="110" height="110" fill="none" :src="data.image" />
@@ -33,9 +33,10 @@ defineProps({
     }
 });
 
-const deckRouting = () => {
+const deckRouting = (id) => {
     router.push({
-        name: 'decks'
+        name: 'decks',
+        params: { cateID: id }
     })
 };
 </script>
