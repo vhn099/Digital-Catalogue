@@ -171,6 +171,9 @@ onMounted(async () => {
       <div class="card normal-line">
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
       </div>
+      <div class="view-more-router">
+        <RouterLink :to="{ name: 'home' }" class="link-router">View More</RouterLink>
+      </div>
     </div>
 
 
@@ -245,5 +248,21 @@ onMounted(async () => {
 
 :deep(.p-button-secondary) {
   border: 1px solid var(--p-select-border-color);
+}
+
+.view-more-router {
+  padding: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.link-router {
+  color: gray;
+  text-decoration: underline;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 30px;
+  text-align: center;
 }
 </style>
