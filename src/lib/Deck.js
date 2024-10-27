@@ -6,9 +6,11 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  limit,
   orderBy,
   query,
   setDoc,
+  startAfter,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -17,6 +19,7 @@ import { useAppStore } from "@/stores";
 import { FirebaseStorage } from "./Storage";
 
 export const DeckFirestore = {
+  // get deck base on ID
   async getDeck(id) {
     const docSnap = await getDoc(
       doc(getFirestore(), useAppStore().getDecksCollection, id)
@@ -24,15 +27,46 @@ export const DeckFirestore = {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      return "Category does not exsist";
+      return false;
     }
   },
 
-  async getDecks(cateID) {
+  async getDecks() {
     const db = collection(getFirestore(), useAppStore().getDecksCollection);
-    const docQuery = cateID
-      ? query(db, orderBy("updated", "desc"), where("category_id", "==", cateID))
-      : query(db, orderBy("updated", "desc"));
+    const docQuery = query(db, orderBy("updated", "desc"));
+    let snapshot = await getDocs(docQuery);
+
+    return snapshot.docs;
+  },
+
+  async getLimitDecks(cateID, lim, lastDeck) {
+    const db = collection(getFirestore(), useAppStore().getDecksCollection);
+    let docQuery = "";
+    if (lastDeck) { // get next {limit} doc
+      docQuery = cateID
+        ? query(
+            db,
+            orderBy("updated", "desc"),
+            where("category_id", "==", cateID),
+            startAfter(lastDeck),
+            limit(lim)
+          )
+        : query(
+            db,
+            orderBy("updated", "desc"),
+            startAfter(lastDeck),
+            limit(lim)
+          );
+    } else { // get first {limit} doc
+      docQuery = cateID
+        ? query(
+            db,
+            orderBy("updated", "desc"),
+            where("category_id", "==", cateID),
+            limit(lim)
+          )
+        : query(db, orderBy("updated", "desc"), limit(lim));
+    }
     let snapshot = await getDocs(docQuery);
 
     return snapshot.docs;

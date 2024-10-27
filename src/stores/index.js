@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 export const useAppStore = defineStore("storeId", {
   state: () => ({
     collections: {
+      favorite: "favorite",
       users: "users",
       categories: "category",
       decks: 'decks',
@@ -46,6 +47,9 @@ export const useAppStore = defineStore("storeId", {
     }
   }),
   getters: {
+    getFavoriteCollection: (state) => {
+      return state.collections.favorite;
+    },
     getDecksCollection: (state) => {
       return state.collections.decks;
     },

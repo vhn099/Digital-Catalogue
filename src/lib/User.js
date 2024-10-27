@@ -87,6 +87,38 @@ export const UserFirestore = {
         return result;
     },
 
+    //get user name base on email
+    async getUserName(emailID) {
+        const db = collection(getFirestore(), useAppStore().getUsersCollection);
+        const userQuery = query(db, where('email', "==", emailID));
+        const userDoc = await getDocs(userQuery);
+
+        if (userDoc.docs.length > 0) {
+            const userData = userDoc.docs[0].data();
+            const userName = userData.firstname ? userData.firstname : '' + " " + userData.lastname ? userData.lastname : '';
+            if (userName) {
+                return userName;
+            } else {
+                return emailID;
+            }
+
+        } else {
+            return false;
+        }
+    },
+    //get user base on email
+    async getUser(emailID) {
+        const db = collection(getFirestore(), useAppStore().getUsersCollection);
+        const userQuery = query(db, where('email', "==", emailID));
+        const userDoc = await getDocs(userQuery);
+
+        if (userDoc.docs.length > 0) {
+            const userData = userDoc.docs[0].data();
+            return userData;
+        } else {
+            return false;
+        }
+    },
     async getUsers() {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
         // const userQuery = query(db, where("disabled", '==', false));

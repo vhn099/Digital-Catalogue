@@ -2,9 +2,10 @@
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
-import FloatLabel from 'primevue/floatlabel';
+import ProgressSpinner from 'primevue/progressspinner';
 
-import { watch, reactive, ref, onMounted, computed } from 'vue';
+
+import {reactive, ref, onMounted, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -17,9 +18,6 @@ import Checkbox from 'primevue/checkbox';
 import MessagePage from '@/components/MessagePage.vue';
 import { useAppStore } from '@/stores';
 import { UserFirestore } from '@/lib/User';
-import { useToast } from 'primevue/usetoast';
-import Toast from 'primevue/toast';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
     fontSize: "62px",
@@ -65,7 +63,6 @@ const ruleEmailInput = computed(() => {
     };
 });
 
-const toast = useToast();
 const vEmailInput = useVuelidate(ruleEmailInput, formForgotPW);
 /* VALIDATION DEFINITION END */
 
@@ -76,12 +73,6 @@ function forgotPassWord() {
     isSendLink.value = false;
     isSignIn.value = false;
     renderRecaptcha('recaptcha_element1');
-    // setTimeout(() => {
-    //     grecaptcha.render('recaptcha_element1', {
-    //         'sitekey': siteKey,
-    //         'callback': clickReCaptcha,
-    //     });
-    // }, "1");
 }
 
 async function sendLink() {
@@ -116,9 +107,7 @@ async function sendLink() {
             useAppStore().setmail(formForgotPW.emailInput);
         }
         else {
-            document.getElementById("invalidEmail").innerHTML = 'Invalid Email';
-            console.log('Invalid Email');
-
+            document.getElementById("invalidEmail").innerHTML = 'Email is not existed';
         }
     }
 
@@ -156,8 +145,8 @@ const clickReCaptcha = () => {
     }
 };
 
-const clearInvalidEmailMess = () => {
-    document.getElementById("invalidEmail").innerHTML = '';
+const clearInvalidEmailMess = (id) => {
+    document.getElementById(id).innerHTML = '';
 };
 
 const backLogin = () => {
@@ -176,19 +165,16 @@ const renderRecaptcha = (id) => {
 };
 
 const handleSubmit = async () => {
-    spinner.value = true;
     const isValid = await v$.value.$validate();
     if (isValid) {
         if (typeof window.grecaptcha === 'undefined') {
             alert('reCAPTCHA is not loaded');
-            spinner.value = false;
             return;
         }
         const captchaResponse = grecaptcha.getResponse();
 
         if (!captchaResponse) {
             document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
-            spinner.value = false;
             return;
         }
         const username = formFields.username;
@@ -201,27 +187,20 @@ const handleSubmit = async () => {
         }
 
         await signInWithEmailAndPassword(getAuth(), username, password).then(async response => {
+            spinner.value = true;
             const userData = await UserFirestore.getCurrentUser();
             UserFirestore.setCookie('user-auth', JSON.stringify(userData), expire);
             router.push({
                 name: 'home'
             });
         }).catch(error => {
-            let message = error.message;
             if (error.code === 'auth/invalid-credential') {
-                message = 'Username or Password entered is incorrect. Please try again'
+                document.getElementById("incorrectLogin").innerHTML = 'Username or Password entered is incorrect.';
             }
-            toast.add({
-                severity: 'error',
-                summary: 'System Message',
-                detail: message,
-                life: 3000
-            })
         });
     } else {
         console.log('Invalid form');
     }
-    spinner.value = false;
 };
 const focusPassword = () => {
     document.getElementById('password').firstChild.focus()
@@ -241,8 +220,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <Toast />
-    <LoadingSpinner v-if="spinner"/>
+    <!-- <LoadingSpinner v-if="spinner"/> -->
     <div class="center-container">
         <div class="login-container">
             <!-- Left side - Login Form -->
@@ -253,28 +231,27 @@ onMounted(async () => {
                     <span></span> <!--dont delete this one. it do something -->
                     <p>Innovation Portal</p>
                 </div>
-                <!-- <div class="text-decord">
-                    <p class="the-line"></p>
-                    
-                </div> -->
-                <div v-if="isSignIn && !isForgotPassword && !isSendLink">
+
+                <div v-if="isSignIn && !isForgotPassword && !isSendLink && spinner">
+                    <div class="is-loggining">
+                        <ProgressSpinner />
+                    </div>
+                    <Button style="margin-top: 30px;" :fluid="true" severity="secondary" disabled label="Loading" />
+                </div>
+                <div v-if="isSignIn && !isForgotPassword && !isSendLink && !spinner">
                     <span>Sign in to your account</span>
                     <div class="flex flex-col">
-                        <!-- <FloatLabel variant="in">
-                            <InputText id="username" autocomplete="off" v-model="formFields.username" :fluid="true"
-                                :invalid="v$.username.$errors.length > 0" />
-                            <label for="username">Username</label>
-                        </FloatLabel> -->
 
                         <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
-                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" />
+                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" v-on:change="clearInvalidEmailMess('incorrectLogin')"/>
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
                     </div>
 
                     <div class="flex flex-col">
                         <Password id="password" :feedback="false" :fluid="true" class="input" placeholder="Password"
-                            v-model="formFields.password" v-on:keyup.enter="handleSubmit" />
+                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"  v-on:change="clearInvalidEmailMess('incorrectLogin')"/>
+                            <small id="incorrectLogin" class="error-messages"></small>
                     </div>
 
                     <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
@@ -301,7 +278,7 @@ onMounted(async () => {
                         <Button :fluid="true" @click="handleSubmit" label="Login" />
                     </div>
                 </div>
-                <div v-if="!isSignIn && isForgotPassword && !isSendLink">
+                <div v-if="!isSignIn && isForgotPassword && !isSendLink && !spinner">
 
                     <span style="font-size: 15px; font-weight: 500;">Forgot Your Password?</span>
                     <p style="font-size: 13px;padding: 5px 0;">No worries! Enter your email address below, and we’ll
@@ -309,7 +286,7 @@ onMounted(async () => {
                         reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
                         id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
-                        v-on:change="clearInvalidEmailMess()" />
+                        v-on:change="clearInvalidEmailMess('emailInput')" />
                     <small class="error-messages" v-if="vEmailInput.emailInput.$errors.length > 0">{{
                         vEmailInput.emailInput.$errors[0].$message }}</small>
                     <small id="invalidEmail" class="error-messages"></small>
@@ -331,7 +308,7 @@ onMounted(async () => {
 
 
                 </div>
-                <div v-if="!isSignIn && !isForgotPassword && isSendLink">
+                <div v-if="!isSignIn && !isForgotPassword && isSendLink && !spinner">
                     <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS"
                         :pageBody="messagePageBody" />
                     <div class="back-home-router">
@@ -409,21 +386,6 @@ onMounted(async () => {
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: 10px;
-}
-
-.form-container button {
-    padding: 10px;
-    background-color: #7326D9;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.form-container button:hover {
-    /* background-color: #218838; */
-    background-color: white;
-    color: black;
 }
 
 /* Right side - image */
@@ -507,5 +469,10 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+}
+
+.is-loggining {
+    display: flex;
+    padding: 25px 0;
 }
 </style>

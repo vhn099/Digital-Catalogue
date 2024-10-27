@@ -13,7 +13,7 @@
                 </div>
                 <div class="deck-info-like">
                     <div class="button-like">
-                        <Button severity="secondary" label="Favourite" @click="favoriteFn('5KGLQrFEKbZBUmAcEYpd')">
+                        <Button severity="secondary" label="Favourite" @click="favoriteFn(data.id)">
                             <!-- <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" /> -->
                             <img draggable="false" width="40" height="40" fill="none" :src="FavoriteRedIcon" />
                             <label>Favourite</label>
