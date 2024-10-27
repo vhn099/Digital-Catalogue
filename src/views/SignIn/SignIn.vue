@@ -2,7 +2,8 @@
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
-import FloatLabel from 'primevue/floatlabel';
+import ProgressSpinner from 'primevue/progressspinner';
+
 
 import { watch, reactive, ref, onMounted, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
@@ -242,7 +243,7 @@ onMounted(async () => {
 
 <template>
     <Toast />
-    <LoadingSpinner v-if="spinner"/>
+    <!-- <LoadingSpinner v-if="spinner"/> -->
     <div class="center-container">
         <div class="login-container">
             <!-- Left side - Login Form -->
@@ -253,18 +254,16 @@ onMounted(async () => {
                     <span></span> <!--dont delete this one. it do something -->
                     <p>Innovation Portal</p>
                 </div>
-                <!-- <div class="text-decord">
-                    <p class="the-line"></p>
-                    
-                </div> -->
-                <div v-if="isSignIn && !isForgotPassword && !isSendLink">
+
+                <div v-if="isSignIn && !isForgotPassword && !isSendLink && spinner">
+                    <div class="is-loggining">
+                        <ProgressSpinner />
+                    </div>
+                    <Button style="margin-top: 30px;" :fluid="true" severity="secondary" disabled label="Loading" />
+                </div>
+                <div v-if="isSignIn && !isForgotPassword && !isSendLink && !spinner">
                     <span>Sign in to your account</span>
                     <div class="flex flex-col">
-                        <!-- <FloatLabel variant="in">
-                            <InputText id="username" autocomplete="off" v-model="formFields.username" :fluid="true"
-                                :invalid="v$.username.$errors.length > 0" />
-                            <label for="username">Username</label>
-                        </FloatLabel> -->
 
                         <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
                             :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" />
@@ -301,7 +300,7 @@ onMounted(async () => {
                         <Button :fluid="true" @click="handleSubmit" label="Login" />
                     </div>
                 </div>
-                <div v-if="!isSignIn && isForgotPassword && !isSendLink">
+                <div v-if="!isSignIn && isForgotPassword && !isSendLink && !spinner">
 
                     <span style="font-size: 15px; font-weight: 500;">Forgot Your Password?</span>
                     <p style="font-size: 13px;padding: 5px 0;">No worries! Enter your email address below, and we’ll
@@ -331,7 +330,7 @@ onMounted(async () => {
 
 
                 </div>
-                <div v-if="!isSignIn && !isForgotPassword && isSendLink">
+                <div v-if="!isSignIn && !isForgotPassword && isSendLink && !spinner">
                     <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS"
                         :pageBody="messagePageBody" />
                     <div class="back-home-router">
@@ -409,21 +408,6 @@ onMounted(async () => {
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: 10px;
-}
-
-.form-container button {
-    padding: 10px;
-    background-color: #7326D9;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.form-container button:hover {
-    /* background-color: #218838; */
-    background-color: white;
-    color: black;
 }
 
 /* Right side - image */
@@ -507,5 +491,10 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+}
+
+.is-loggining {
+    display: flex;
+    padding: 25px 0;
 }
 </style>
