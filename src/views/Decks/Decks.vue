@@ -21,6 +21,7 @@ import { getAuth } from 'firebase/auth';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
 import router from '@/router';
+import { Timestamp } from "firebase/firestore";
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
@@ -51,6 +52,7 @@ const categories = ref([
 
 const selectedCategories = ref(['Marketing']);
 const favRecord = ref({
+  created: '',
   userID:'',
   deckID: '',
 });
@@ -59,6 +61,7 @@ const email = ref('');
 const favoriteFn = async (id) => {
   favRecord.value.userID = email.value;
   favRecord.value.deckID = id;
+  favRecord.value.created = Timestamp.now().toDate();
   await addDoc(collection(db, 'favorite'), favRecord.value);
   console.log('called' + id);
 };

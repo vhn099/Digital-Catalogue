@@ -1,135 +1,18 @@
-<!-- <script setup>
-import { FilterMatchMode } from '@primevue/core';
-import Button from 'primevue/button';
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
-import { ref } from 'vue';
-
-const tableColumns = [
-    {
-        field: 'created',
-        label: 'Created On',
-        styles: {
-            width: "10%"
-        }
-    },
-    {
-        field: 'created_by',
-        label: 'Created By',
-        styles: {
-            width: "10%"
-        }
-    },
-    {
-        field: 'updated',
-        label: 'Updated On',
-        styles: {
-            width: "10%"
-        }
-    },
-    {
-        field: 'updated_by',
-        label: 'Updated By',
-        styles: {
-            width: "10%"
-        }
-    }
-];
-
-const filters = ref({
-    'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
-});
-
-</script>
-
-<template>
-    <div class="">
-        <div class="flex flex-col table-section min-height-750">
-            <div class="card">
-                <DataTable datakey="id" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]"
-                    tableStyle="width: 100%"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="{first} to {last} of {totalRecords}" ref="datatable" :filters="filters"
-                    :paginator="true">
-                    <template #header>
-                        <div class="header-table">
-                            <span class="table-title">Manage User Favorite</span>
-                            <div class="table-actions gap-2">
-                                <div>
-                                    <IconField>
-                                        <InputIcon>
-                                            <i class="pi pi-search" />
-                                        </InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Search..." />
-                                    </IconField>
-                                </div>
-
-                            </div>
-                        </div>
-                    </template>
-                    <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
-                        :style="{ ...column.styles }">
-                        <template #body="slotProps">
-                            <p >{{ slotProps.data[column.field] }}</p>
-                        </template>
-                    </Column>
-                    <Column header="Actions">
-                        <template #body="{ data }">
-                            <div class="actions">
-                                <Button icon="pi pi-trash" aria-label="Delete" rounded
-                                    severity="warn" />
-                                <Button icon="pi pi-pencil" aria-label="Update" rounded />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>
-        </div>
-    </div>
-</template>
-
-<style scoped>
-/* TABLE CSS START */
-.table-section {
-    padding: 20px;
-}
-
-.flex-col {
-    flex-direction: column;
-}
-
-.header-table {
-    display: flex;
-    justify-content: space-between;
-}
-
-.table-title {
-    font-weight: 700;
-    font-size: 20px;
-}
-
-.table-actions {
-    display: flex;
-    justify-content: center;
-}
-/* TABLE CSS END */
-</style> -->
-
 <template>
     <div class="flex flex-col table-section min-height-1000">
         <div class="card">
-            <DataTable v-model:expandedRowGroups="expandedRowGroups" :value="customers" tableStyle="min-width: 50rem"
-                expandableRowGroups rowGroupMode="subheader" groupRowsBy="representative.name"
-                @rowgroup-expand="onRowGroupExpand" @rowgroup-collapse="onRowGroupCollapse" sortMode="single"
-                sortField="representative.name" :sortOrder="1" paginator :rows="50"
-                :rowsPerPageOptions="[5, 20, 50, 100]">
+            <DataTable v-model:expandedRowGroups="expandedRowGroups" :value='isUser ? fav_user : fav_deck'
+                tableStyle="min-width: 50rem" expandableRowGroups rowGroupMode="subheader"
+                groupRowsBy="representative.name" @rowgroup-expand="onRowGroupExpand"
+                @rowgroup-collapse="onRowGroupCollapse" sortMode="single" sortField="representative.name" :sortOrder="1"
+                paginator :rows="50" :rowsPerPageOptions="[5, 20, 50, 100]">
                 <template #header>
                     <div class="header-table">
                         <span class="table-title">Manage User Favorite</span>
                         <div class="table-actions gap-2">
+                            <div>
+                                <Button type="button" label="Switch view" icon="pi pi-plus" @click="switchView"/>
+                            </div>
                             <div>
                                 <IconField>
                                     <InputIcon>
@@ -142,35 +25,39 @@ const filters = ref({
                     </div>
                 </template>
                 <template #groupheader="slotProps">
-                    <img :alt="slotProps.data.representative.name"
-                        :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.data.representative.image}`"
+                    <img :alt="slotProps.data.representative.name" :src="`${slotProps.data.representative.image}`"
                         width="32" style="vertical-align: middle" class="ml-2" />
                     <span class="align-middle ml-2 font-bold leading-normal">{{ slotProps.data.representative.name
                         }}</span>
                 </template>
                 <Column field="representative.name" header="Representative"></Column>
-                <Column field="deck_highlight" header="Deck Highlight" style="width: 20%">
+                <Column field="deck_highlight" header="Deck Highlight" style="width: 20%" v-if="isUser">
                     <template #body="slotProps">
                         <div class="flex items-center gap-2">
-                            <img alt="flag" src="https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F43_CAP.png_Fri%20Oct%2025%202024?alt=media&token=f74a735b-b7f5-4d5e-82fd-48996ee4b18a"
-                                class="flag flag" style="width: 200px" />
+                            <img alt="flag" :src="`${slotProps.data.deck_highlight}`" class="flag flag"
+                                style="width: 200px" />
                             <!-- <span>{{ slotProps.data.country.name }}</span> -->
                         </div>
                     </template>
                 </Column>
-                <Column field="title" header="Title" style="width: 20%"></Column>
-                
-                <Column field="category" header="Category" style="width: 20%"></Column>
-                <Column field="detail_description" header="Detail Description" style="width: 20%"></Column>
-                <!-- <Column field="status" header="Status" style="width: 20%">
+                <Column field="firstname" header="First Name" style="width: 20%"></Column>
+                <Column :field='isUser ? "title" : "lastname"' :header='isUser ? "Title" : "Last Name"'
+                    style="width: 20%"></Column>
+
+                <Column :field='isUser ? "category" : "email"' :header='isUser ? "Category" : "Email"'
+                    style="width: 20%"></Column>
+                <Column field="detail_description" header="Detail Description" style="width: 20%" v-if="isUser">
+                </Column>
+                <Column field="status" header="User Status" style="width: 20%" v-if="!isUser">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.status" :severity="getSeverity(slotProps.data.status)" />
                     </template>
-                </Column> -->
+                </Column>
                 <Column field="date" header="Date" style="width: 20%"></Column>
                 <template #groupfooter="slotProps">
-                    <div class="flex justify-end font-bold w-full">Total Customers: {{
-                        calculateCustomerTotal(slotProps.data.representative.name) }}</div>
+                    <div class="flex justify-end font-bold w-full">Total: {{ isUser ?
+                        calculateUserTotal(slotProps.data.representative.name) :
+                        calculateDeckTotal(slotProps.data.representative.name)}}</div>
                 </template>
             </DataTable>
             <!-- <Toast /> -->
@@ -193,53 +80,46 @@ import { FilterMatchMode } from '@primevue/core';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
 import { UserFirestore } from "@/lib/User";
+import { FavoriteFirestore } from "@/lib/Favorite";
+import ProfileIcon from '@/assets/img/icon/profile.png';
+import Button from 'primevue/button';
 
 onMounted(() => {
-    for (var i = 0; i < 20; i++) {
-        // customers.value.push({
-        //     id: 1000,
-        //     firstname: 'James Butt',
-        //     lastname: 'Benton, John B Jr',
-        //     email: '2015-09-13',
-        //     status: true,
-        //     date: '2015-09-13',
-        //     representative: {
-        //         name: 'Ioni Bowcher ',
-        //         image: 'ionibowcher.png'
-        //     },
-        // });
-        customers.value.push({
-            id: "xxx",
-            title: 'Quang',
-            detail_description: 'You can use Firebase Auth to send and process account management emails and SMS messages. These messages allow your users to complete the following account management tasks:',
-            date: '2015-09-13',
-            deck_highlight: 'unqualified',
-            category: true,
-            representative: {
-                name: 'Tran Quang',
-                image: 'ionibowcher.png'
-            },
-
-        });
-    }
+    getAllFavorites_Deck();
+    getAllFavorites_User();
 });
 // fist name , last name , email, status, date
 // Deck Highlight, Title, Detail Description , Category, Date
-const customers = ref([]);
+const fav_user = ref([]);
+const fav_deck = ref([]);
 const expandedRowGroups = ref();
+const isUser = ref(true);
 // const toast = useToast();
-// const onRowGroupExpand = (event) => {
-//     //toast.add({ severity: 'info', summary: 'Row Group Expanded', detail: 'Value: ' + event.data, life: 3000 });
-// };
-// const onRowGroupCollapse = (event) => {
-//     //toast.add({ severity: 'success', summary: 'Row Group Collapsed', detail: 'Value: ' + event.data, life: 3000 });
-// };
-const calculateCustomerTotal = (name) => {
+const onRowGroupExpand = (event) => {
+    //toast.add({ severity: 'info', summary: 'Row Group Expanded', detail: 'Value: ' + event.data, life: 3000 });
+};
+const onRowGroupCollapse = (event) => {
+    //toast.add({ severity: 'success', summary: 'Row Group Collapsed', detail: 'Value: ' + event.data, life: 3000 });
+};
+const calculateUserTotal = (name) => {
     let total = 0;
 
-    if (customers.value) {
-        for (let customer of customers.value) {
-            if (customer.representative.name === name) {
+    if (fav_user.value) {
+        for (let fav of fav_user.value) {
+            if (fav.representative.name === name) {
+                total++;
+            }
+        }
+    }
+
+    return total;
+};
+const calculateDeckTotal = (name) => {
+    let total = 0;
+
+    if (fav_deck.value) {
+        for (let fav of fav_deck.value) {
+            if (fav.representative.name === name) {
                 total++;
             }
         }
@@ -249,10 +129,10 @@ const calculateCustomerTotal = (name) => {
 };
 const getSeverity = (status) => {
     switch (status) {
-        case 'unqualified':
+        case 'Deactive':
             return 'danger';
 
-        case 'qualified':
+        case 'Active':
             return 'success';
 
         case 'new':
@@ -266,30 +146,64 @@ const getSeverity = (status) => {
     }
 };
 
+const switchView = () => {
+    isUser.value = !isUser.value;
+};
+
+
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-const getAllFavorites = async () => {
-    const favoriteTable = collection(db, 'favorite');
-    //const q = query(favoriteTable, where('userID', '==', email.value));
-    try {
-        const querySnapshot = await getDocs(favoriteTable);
-        querySnapshot.forEach(obj => {
-            const data = obj.data();
-            const object = {
-                favID: obj.id,
-                //userID: data.userID || '',
-                deckID: data.deckID || '',
-            };
-            favorites.value.push(object);
-        });
-        //return favoriteList;
-    } catch (error) {
-        console.error('Error:', error);
-        return false;
-    }
-
+const getAllFavorites_User = async () => {
+    const favSnapshot = await FavoriteFirestore.getFavorites();
+    const promises = favSnapshot.map(async (fav) => {
+        const data = fav.data();
+        const userName = await UserFirestore.getUserName(data.userID);
+        const deck = await DeckFirestore.getDeck(data.deckID);
+        if (deck) {
+            const category_name = await CategoryFirestore.getCategoryName(deck.category_id);
+            const obj = {
+                id: fav.id,
+                deck_highlight: deck.deck_highlight || '',
+                title: deck.title || '',
+                detail_description: deck.detail_description || '',
+                category: category_name || '',
+                date: data.created ? data.created.toDate().toLocaleString() : '',
+                representative: {
+                    name: userName || '',
+                    image: ProfileIcon
+                },
+            }
+            fav_user.value.push(obj);
+        }
+    });
+};
+const getAllFavorites_Deck = async () => {
+    const favSnapshot = await FavoriteFirestore.getFavorites();
+    const promises = favSnapshot.map(async (fav) => {
+        const data = fav.data();
+        const user = await UserFirestore.getUser(data.userID);
+        const deck = await DeckFirestore.getDeck(data.deckID);
+        //const category_name = await CategoryFirestore.getCategoryName(deck.category_id);
+        console.log(user.disabled);
+        const obj = {
+            // fist name , last name , email, status, date
+            id: fav.id,
+            status: user.disabled === false ? 'Active' : 'Deactive',
+            firstname: user.firstname || '',
+            lastname: user.lastname || '',
+            email: data.userID || '',
+            date: data.created ? data.created.toDate().toLocaleString() : '',
+            representative: {
+                name: deck.title,
+                image: deck.deck_highlight || ''
+            },
+        }
+        return obj;
+    });
+    const results = await Promise.all(promises);
+    fav_deck.value = results;
 };
 </script>
 <style scoped>

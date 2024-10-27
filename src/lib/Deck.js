@@ -16,6 +16,7 @@ import {
 import { useAppStore } from "@/stores";
 
 export const DeckFirestore = {
+  // get deck base on ID
   async getDeck(id) {
     const docSnap = await getDoc(
       doc(getFirestore(), useAppStore().getDecksCollection, id)
@@ -23,7 +24,7 @@ export const DeckFirestore = {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      return "Category does not exsist";
+      return false;
     }
   },
 
