@@ -94,7 +94,9 @@ const formFields = reactive({
     id: '',
     banner_title: '',
     banner_description: '',
-    background_color: "ff0000",
+    background_color: "",
+    image_link: '',
+    image_name: '',
     order: 0
 });
 const selectedDeck = ref();
@@ -129,12 +131,14 @@ const getSliderFormData = () => {
     }
     const imageFile = image.value.files;
     sliderForm.image = {};
-    if (!_.isEmpty(selectedDeck.value) && _.isArray(selectedDeck.value)) {
-        sliderForm.deck_id = selectedDeck.value[0].code;
+    if (selectedDeck.value) {
+        sliderForm.deck_id = selectedDeck.value;
+    } else {
+        sliderForm.deck_id = "";
     }
     if (imageFile.length != 0) {
-        sliderForm.image.image_data = imageFile[0],
-            sliderForm.image.image_name = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
+        sliderForm.image.image_data = imageFile[0];
+        sliderForm.image.image_name = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
     }
     return sliderForm;
 };
@@ -174,11 +178,13 @@ const deleteRow = (data) => {
 
 const resetFormData = () => {
     formFields.id = '';
-    formFields.background_color = "ff0000";
+    formFields.background_color = "";
     formFields.banner_description = "";
     formFields.banner_title = "";
+    formFields.image_link = "";
+    formFields.image_name = "";
     formFields.order = 0;
-
+    selectedDeck.value = null;
     imagePreviewer.value = null;
 };
 const editRow = (data) => {
@@ -187,10 +193,13 @@ const editRow = (data) => {
     formFields.banner_description = data.banner_description;
     formFields.background_color = data.background_color;
     if (data.deck_id) {
-        selectedDeck.value = decks.value.filter(deck => deck.id === data.deck_id);
+        const deckValue = decks.value.filter(deck => deck.id === data.deck_id);
+        selectedDeck.value = deckValue[0].id;
     } else {
         selectedDeck.value = [];
     }
+    formFields.image_link = data.image;
+    formFields.image_name = data.image_name;
 
     formFields.order = data.order;
     imagePreviewer.value = data.image;
@@ -202,6 +211,7 @@ const submitForm = async () => {
     emits('setLoading', true);
     const isValid = await v$.value.$validate();
     const imageValid = await imageV$.value.$validate();
+    console.log(selectedDeck.value);
     if (isValid && imageValid) {
         let result = {};
         const formData = getSliderFormData();
@@ -234,6 +244,7 @@ const getHomeSliders = async () => {
             image_name: data.image_name,
             banner_title: data.banner_title,
             banner_description: data.banner_description,
+            deck_id: data.deck_id,
             order: data.order,
             background_color: data.background_color,
             created: data.created ? data.created.toDate().toLocaleString() : '',
@@ -251,7 +262,7 @@ const getDecks = async () => {
         const data = deck.data();
         deckList.push({
             name: data.title,
-            code: deck.id
+            id: deck.id
         });
     });
     return deckList;
@@ -274,7 +285,7 @@ onMounted(async () => {
 });
 
 watch(visible, () => {
-    if (!visible) {
+    if (!visible.value) {
         resetFormData();
     }
 });
@@ -306,7 +317,7 @@ const emits = defineEmits(['setLoading']);
 
                 <div class="flex flex-col">
                     <label class="form-label" for="banner_title">Line 1<span class="required-icon">*</span></label>
-                    <InputText :readonly="edit" :fluid="true" placeholder="Line 1" id="banner_title"
+                    <InputText :fluid="true" placeholder="Line 1" id="banner_title"
                         v-model="formFields.banner_title" :invalid="v$.banner_title.$errors.length > 0" />
                     <small class="error-messages" v-if="v$.banner_title.$errors.length > 0">{{
                         v$.banner_title.$errors[0].$message }}</small>
@@ -317,20 +328,20 @@ const emits = defineEmits(['setLoading']);
                             class="required-icon">*</span></label>
                     <InputText :fluid="true" placeholder="Line 2" id="banner_description"
                         v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0" />
-                    <small class="error-messages" v-if="v$.banner_title.$errors.length > 0">{{
+                    <small class="error-messages" v-if="v$.banner_description.$errors.length > 0">{{
                         v$.banner_description.$errors[0].$message }}</small>
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="banner_description">Linked Deck</label>
-                    <Select id="deck_id" v-model="selectedDeck" :options="decks" showClear optionLabel="name" />
+                    <Select id="deck_id" v-model="selectedDeck" :options="decks" showClear optionLabel="name" optionValue="id"/>
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="background_color">Background Color</label>
                     <div class="flex items-center">
-                        <ColorPicker id="background_color" v-model="formFields.background_color" />
-                        <InputText style="width: 115px" class="ml-2" v-model="formFields.background_color" />
+                        <!-- <ColorPicker id="background_color" v-model="formFields.background_color"/> -->
+                        <InputText :fluid="true" v-model="formFields.background_color" />
                     </div>
                 </div>
 

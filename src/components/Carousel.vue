@@ -4,14 +4,14 @@
         :showIndicatorsOnItem="inside" :indicatorsPosition="position">
         <template #item="slotProps">
 
-            <div class="slideshow-canva" :style="{backgroundColor: `${slotProps.item.background_color}`}">
+            <div class="slideshow-canva" :style="{background: `${slotProps.item.background_color}`}">
                 <div class="slideshow-text">
                     <span class="line-1">{{ slotProps.item.banner_title }}</span>
                     <span class="line-2">{{ slotProps.item.banner_description }}</span>
-                    <Button @click="viewDeck" label="View Deck" />
+                    <Button class="button-view-deck" @click="viewDeck" label="View Deck" />
                 </div>
                 <div class="slideshow-image">
-                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.image" />
+                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.image"/>
                 </div>
             </div>
 
@@ -30,30 +30,9 @@ import Galleria from 'primevue/galleria';
 import Button from 'primevue/button';
 import router from "@/router";
 
-import CapImage from '@/assets/img/carousel/CAP.png';
-import CarltonImage from '@/assets/img/carousel/CARLTON DRAUGHT _ESKY - 2 - CUB-CND-1004 1.png';
-import PepsiShirtImage from '@/assets/img/carousel/Pepsi_Shirt.png';
 import { OtherConfigFirestore } from "@/lib/OtherConfig";
 
 const position = ref('bottom');
-// const images = [
-//     {
-//         itemImageSrc: CapImage,
-//         alt: 'Description for Image 1',
-//         title: 'Title 1'
-//     },
-//     {
-//         itemImageSrc: CarltonImage,
-//         alt: 'Description for Image 1',
-//         title: 'Title 2'
-//     },
-//     {
-//         itemImageSrc: PepsiShirtImage,
-//         alt: 'Description for Image 1',
-//         title: 'Title 3',
-//         backgroundColor: ''
-//     }
-// ];
 const sliders = ref();
 const inside = ref(true);
 
@@ -73,6 +52,9 @@ const getHomeSliders = async () => {
             banner_description: data.banner_description,
             background_color: data.background_color,
         };
+        if (object.background_color.indexOf(";") !== -1) {
+            object.background_color = object.background_color.replaceAll(";", ""); // Putting ; inside this property will break CSS and it won't run the dynamic style
+        }
         sliderList.push(object);
     });
     return sliderList;
@@ -142,6 +124,7 @@ onMounted(async () => {
 .slideshow-text button {
     border: 5px solid #FFFFFF;
     width: 30%;
+    background: transparent;
 }
 
 .slideshow-text button::hover {
@@ -161,4 +144,5 @@ onMounted(async () => {
 .pedding-border {
     width: 10%;
 }
+
 </style>

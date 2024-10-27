@@ -1,5 +1,5 @@
 import { useAppStore } from "@/stores";
-import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query, updateDoc } from "firebase/firestore";
 import { FirebaseStorage } from "./Storage";
 import _ from 'lodash';
 
@@ -27,7 +27,7 @@ export const OtherConfigFirestore = {
                     image_name: sliderForm.image.image_name,
                     banner_title: sliderForm.banner_title,
                     banner_description: sliderForm.banner_description,
-                    background_color: `#${sliderForm.background_color}`,
+                    background_color: sliderForm.background_color,
                     deck_id: sliderForm.deck_id,
                     order: sliderForm.order,
                     created: sliderForm.created,
@@ -50,8 +50,40 @@ export const OtherConfigFirestore = {
 
         return result;
     },
-    updateSlider: async (formData) => {
+    updateSlider: async (sliderForm) => {
+        const result = {
+            status: "success",
+            message: "",
+            data: {},
+        };
+        try {
+            let downloadedURL = "";
+            const db = collection(getFirestore(), useAppStore().getHomeSliderCollection);
+            const docRef = doc(db, sliderForm.id);
+            if (!_.isEmpty(sliderForm.image)) {
+                downloadedURL = await FirebaseStorage.uploadFile(sliderForm.image.image_name, sliderForm.image.image_data, folderLocation);
+            }
+            const formData = {
+                image: downloadedURL ? downloadedURL : sliderForm.image_link,
+                image_name: sliderForm.image_name,
+                banner_title: sliderForm.banner_title,
+                banner_description: sliderForm.banner_description,
+                background_color: sliderForm.background_color,
+                deck_id: sliderForm.deck_id,
+                order: sliderForm.order,
+                updated: sliderForm.updated,
+                updated_by: sliderForm.updated_by
+            };
 
+            await updateDoc(docRef, formData).then(async (response) => {
+                result.message = useAppStore().getMessageMaster.DATA("").SLIDER_UPDATED;
+            });
+        } catch (error) {
+            result.status = 'error';
+            result.message = error.message;
+        }
+
+        return result;
     },
     deleteSlider: async (id, image_name) => {
         const result = {

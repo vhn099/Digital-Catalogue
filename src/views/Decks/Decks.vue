@@ -40,7 +40,7 @@ const cities = ref([
   { name: 'Latest Update', code: 'LDN' },
   { name: 'Most Favorited', code: 'IST' },
 ]);
-const deckSectionPageHeader = "Last Decks";
+const deckSectionPageHeader = "Lastest Decks";
 
 const categories = ref([
   { name: "Accounting", key: "A" },
