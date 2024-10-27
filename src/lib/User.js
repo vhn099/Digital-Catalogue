@@ -52,6 +52,7 @@ export const UserFirestore = {
             if (userDoc.docs.length > 0) {
                 const userData = userDoc.docs[0].data();
                 result.userData = userData;
+                result.userData.id = userDoc.docs[0].id;
                 const disabled = result.userData.disabled;
                 if (disabled) {
                     result.status = 'error';
@@ -61,6 +62,27 @@ export const UserFirestore = {
                 result.status = 'error';
                 result.message = useAppStore().getMessageMaster.AUTH.NOT_EXISTED_ACCOUNT;
             }
+        }
+        return result;
+    },
+
+    async checkUserPermissionBeforeAction() {
+        const currentUser = await this.getCurrentUser();
+        const result = {
+            status: 'success',
+            message: '',
+            data: {}
+        };
+        // Check current operation of the current user if they are admin but suddenly got remove role.
+        if (currentUser.userData) {
+            if (!currentUser.userData.isAdmin) {
+                result.status = 'error';
+                result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
+                return result;
+            }
+        } else {
+            result.status = 'error';
+            result.message = useAppStore().getMessageMaster.AUTH.NOT_EXISTED_ACCOUNT;
         }
         return result;
     },
@@ -122,19 +144,47 @@ export const UserFirestore = {
 
         return result;
     },
+    async updateMyProfile(userForm) {
+        const db = collection(getFirestore(), useAppStore().getUsersCollection);
+        let result = {
+            status: 'success',
+            message: '',
+            data: {}
+        };
+        try {
+            const docRef = getDoc(doc(db, userForm.id));
+            if ((await docRef).exists()) {
+                console.log(userForm);
+                await updateDoc(doc(db, userForm.id), {
+                    firstname: userForm.firstname || "",
+                    lastname: userForm.lastname || "",
+                    updated: userForm.updated,
+                    updated_by: userForm.updated_by
+                }).then(response => {
+                    result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_UPDATE;
+                });
+            } else {
+                result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_NOT_EXISTED;
+                result.status = 'warning';
+            }
+        } catch (error) {
+            result.status = 'error';
+            result.message = error.message;
+
+        }
+        return result;
+    },
     async updateUser(userForm) {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
-        const currentUser = await this.getCurrentUser();
-        const result = {
+        let result = {
             status: 'success',
             message: '',
             data: {}
         };
         // Check current operation of the current user if they are admin but suddenly got remove role.
-        if (!currentUser.isAdmin) {
-            result.status = 'error',
-                result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
-            result.data = {};
+        const checkPermission = await this.checkUserPermissionBeforeAction();
+        if (checkPermission.status !== 'success') {
+            result = checkPermission;
             return result;
         }
         try {
@@ -167,17 +217,15 @@ export const UserFirestore = {
     },
     async deleteUser(userID, email, updated, updated_by) {
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
-        const currentUser = await this.getCurrentUser();
-        const result = {
+        let result = {
             status: 'success',
             message: '',
             data: {}
         };
         // Check current operation of the current user if they are admin but suddenly got remove role.
-        if (!currentUser.isAdmin) {
-            result.status = 'error',
-                result.message = useAppStore().getMessageMaster.ADMIN_SITE.NO_PERMISSION;
-            result.data = {};
+        const checkPermission = await this.checkUserPermissionBeforeAction();
+        if (checkPermission.status !== 'success') {
+            result = checkPermission;
             return result;
         }
         try {

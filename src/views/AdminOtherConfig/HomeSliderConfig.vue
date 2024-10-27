@@ -57,7 +57,7 @@ const tableColumns = [
         field: 'order',
         label: 'Order',
         styles: {
-
+            textAlign: 'center'
         }
     }
 ];

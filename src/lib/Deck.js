@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 
 import { useAppStore } from "@/stores";
+import { FirebaseStorage } from "./Storage";
 
 export const DeckFirestore = {
   async getDeck(id) {
@@ -76,14 +77,51 @@ export const DeckFirestore = {
     try {
       const docRef = getDoc(doc(db, deckForm.id));
       if ((await docRef).exists()) {
+        let pdfFile = {
+          downloadURL: '',
+          fileName: ''
+        };
+        let highlight = {
+          downloadURL: '',
+          fileName: ''
+        };
+        let subImages = [];
+        // There is changes like add new images or replace the old ones with new ones.
+        if (deckForm.images.length != 0) {
+          for (let i = 0; i < deckForm.images.length; i++) {
+            const folder = deckForm.images[i].type === "pdfFile" ? "deck/pdf" : "deck/images";
+            const downloadURL = await FirebaseStorage.uploadFile(deckForm.images[i].file_name, deckForm.images[i].file_data, folder);
+            if (deckForm.images[i].type === 'pdfFile') {
+              pdfFile.downloadURL = downloadURL;
+              pdfFile.fileName = deckForm.images[i].file_name;
+            } else if (deckForm.images[i].type === 'highlight') {
+              highlight.downloadURL = downloadURL;
+              highlight.fileName = deckForm.images[i].file_name;
+            } else if (deckForm.images[i].type === 'subImages') {
+              subImages.push({
+                name: deckForm.images[i].file_name,
+                url: downloadURL
+              });
+            }
+          }
+        }
+        // There is deleted old files in sub images (pdf file and highlight is not done yet)
+        if (deckForm.deleted_sub_images) {
+          if (deckForm.deleted_sub_images.length > 0) {
+            deckForm.deleted_sub_images.forEach(async image => {
+              await FirebaseStorage.deleteFile("deck/images", image.name);
+            });
+          }
+        }
+
         await updateDoc(doc(db, deckForm.id), {
           title: deckForm.title || "",
           detail_description: deckForm.detail_description || "",
           category_id: deckForm.category_id || "",
-          deck_highlight: deckForm.deck_highlight || "",
-          deck_highlight_name: deckForm.deck_highlight_name || "",
-          deck_images: deckForm.deck_images || [],
-          pdf: deckForm.pdf || "",
+          deck_highlight: highlight.downloadURL ? highlight.downloadURL : deckForm.deck_highlight,
+          deck_highlight_name: highlight.fileName ? highlight.fileName : deckForm.deck_highlight_name,
+          deck_images: subImages.length === 0 ? deckForm.deck_images : subImages,
+          pdf: pdfFile.downloadURL,
           tag: deckForm.tag || [],
           updated: deckForm.updated,
           updated_by: deckForm.updated_by,
@@ -100,7 +138,8 @@ export const DeckFirestore = {
       }
     } catch (error) {
       result.status = "error";
-      result.message = error.message;
+      console.log(error);
+      result.message = error;
     }
 
     return result;
