@@ -40,7 +40,7 @@
                         </div>
                     </template>
                 </Column>
-                <Column field="firstname" header="First Name" style="width: 20%"></Column>
+                <Column field="firstname" header="First Name" style="width: 20%" v-if="!isUser"></Column>
                 <Column :field='isUser ? "title" : "lastname"' :header='isUser ? "Title" : "Last Name"'
                     style="width: 20%"></Column>
 
