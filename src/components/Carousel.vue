@@ -141,17 +141,17 @@ onMounted(async () => {
 
 .slideshow-text button {
     border: 5px solid #FFFFFF;
-    width: 30%;
+    width: 200px;
 }
 
 .slideshow-text button::hover {
     border: 5px solid #FFFFFF;
-    width: 30%;
+    width: 200px;
 }
 
 :deep(.p-button:not(:disabled):hover) {
     border: 5px solid #FFFFFF;
-    width: 30%;
+    width: 200px;
 }
 
 .slideshow-image {
