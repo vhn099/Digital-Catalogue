@@ -66,7 +66,7 @@ const callDeleteFav = (id) => {
             </template>
         </Card>
 
-        <Card style="width: 25rem; overflow: hidden" v-if="isnew">
+        <Card class="new-fav-canva" style="width: 25rem; overflow: hidden" v-if="isnew">
             <template #content>
                 <div class="add-new-fav" @click="deckRouting">
                     <div class="new-icon">
@@ -113,6 +113,11 @@ const callDeleteFav = (id) => {
     height: inherit;
     cursor: pointer;
 }
+
+.new-fav-canva:hover {
+  background-color: var(--p-button-secondary-hover-background);
+}
+
 
 .new-icon {
     padding: 15px;

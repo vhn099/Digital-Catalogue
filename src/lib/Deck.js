@@ -16,9 +16,23 @@ import {
 import { useAppStore } from "@/stores";
 
 export const DeckFirestore = {
-  async getDecks() {
+  async getDeck(id) {
+    const docSnap = await getDoc(
+      doc(getFirestore(), useAppStore().getDecksCollection, id)
+    );
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      return "Category does not exsist";
+    }
+  },
+
+  async getDecks(cateID) {
     const db = collection(getFirestore(), useAppStore().getDecksCollection);
-    let snapshot = await getDocs(query(db, orderBy('updated', 'desc')));
+    const docQuery = cateID
+      ? query(db, orderBy("updated", "desc"), where("category_id", "==", cateID))
+      : query(db, orderBy("updated", "desc"));
+    let snapshot = await getDocs(docQuery);
 
     return snapshot.docs;
   },

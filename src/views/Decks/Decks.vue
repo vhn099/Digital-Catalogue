@@ -20,6 +20,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
+import router from '@/router';
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
@@ -62,9 +63,9 @@ const favoriteFn = async (id) => {
   console.log('called' + id);
 };
 
-const getDecks = async () => {
+const getDecks = async (cateID) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getDecks();
+  const decksSnapshot = await DeckFirestore.getDecks(cateID);
   for (const deck of decksSnapshot) {
     const data = deck.data();
     const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
@@ -90,9 +91,10 @@ const getDecks = async () => {
 };
 
 onMounted(async () => {
-    email.value = getAuth().currentUser.email;
+  email.value = getAuth().currentUser.email;
+  const { params } = router.currentRoute.value; // open from category
 
-  const decks = await getDecks();
+  const decks = await getDecks(params.cateID);
   for (let i = 0; i < decks.length; i++) {
     if (i < 2) {
       top_decks.value.push(decks[i]);
@@ -169,6 +171,9 @@ onMounted(async () => {
       <div class="card normal-line">
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
       </div>
+      <div class="view-more-router">
+        <RouterLink :to="{ name: 'home' }" class="link-router">View More</RouterLink>
+      </div>
     </div>
 
 
@@ -243,5 +248,21 @@ onMounted(async () => {
 
 :deep(.p-button-secondary) {
   border: 1px solid var(--p-select-border-color);
+}
+
+.view-more-router {
+  padding: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.link-router {
+  color: gray;
+  text-decoration: underline;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 30px;
+  text-align: center;
 }
 </style>

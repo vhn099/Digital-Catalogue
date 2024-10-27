@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { CategoryFirestore } from '@/lib/Category';
 import router from '@/router';
 import Button from 'primevue/button';
@@ -36,7 +36,6 @@ function prev() {
 };
 
 function moveLeft() {
-  console.log(innerStyles)
   innerStyles.value = {
     transform: `translateX(-${step.value})
                     translateX(-${step.value})`
@@ -92,13 +91,13 @@ async function getCategories() {
     categoryList.push(object);
   });
 
-  // console.log('categoryList', categoryList);
   return categoryList;
 };
 
-const categoryRouting = () => {
+const categoryRouting = (id) => {
   router.push({
-    name: 'decks'
+    name: 'decks',
+    params: { cateID: id }
   })
 }
 /* FUNCTION END */
@@ -121,7 +120,7 @@ onMounted(async () => {
     <div class="carousel">
       <div class="inner" ref="inner" :style="innerStyles">
         <div class="card" v-for="card in cards" :key="card">
-          <div class="cate-item" @click="categoryRouting">
+          <div class="cate-item" @click="categoryRouting(card.id)">
             <div class="cate-logo">
               <img draggable="false" width="52" height="52" fill="none" :src="card.icon" />
             </div>
@@ -176,6 +175,10 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.card:hover {
+  background-color: var(--p-button-secondary-hover-background);
 }
 
 

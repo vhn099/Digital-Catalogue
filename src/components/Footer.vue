@@ -7,7 +7,7 @@
             </div>
         </div>
       
-       <div class="footer-link flex-1 flex align-items-center justify-content-center gap-2">
+       <div class="footer-link">
         <a href="https://www.admgroup.com/cookie-policy">Cookie Policy,</a>
         <a href="https://www.admgroup.com/website-accessibility-statement">Website Accessibility Statement,</a>
 
@@ -39,7 +39,6 @@
 }
 
 .my-footer {
-    height: 251px;
     width: 100%;
     background-color: #7326D9;
 }
@@ -47,6 +46,20 @@
 .footer-link {
     /* background-color: aqua; */
     margin-top: -25px;
+    padding-bottom: 50px;
+    display: flex;
+    gap: 10px;
+    text-align: center;
+    justify-content: center;
+}
+
+@media (max-width: 920px) {
+    .footer-link {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+    }
 }
 
 .footer-link a{

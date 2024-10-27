@@ -1,7 +1,10 @@
 <template>
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
-            <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon" draggable="false" />
+            <div class="icon-hover">
+                <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon"
+                    draggable="false" />
+            </div>
             <span> {{ item.label }}</span>
         </template>
     </Dock>
@@ -111,11 +114,62 @@ const position = 'left';
 }
 
 :deep(.p-dock-item-link) img {
-    height: 50%;
+    height: 100%;
+    /* height: 50px;
+    width: 50px; */
+    /* padding: 10px; */
+}
+
+
+/* Cực khổ vãi cái lồn, xin đừng đụng vào CSS này */
+:deep(.p-dock-list) li:nth-child(1):hover .icon-hover {
+    background-color: #7326D9;
+    border-radius: 50px;   
+}
+:deep(.p-dock-list) li:nth-child(1):hover img {
+    content: url('../assets/img/icon/home_white.png')
+}
+
+:deep(.p-dock-list) li:nth-child(2):hover .icon-hover {
+    background-color: #7326D9;
+    border-radius: 50px;   
+}
+:deep(.p-dock-list) li:nth-child(2):hover img {
+    content: url('../assets/img/icon/supply-chain_white.png')
+}
+
+:deep(.p-dock-list) li:nth-child(3):hover .icon-hover {
+    background-color: #7326D9;
+    border-radius: 50px;   
+}
+:deep(.p-dock-list) li:nth-child(3):hover img {
+    content: url('../assets/img/icon/presentation_white.png')
+}
+
+:deep(.p-dock-list) li:nth-child(4):hover .icon-hover {
+    background-color: #7326D9;
+    border-radius: 50px;   
+}
+:deep(.p-dock-list) li:nth-child(4):hover img {
+    content: url('../assets/img/icon/support_white.png')
+}
+
+:deep(.p-dock-list) li:nth-child(5):hover .icon-hover {
+    background-color: #7326D9;
+    border-radius: 50px;   
+}
+:deep(.p-dock-list) li:nth-child(5):hover img {
+    content: url('../assets/img/icon/logout_white.png')
 }
 
 :deep(.p-dock-item-link) span {
     font-size: 10px;
     font-weight: 700;
+}
+
+.icon-hover {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
 }
 </style>

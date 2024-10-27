@@ -1,4 +1,4 @@
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 
 export const FirebaseStorage = {
     getStorageInfo: () => {
@@ -29,5 +29,24 @@ export const FirebaseStorage = {
         // });
         downloadableURL = await getDownloadURL(categoryRef);
         return downloadableURL;
-    }
+    },
+    deleteFile: async (folder, imageName) => {
+        const storage = getStorage();
+        const imageRef = ref(storage, `${folder}/${imageName}`);
+        let result = {
+            message: 'Deleted file successfully',
+            deleted: false
+        };
+
+        if (!folder || !imageName) {
+            result.message = "No folder name or file name specified to delete";
+        } else {
+            await deleteObject(imageRef).then(() => {
+                result.deleted = true;
+            }).catch(error => {
+                result.message = error.message;
+            });
+        }      
+        return result;
+    },
 };

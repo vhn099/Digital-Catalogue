@@ -6,40 +6,21 @@ import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import { ref, onMounted } from "vue";
 import PresentationIcon from '@/assets/img/icon/presentation.png';
+import router from '@/router';
+import { DeckFirestore } from '@/lib/Deck';
+import { CategoryFirestore } from '@/lib/Category';
 
-onMounted(() => {
-    
+const deckDetails = ref({});
+
+onMounted(async () => {
+    const { params } = router.currentRoute.value;
+    deckDetails.value = await getDeckByID(params.id);
 });
+
 const sectionIcon = PresentationIcon;
 const sectionText = "Deck";
 const deckDetailPageHeader = "Selected:";
 const isViewDeck = ref(false);
-
-const images = [
-    {
-        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F1.png?alt=media&token=26006724-e5aa-4483-a11a-8367c6a54c39',
-        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F1.png?alt=media&token=26006724-e5aa-4483-a11a-8367c6a54c39',
-        alt: 'Description for Image 1',
-        title: 'Title 1'
-    }, {
-        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F2.png?alt=media&token=cc5c0d93-493f-4474-bf1e-a557d9848c6f',
-        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F2.png?alt=media&token=cc5c0d93-493f-4474-bf1e-a557d9848c6f',
-        alt: 'Description for Image 2',
-        title: 'Title 2'
-    }, {
-        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F3.jpg?alt=media&token=671fbf19-d788-4e0e-ac79-c659e74990c0',
-        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F3.jpg?alt=media&token=671fbf19-d788-4e0e-ac79-c659e74990c0',
-        alt: 'Description for Image 3',
-        title: 'Title 3',
-        backgroundColor: ''
-    },{
-        itemImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F4.png?alt=media&token=cb82599a-2692-4376-8eb5-655127e50026',
-        thumbnailImageSrc: 'https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fimages%2F4.png?alt=media&token=cb82599a-2692-4376-8eb5-655127e50026',
-        alt: 'Description for Image 4',
-        title: 'Title 4',
-        backgroundColor: ''
-    }
-];
 
 const responsiveOptions = ref([
     {
@@ -51,6 +32,27 @@ const responsiveOptions = ref([
         numVisible: 1
     }
 ]);
+
+const getDeckByID = async (id) => {
+    const deck = {};
+    const data = await DeckFirestore.getDeck(id);
+    const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
+    deck.title = data.title;
+    deck.detail_description = data.detail_description;
+    deck.category_id = data.category_id;
+    deck.category_name = categoryName;
+    deck.deck_highlight = data.deck_highlight;
+    deck.deck_images = data.deck_images;
+    deck.pdf = data.pdf;
+    deck.tag = data.tag;
+    deck.created = data.created ? data.created.toDate().toLocaleString() : '';
+    deck.created_by = data.created_by || '';
+    deck.updated = data.updated ? data.updated.toDate().toLocaleString() : '';
+    deck.updated_by = data.updated_by || '';
+
+    return deck;
+};
+
 function viewDeck() {
     isViewDeck.value = true;
 }
@@ -69,14 +71,14 @@ function viewDeck() {
             <!-- https://pdfobject.com/guide/quick-start.html -->
             <div v-if="!isViewDeck" class="deck-canva">
                 <div class="deck-image">
-                    <Galleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="4"
+                    <Galleria :value="deckDetails.deck_images" :responsiveOptions="responsiveOptions" :numVisible="4"
                         containerStyle="max-width: 800px" :circular="true" :autoPlay="true" :transitionInterval="4000">
                         <template #item="slotProps">
-                            <img draggable="false" :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
+                            <img draggable="false" :src="slotProps.item.url" :alt="slotProps.item.name"
                                 style="width: 100%; display: block" />
                         </template>
                         <template #thumbnail="slotProps">
-                            <img draggable="false" :src="slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt"
+                            <img draggable="false" :src="slotProps.item.url" :alt="slotProps.item.name"
                                 style="max-height:100%; max-width:100% ;display: block;" />
                         </template>
                     </Galleria>
@@ -84,7 +86,7 @@ function viewDeck() {
                 <div class="deck-info">
                     <div class="deck-title">
                         <div class="deck-title-left">
-                            <span style="font-size: 40px;font-weight: 500;">Placeholder for the title</span>
+                            <span style="font-size: 40px;font-weight: 500;">{{ deckDetails.title }}</span>
                         </div>
                         <div class="deck-title-right">
                             <div class="button-like">
@@ -99,40 +101,31 @@ function viewDeck() {
                     </div>
                     <div class="deck-fav-button">
                         <Button label="Favourite">
-                            <img draggable="false" width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
+                            <img draggable="false" width="23" height="23" fill="none"
+                                src="../../assets/img/icon/favorite_white.png" />
                             <label>Add to my Favorite</label>
                         </Button>
                     </div>
                     <div class="deck-description">
                         <p>
-                            Crafted from high-quality stainless steel, the Ultimate Ice Bucket offers excellent
-                            insulation, keeping ice
-                            frozen for hours. Its double-walled construction prevents condensation, ensuring your table
-                            or countertop
-                            stays dry while maintaining a sleek, polished look.
-
-                            The bucket's large capacity makes it ideal for serving beverages, from chilled wines and
-                            champagnes to sodas
-                            and cocktails.
+                            {{ deckDetails.detail_description }}
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag severity="secondary" value="#news"></Tag>
-                        <Tag severity="secondary" value="#news"></Tag>
-                        <Tag severity="secondary" value="#news"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"></Tag>
                     </div>
                 </div>
             </div>
             <div v-if="isViewDeck" class="pdf-canva">
                 <div class="pdf-fav-button">
                     <Button label="Favourite">
-                        <img draggable="false" width="23" height="23" fill="none" src="../../assets/img/icon/favorite_white.png" />
+                        <img draggable="false" width="23" height="23" fill="none"
+                            src="../../assets/img/icon/favorite_white.png" />
                         <label>Add to my Favorite</label>
                     </Button>
                 </div>
                 <div class="pdf-place">
-                    <PdfObject class="pdf-view"
-                        url="https://firebasestorage.googleapis.com/v0/b/digital-catalogue-15dcb.appspot.com/o/deck%2Fpdf%2Fexample.pdf?alt=media&token=ba1748fd-1602-46dd-bcc8-a49fc4f56754" />
+                    <PdfObject class="pdf-view" :url="deckDetails.pdf" />
                 </div>
             </div>
         </div>

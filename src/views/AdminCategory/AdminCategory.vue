@@ -31,6 +31,13 @@ const rules = computed(() => {
         },
     };
 });
+const imageRule = computed(() => {
+    return {
+        imagePreview: {
+            required
+        }
+    }
+});
 /* COMPUTED VALUES */
 
 const tableColumns = [
@@ -89,11 +96,11 @@ const deleteCategoryDialog = ref(false);
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
-const imageRule = ref(null);
 const imagePreview = ref(null);
 /* REF DEFINITION END*/
 
 const v$ = useVuelidate(rules, formFields);
+const imageRule$ = useVuelidate(imageRule, { imagePreview });
 
 /* FUNCTIONS */
 const resetFormData = () => {
@@ -146,18 +153,12 @@ const getCategories = async () => {
 
 const submitForm = async () => {
     const isValid = await v$.value.$validate();
-    const imageFile = image.value.files;
-    if (imageFile.length === 0) {
-        imageRule.value = "Value is required";
-        return false;
-    } else {
-        imageRule.value = null;
-    }
+    const imageValue = await imageRule$.value.$validate();
 
-
-    if (isValid || edit.value) {
+    if ((isValid && imageValue)) {
+        const imageFile = image.value.files;
         let imageData = imageFile[0];
-        let imageName = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toDateString()}`;
+        let imageName = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
         const categoryFormData = getCategoryFormData();
         let result = {};
         const downloadURL = await FirebaseStorage.uploadFile(imageName, imageData, 'category');
@@ -259,8 +260,8 @@ watch(visible, () => {
                         <label class="form-label" for="image">Image <span class="required-icon">*</span></label>
                         <img draggable="false" v-if="imagePreview" :src="imagePreview" alt="Image" width="64"/>
                         <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="1000000" accept="image/*" />
-                        <small class="error-messages" v-if="imageRule" customUpload>{{
-                            imageRule }}</small>
+                        <small class="error-messages" v-if="imageRule$.imagePreview.$errors.length > 0">{{
+                            imageRule$.imagePreview.$errors[0].$message }}</small>
                     </div>
                 </form>
 

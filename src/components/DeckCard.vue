@@ -14,7 +14,8 @@
                 <div class="deck-info-like">
                     <div class="button-like">
                         <Button severity="secondary" label="Favourite" @click="favoriteFn('5KGLQrFEKbZBUmAcEYpd')">
-                            <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" />
+                            <!-- <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" /> -->
+                            <img draggable="false" width="40" height="40" fill="none" :src="FavoriteRedIcon" />
                             <label>Favourite</label>
                         </Button>
                         <!-- <Button label="Favourite" icon="pi pi-heart" iconPos="top" /> -->
@@ -33,6 +34,7 @@ import router from '@/router';
 import { computed, defineEmits } from 'vue';
 
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
+import FavoriteRedIcon from '@/assets/img/icon/favorite_red.png';
 
 defineProps({
     data: {
@@ -78,6 +80,7 @@ const backgroundImage = (img) => {
     font-weight: 600;
     margin-left: 5px;
     border-radius: 25px;
+    cursor: pointer;
 }
 
 .deck-name {
@@ -85,6 +88,13 @@ const backgroundImage = (img) => {
     font-weight: 500;
     line-height: 54px;
     cursor: pointer;
+    padding: 0 10px;
+}
+
+.deck-name:hover {
+    /* background-color: rgba(115, 38, 217, 0.1); */
+    background-color: var(--p-button-secondary-hover-background);
+    border-radius: 20px;
 }
 
 .my-card-deck {
