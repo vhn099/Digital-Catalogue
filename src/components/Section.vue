@@ -20,7 +20,7 @@ defineProps({
         type: String
     },
     breadcrumb: {
-        type: String
+        type: Array
     },
     line4: {
         type: Object
@@ -42,6 +42,8 @@ defineProps({
 
 <style scoped>
 .my-second-line {
+    display: flex;
+    flex-direction: row;
     font-weight: 500;
     font-size: 24px;
 }

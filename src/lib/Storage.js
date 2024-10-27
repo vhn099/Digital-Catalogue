@@ -5,6 +5,18 @@ export const FirebaseStorage = {
         return getStorage();
     },
 
+    checkFileExists: async (folder, imageName) => {
+        const storage = getStorage();
+        const imageRef = ref(storage, `${folder}/${imageName}`);
+        let result = true;
+        try {
+            await getDownloadURL(imageRef);
+        } catch (error) {
+            result = false;
+        }
+        return result;
+    },
+
     uploadFile: async (imageName, imageData, folder) => {
         const storage = getStorage();
         let downloadableURL = '';

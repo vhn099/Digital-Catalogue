@@ -34,7 +34,8 @@ export const useAppStore = defineStore("storeId", {
 
           SLIDER_CREATED: "Created slider successfully",
           IMAGE_SLIDER_ERROR: `No images were found during the upload process`,
-          SLIDER_DELETED: "Deleted slider successfully"
+          SLIDER_DELETED: "Deleted slider successfully",
+          SLIDER_UPDATED: "Updated slider successfully"
         }
       },
       ADMIN_SITE: {

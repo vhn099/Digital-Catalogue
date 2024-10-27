@@ -15,12 +15,14 @@ const deckDetails = ref({});
 onMounted(async () => {
     const { params } = router.currentRoute.value;
     deckDetails.value = await getDeckByID(params.id);
+    setBreadcrumbs(createBreadcrumbObject(deckDetails.value), 'add');
 });
 
 const sectionIcon = PresentationIcon;
 const sectionText = "Deck";
-const deckDetailPageHeader = "Selected:";
 const isViewDeck = ref(false);
+const breadcrumbs = ref([]);
+const isActiveBreadCrumb = ref(0);
 
 const responsiveOptions = ref([
     {
@@ -33,6 +35,7 @@ const responsiveOptions = ref([
     }
 ]);
 
+/* FUNCTIONS DEFINITION START */
 const getDeckByID = async (id) => {
     const deck = {};
     const data = await DeckFirestore.getDeck(id);
@@ -53,9 +56,53 @@ const getDeckByID = async (id) => {
     return deck;
 };
 
-function viewDeck() {
+
+const viewDeck = (index) => {
     isViewDeck.value = true;
-}
+    isActiveBreadCrumb.value = index;
+    const object = {
+        title: 'View Deck',
+        component: 'isViewDeck'
+    };
+    setBreadcrumbs(createBreadcrumbObject(object), 'add');
+};
+
+const setStateComponent = (component) => {
+    console.log(component);
+    if (component === 'isViewDeck') {
+        isViewDeck.value = false;
+    }
+};
+
+const changeActiveBreadCrumb = (index) => {
+    isActiveBreadCrumb.value = index;
+    for (let i = breadcrumbs.value.length - 1; i > index; --i) {
+        if (breadcrumbs.value[i].component) {
+            setStateComponent(breadcrumbs.value[i].component);
+        }
+        setBreadcrumbs({}, 'remove');
+    }
+};
+
+const createBreadcrumbObject = (data) => {
+    const object = {};
+    if (data) {
+        object.id = data.title;
+        object.label = data.title;
+        object.component = data.component || null;
+    }
+    return object;
+};
+
+const setBreadcrumbs = (data, type) => {
+    if (type === 'add') {
+        breadcrumbs.value.push(data);
+    } else {
+        breadcrumbs.value.pop();
+    }
+};
+
+/* FUNCTIONS DEFINITION END */
 </script>
 
 <template>
@@ -66,7 +113,19 @@ function viewDeck() {
 
         </div>
         <div class="col-11">
-            <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="deckDetailPageHeader"></SectionItem>
+            <SectionItem :icon="sectionIcon" :icon_text="sectionText"></SectionItem>
+            <div class="breadcrumb">
+                <span class="breadcrumb-header">Selected: </span>
+                <div class="breadcrumb-content">
+                    <span v-for="(breadcrumb, index) in breadcrumbs" :key="breadcrumb.id"
+                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }"
+                        class="cursor-element"
+                        @click="changeActiveBreadCrumb(index)">
+                        {{ breadcrumb.label }}
+                        <span v-if="(index + 1) < breadcrumbs.length" style="padding: 10px">></span>
+                    </span>
+                </div>
+            </div>
 
             <!-- https://pdfobject.com/guide/quick-start.html -->
             <div v-if="!isViewDeck" class="deck-canva">
@@ -91,7 +150,7 @@ function viewDeck() {
                         <div class="deck-title-right">
                             <div class="button-like">
 
-                                <Button severity="secondary" label="Favourite" @click="viewDeck()">
+                                <Button severity="secondary" label="Favourite" @click="viewDeck(1)">
                                     <img draggable="false" width="40" height="40" fill="none"
                                         src="../../assets/img/icon/search_file.png" />
                                     <label>View Deck</label>
@@ -223,4 +282,29 @@ function viewDeck() {
     margin-right: 5px;
     border-radius: 25px;
 }
+
+/* BREADCRUMB CSS START */
+.breadcrumb {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.breadcrumb-header {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.breadcrumb-content {
+    margin-left: 15px;
+}
+
+.active-breadcrumb {
+    font-weight: 500;
+}
+.cursor-element {
+    cursor: pointer;
+}
+
+/* BREADCRUMB CSS END */
 </style>
