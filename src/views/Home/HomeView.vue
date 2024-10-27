@@ -94,6 +94,10 @@ onMounted(async () => {
       <div class="normal-line">
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
       </div>
+      <div class="view-more-router">
+        <RouterLink :to="{ name: 'home' }" class="link-router">View More</RouterLink>
+      </div>
+
 
       <!-- <DeckItem></DeckItem> -->
 
@@ -108,4 +112,20 @@ onMounted(async () => {
   </div>
 
 </template>
-<style scoped></style>
+<style scoped>
+.view-more-router {
+  padding: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.link-router {
+  color: gray;
+  text-decoration: underline;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 30px;
+  text-align: center;
+}
+</style>
