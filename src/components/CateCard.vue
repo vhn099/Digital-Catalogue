@@ -53,6 +53,10 @@ const deckRouting = (id) => {
     border-radius: 11px;
 }
 
+.cate-card-box:hover {
+  background-color: var(--p-button-secondary-hover-background);
+}
+
 .cate-card-image {
     display: grid;
     place-items: center;
