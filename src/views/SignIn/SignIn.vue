@@ -177,19 +177,16 @@ const renderRecaptcha = (id) => {
 };
 
 const handleSubmit = async () => {
-    spinner.value = true;
     const isValid = await v$.value.$validate();
     if (isValid) {
         if (typeof window.grecaptcha === 'undefined') {
             alert('reCAPTCHA is not loaded');
-            spinner.value = false;
             return;
         }
         const captchaResponse = grecaptcha.getResponse();
 
         if (!captchaResponse) {
             document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
-            spinner.value = false;
             return;
         }
         const username = formFields.username;
@@ -202,6 +199,7 @@ const handleSubmit = async () => {
         }
 
         await signInWithEmailAndPassword(getAuth(), username, password).then(async response => {
+            spinner.value = true;
             const userData = await UserFirestore.getCurrentUser();
             UserFirestore.setCookie('user-auth', JSON.stringify(userData), expire);
             router.push({
@@ -222,7 +220,6 @@ const handleSubmit = async () => {
     } else {
         console.log('Invalid form');
     }
-    spinner.value = false;
 };
 const focusPassword = () => {
     document.getElementById('password').firstChild.focus()
