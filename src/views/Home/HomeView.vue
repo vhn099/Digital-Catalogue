@@ -36,7 +36,7 @@ const deckPageHeader = "Latest Decks";
 
 const getDecks = async () => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getDecks();
+  const decksSnapshot = await DeckFirestore.getLimitDecks('', 5, '');
   for (const deck of decksSnapshot) {
     const data = deck.data();
     const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
@@ -95,7 +95,7 @@ onMounted(async () => {
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
       </div>
       <div class="view-more-router">
-        <RouterLink :to="{ name: 'home' }" class="link-router">View More</RouterLink>
+        <RouterLink :to="{ name: 'decks' }" class="link-router">View More</RouterLink>
       </div>
 
 

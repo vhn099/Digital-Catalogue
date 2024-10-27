@@ -27,8 +27,10 @@ const sectionIcon = Presentation;
 const sectionText = "Decks";
 
 const op = ref();
+const cateIDParm = ref('');
 const top_decks = ref([]);
 const normal_decks = ref([]);
+const last_deck = ref({});
 
 const toggle = (event) => {
   op.value.toggle(event);
@@ -53,7 +55,7 @@ const categories = ref([
 const selectedCategories = ref(['Marketing']);
 const favRecord = ref({
   created: '',
-  userID:'',
+  userID: '',
   deckID: '',
 });
 const email = ref('');
@@ -66,9 +68,10 @@ const favoriteFn = async (id) => {
   console.log('called' + id);
 };
 
-const getDecks = async (cateID) => {
+const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getDecks(cateID);
+  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 11, lastDeck);
+  last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
     const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
@@ -95,9 +98,10 @@ const getDecks = async (cateID) => {
 
 onMounted(async () => {
   email.value = getAuth().currentUser.email;
-  const { params } = router.currentRoute.value; // open from category
+  const { params } = router.currentRoute.value; // open from Category
+  cateIDParm.value = params.cateID;
 
-  const decks = await getDecks(params.cateID);
+  const decks = await getDecks(cateIDParm.value);
   for (let i = 0; i < decks.length; i++) {
     if (i < 2) {
       top_decks.value.push(decks[i]);
@@ -106,6 +110,13 @@ onMounted(async () => {
     }
   }
 });
+
+const nextDecks = async (lastDeck) => {
+  const decks = await getDecks(cateIDParm.value, lastDeck);
+  for (let i = 0; i < decks.length; i++) {
+    normal_decks.value.push(decks[i]);
+  }
+};
 </script>
 
 <template>
@@ -175,7 +186,7 @@ onMounted(async () => {
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
       </div>
       <div class="view-more-router">
-        <RouterLink :to="{ name: 'home' }" class="link-router">View More</RouterLink>
+        <RouterLink v-if="last_deck" :to="{}" class="link-router" @click="nextDecks(last_deck)">View More</RouterLink>
       </div>
     </div>
 
