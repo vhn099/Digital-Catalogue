@@ -53,14 +53,14 @@ const routingDeck = (deckID) => {
 const emit = defineEmits(['callFavoriteFn']);
 
 const favoriteFn = (id) => {
-  emit('callFavoriteFn', id);
+    emit('callFavoriteFn', id);
 };
 
 const backgroundImage = (img) => {
-   return {
-     'background-image': `url(${img})`,
-     'background-size': 'cover'
-   }
+    return {
+        'background-image': `url('${img}')`,
+        'background-size': 'cover'
+    }
 }
 /* FUNCTION END */
 </script>
@@ -136,7 +136,7 @@ const backgroundImage = (img) => {
 /* .button-like {
     align-items: end;
 } */
- 
+
 /* :deep(.button-like .p-button-icon) {
     font-size: 50px;
 }
@@ -152,6 +152,7 @@ const backgroundImage = (img) => {
     flex-direction: column;
     width: 90px;
 }
+
 :deep(.button-like .p-button) {
     font-size: 10px;
     font-weight: 700;

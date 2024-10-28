@@ -19,15 +19,15 @@ const tabs = ref([
             component: markRaw(defineAsyncComponent(() => import ('./HomeSliderConfig.vue')))
         }
     },
-    {
-        title: "Contact Email Config",
-        value: '1',
-        content: {
-            tabId: 'email_config',
-            // markRaw: Vue marks a component used in this function as not reactive 
-            component: markRaw(defineAsyncComponent(() => import ('./EmailContactConfig.vue')))
-        }
-    },
+    // {
+    //     title: "Contact Email Config",
+    //     value: '1',
+    //     content: {
+    //         tabId: 'email_config',
+    //         // markRaw: Vue marks a component used in this function as not reactive 
+    //         component: markRaw(defineAsyncComponent(() => import ('./EmailContactConfig.vue')))
+    //     }
+    // },
     
 ]);
 const spinner = ref(false);
