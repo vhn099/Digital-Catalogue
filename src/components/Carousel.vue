@@ -119,22 +119,23 @@ onMounted(async () => {
     line-height: 48px;
     text-align: left;
     color: white;
+    padding-bottom: 20px;
 }
 
 .slideshow-text button {
-    border: 5px solid #FFFFFF;
+    border: 3px solid #FFFFFF;
     width: 30%;
     background: transparent;
     width: 200px;
 }
 
 .slideshow-text button::hover {
-    border: 5px solid #FFFFFF;
+    border: 3px solid #FFFFFF;
     width: 200px;
 }
 
 :deep(.p-button:not(:disabled):hover) {
-    border: 5px solid #FFFFFF;
+    border: 3px solid #FFFFFF;
     width: 200px;
 }
 
@@ -145,5 +146,4 @@ onMounted(async () => {
 .pedding-border {
     width: 10%;
 }
-
 </style>
