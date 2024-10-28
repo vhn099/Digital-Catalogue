@@ -1,8 +1,8 @@
 <template>
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
-            <div class="icon-hover">
-                <img @click="item.eventHandler" class="icon-image" :alt="item.label" :src="item.icon"
+            <div class="icon-hover" @click="item.eventHandler">
+                <img class="icon-image" :alt="item.label" :src="item.icon"
                     draggable="false" />
             </div>
             <span> {{ item.label }}</span>
