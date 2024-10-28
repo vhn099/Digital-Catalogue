@@ -8,7 +8,7 @@
                 <div class="deck-info-desc">
                     <span class="deck-name" @click="routingDeck(data.id)">{{ data.title }}</span>
                     <div class="deck-tag gap-2">
-                        <Tag v-for="t in data.tag" severity="secondary" :value="'#' + t" @click="favoriteFN()"></Tag>
+                        <Tag v-for="t in data.tag" severity="secondary" :value="'#' + t" @click="searchPage(`#${t}`)"></Tag>
                     </div>
                 </div>
                 <div class="deck-info-like">
@@ -82,8 +82,11 @@ const backgroundImage = (img) => {
         'background-size': 'cover'
     }
 }
-const favoriteFN = () =>{
-    alert("Function is under development");
+const searchPage = (value) =>{
+    router.push({
+        name: 'search',
+        query: { query: value }
+    });
 }
 onMounted(async () => {
     fav.value = await FavoriteIcon(props.email, props.data.id);

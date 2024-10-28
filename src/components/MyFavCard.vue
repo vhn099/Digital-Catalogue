@@ -41,9 +41,9 @@ const deckRouting = () => {
 const emit = defineEmits(['callFunction']);
 
 const callDeleteFav = (id) => {
-  emit('callFunction', id);
+    emit('callFunction', id);
 };
-const favoriteFN = () =>{
+const favoriteFN = () => {
     alert("Function is under development");
 }
 
@@ -53,6 +53,12 @@ const deckDetailRouting = (deckID) => {
         params: { id: deckID }
     });
 }
+const searchPage = (value) => {
+    router.push({
+        name: 'search',
+        query: { query: value }
+    });
+};
 /* FUNCTION END */
 </script>
 
@@ -62,10 +68,13 @@ const deckDetailRouting = (deckID) => {
             <template #header>
                 <img alt="user header" :src="deck_img" draggable="false" width="400" height="256" />
             </template>
-            <template #title><div class="title-fav" @click="deckDetailRouting(deck_id)">{{ title }}</div></template>
+            <template #title>
+                <div class="title-fav" @click="deckDetailRouting(deck_id)">{{ title }}</div>
+            </template>
             <template #subtitle>
                 <div class="fav-tag">
-                    <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag' @click="favoriteFN()"></Tag>
+                    <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag'
+                        @click="searchPage(`#${tag}`)"></Tag>
                 </div>
 
             </template>
@@ -149,7 +158,7 @@ const deckDetailRouting = (deckID) => {
 }
 
 .new-fav-canva:hover {
-  background-color: var(--p-button-secondary-hover-background);
+    background-color: var(--p-button-secondary-hover-background);
 }
 
 
@@ -172,5 +181,4 @@ const deckDetailRouting = (deckID) => {
     overflow: hidden;
     min-height: 155px;
 }
-
 </style>

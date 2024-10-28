@@ -65,6 +65,12 @@ const getDeckByID = async (id) => {
     return deck;
 };
 
+const searchPage = (value) => {
+    router.push({
+        name: 'search',
+        query: { query: value }
+    });
+};
 
 const viewDeck = (index) => {
     isViewDeck.value = true;
@@ -196,8 +202,7 @@ const FavoriteIcon = async (userID, deckID) => {
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"
-                            @click="favoriteFn(deckID)"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="searchPage(`#${t}`)"></Tag>
                     </div>
                 </div>
             </div>
@@ -313,6 +318,10 @@ const FavoriteIcon = async (userID, deckID) => {
     font-weight: 600;
     margin-right: 5px;
     border-radius: 25px;
+}
+
+.deck-tags:hover {
+    cursor: pointer;
 }
 
 /* BREADCRUMB CSS START */

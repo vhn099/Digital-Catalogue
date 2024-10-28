@@ -14,12 +14,13 @@ import Popover from 'primevue/popover';
 import Checkbox from 'primevue/checkbox';
 import Divider from 'primevue/divider';
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { getAuth } from 'firebase/auth';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
 import { FavoriteFirestore } from '@/lib/Favorite';
 import router from '@/router';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
@@ -57,10 +58,8 @@ const favRecord = ref({
   deckID: '',
 });
 const email = ref('');
+const spinner = ref(false);
 
-const favoriteFn = async (id) => {
-  await FavoriteFirestore.favoriteFn(email.value, id);
-};
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
   const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 14, lastDeck);
@@ -89,9 +88,8 @@ const getDecks = async (cateID, lastDeck) => {
   return deckList;
 };
 
-onMounted(async () => {
-
-  email.value = getAuth().currentUser.email;
+const onLoadEvents = async () => {
+  spinner.value = true;
   const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = params.cateID;
 
@@ -103,6 +101,16 @@ onMounted(async () => {
       normal_decks.value.push(decks[i]);
     }
   }
+  spinner.value = false;
+}
+
+onMounted(async () => {
+  email.value = getAuth().currentUser.email;
+  await onLoadEvents();
+});
+
+watch(() => router.currentRoute.value.params, async () => {
+  await onLoadEvents()
 });
 
 const nextDecks = async (lastDeck) => {
@@ -114,7 +122,7 @@ const nextDecks = async (lastDeck) => {
 </script>
 
 <template>
-
+  <LoadingSpinner v-if="spinner"/>
   <Popover ref="op">
     <div class="custom-dropdown">
       <div class="block-search">
