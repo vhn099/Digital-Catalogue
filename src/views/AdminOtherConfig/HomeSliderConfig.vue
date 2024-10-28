@@ -192,8 +192,11 @@ const editRow = (data) => {
     formFields.banner_description = data.banner_description;
     formFields.background_color = data.background_color;
     if (!_.isEmpty(data.deck_id)) {
+        
         const deckValue = decks.value.filter(deck => deck.id === data.deck_id);
-        selectedDeck.value = deckValue[0].id;
+        if (!_.isEmpty(deckValue)) {
+            selectedDeck.value = deckValue[0].id;
+        }
     } else {
         selectedDeck.value = null;
     }

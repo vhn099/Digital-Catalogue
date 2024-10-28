@@ -46,6 +46,7 @@ export const OtherConfigFirestore = {
             }
         } catch (error) {
             result.status = 'error';
+            console.log(error);
             result.message = error.message;
         }
 
@@ -67,7 +68,7 @@ export const OtherConfigFirestore = {
             const formData = {
                 image: downloadedURL ? downloadedURL : sliderForm.image_link,
                 image_name: sliderForm.image_name,
-                image_name_id: sliderForm.sliderForm.image_name,
+                image_name_id: sliderForm.image_name_id || "",
                 banner_title: sliderForm.banner_title,
                 banner_description: sliderForm.banner_description,
                 background_color: sliderForm.background_color,
@@ -82,6 +83,7 @@ export const OtherConfigFirestore = {
             });
         } catch (error) {
             result.status = 'error';
+            console.log(error);
             result.message = error.message;
         }
 
