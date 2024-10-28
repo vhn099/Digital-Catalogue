@@ -22,6 +22,9 @@ import Select from "primevue/select";
 import 'primeicons/primeicons.css';
 import InputChips from "primevue/inputchips";
 import _ from 'lodash';
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import ConfirmDialog from "primevue/confirmdialog";
+import { useConfirm } from "primevue/useconfirm";
 
 const formFields = reactive({
     id: '',
@@ -30,9 +33,9 @@ const formFields = reactive({
     category_id: null,
     deck_highlight: '',
     deck_highlight_name: '',
+    deck_highlight_name_id: '',
     deck_images: [],
     pdf: '',
-    pdf_name: '',
     tag: [],
 });
 
@@ -163,6 +166,7 @@ const tableColumns = [
     }
 ]
 const toast = useToast();
+const confirm = useConfirm();
 
 /* REF DEFINITION START */
 const decks = ref();
@@ -175,18 +179,20 @@ const multiple_file_upload = useTemplateRef('multiple_file_upload');
 const deck_images = ref([]);
 const pdf = ref(null);
 const pdfFile = ref();
-const deleteDeckDialog = ref(false);
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const deckHighlightPreview = ref(null);
 const deletedDeckSubImages = ref([]);
+const spinner = ref();
 /* REF DEFINITION END*/
 
+/* VALIDATION START */
 const v$ = useVuelidate(rules, formFields);
 const imageHighlight$ = useVuelidate(imageHighlightRule, { deckHighlightPreview });
 const subImages$ = useVuelidate(subImagesRule, { deck_images });
 const pdfFile$ = useVuelidate(pdfFileRule, { pdfFile });
+/* VALIDATION END */
 
 /* FUNCTIONS */
 const onRemoveTemplatingFile = (subImage, removeFileCallback, index) => {
@@ -211,7 +217,6 @@ const onSelectedFiles = (event) => {
         const exists = deck_images.value.some(deck_image => deck_image.name === file.name);
         if (!exists) {
             file.isNew = true;
-            file.isDeleted = false;
             deck_images.value.push(file);
         }
     });
@@ -223,7 +228,7 @@ const resetFormData = () => {
     formFields.category_id = null;
     formFields.tag = '';
     formFields.deck_highlight_name = "";
-    formFields.pdf_name = "";
+    formFields.deck_highlight_name_id = "";
 
     deck_images.value = [];
     deckHighlightPreview.value = null;
@@ -256,8 +261,10 @@ const getDeckFormData = () => {
     if (uploadedPDFFile.length != 0) {
         deckForm.images.push({
             file_data: uploadedPDFFile[0],
-            file_name: `${Math.floor(Math.random() * 60)}_${uploadedPDFFile[0].name}_${new Date().toTimeString()}`,
+            file_name: uploadedPDFFile[0].name,
+            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${uploadedPDFFile[0].name}`,
             type: 'pdfFile',
+            isNew: true, // Check if table is added or replaced the old image
         });
     }
 
@@ -265,19 +272,21 @@ const getDeckFormData = () => {
     if (imageHighlight.length != 0) {
         deckForm.images.push({
             file_data: imageHighlight[0],
-            file_name: `${Math.floor(Math.random() * 60)}_${imageHighlight[0].name}_${new Date().toTimeString()}`,
-            type: 'highlight'
+            file_name: imageHighlight[0].name,
+            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${imageHighlight[0].name}`,
+            type: 'highlight',
+            isNew: true,
         });
     }
 
     deck_images.value.forEach(image => {
-        if (image.isNew) {
-            deckForm.images.push({
-                file_data: image,
-                file_name: `${Math.floor(Math.random() * 60)}_${image.name}_${new Date().toTimeString()}`,
-                type: 'subImages'
-            })
-        }
+        deckForm.images.push({
+            file_data: image,
+            file_name: image.name,
+            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${image.name}`,
+            type: 'subImages',
+            isNew: image.isNew
+        });
     });
 
     if (!_.isEmpty(deletedDeckSubImages.value)) {
@@ -302,9 +311,9 @@ const getDecks = async () => {
             category_name: categoryName,
             deck_highlight: data.deck_highlight,
             deck_highlight_name: data.deck_highlight_name,
+            deck_highlight_name_id: data.deck_highlight_name_id,
             deck_images: data.deck_images,
             pdf: data.pdf,
-            pdf_name: data.pdf_name || "",
             tag: data.tag,
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
@@ -332,6 +341,7 @@ const getCategories = async () => {
 };
 
 const submitForm = async () => {
+    spinner.value = true;
     const isValid = await v$.value.$validate();
     const imageHighlightValid = await imageHighlight$.value.$validate();
     const subImagesValid = await subImages$.value.$validate();
@@ -362,27 +372,39 @@ const submitForm = async () => {
     } else {
 
     }
-};
-const deleteDeck = async () => {
-    let result = await DeckFirestore.deleteDeck(formFields.id);
-    toast.add({
-        summary: 'System Message',
-        severity: result.status,
-        detail: result.message,
-        life: 3000 // 3s
-    });
-    if (result.status === 'success') {
-        visible.value = false;
-        decks.value = await getDecks();
-    }
-
-    formFields.id = '';
-    deleteDeckDialog.value = false;
+    spinner.value = false;
 };
 const deleteRow = (data) => {
-    formFields.id = data.id;
+    confirm.require({
+        message: 'Do you want to delete this deck ?',
+        header: 'ATTENTION',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: async () => {
+            let result = await DeckFirestore.deleteDeck(data);
+            toast.add({
+                summary: 'System Message',
+                severity: result.status,
+                detail: result.message,
+                life: 3000 // 3s
+            });
+            if (result.status === 'success') {
+                visible.value = false;
+                decks.value = await getDecks();
+            }
+        },
+        reject: () => {
 
-    deleteDeckDialog.value = true;
+        }
+    });
 };
 const editRow = (data) => {
     formFields.id = data.id;
@@ -392,31 +414,31 @@ const editRow = (data) => {
         id: data.category_id,
         name: data.category_name,
     };
-    // formFields.deck_images = data.deck_images;
     formFields.deck_highlight = data.deck_highlight;
     formFields.deck_highlight_name = data.deck_highlight_name;
     formFields.pdf = data.pdf;
-    formFields.pdf_name = data.pdf_name;
     formFields.tag = data.tag;
     formFields.deck_images = data.deck_images;
 
     deckHighlightPreview.value = data.deck_highlight;
-    deck_images.value = []; // Reset data of deck sub images;
+    deck_images.value = []; // Reset data of deck sub images when users click edit
     if (!_.isEmpty(data.deck_images)) {
         data.deck_images.forEach(async image => {
             const object = {
                 name: image.name,
+                name_id: image.name_id,
                 objectURL: image.url,
                 isNew: false,
-                isDeleted: false
             };
             deck_images.value.push(object);
         });
     }
+    pdfFile.value = data.pdf;
 
     visible.value = true;
     edit.value = true;
 };
+// IMAGE PREVIEWER
 const onImageSelected = (event) => {
     const file = event.files[0];
     const reader = new FileReader();
@@ -427,11 +449,10 @@ const onImageSelected = (event) => {
 
     reader.readAsDataURL(file);
 };
-const onAdvancedUpload = () => {
-    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
-};
+
+// ON PDF SELECTED
 const onFileSelected = (event) => {
-    pdfFile.value = event.files;
+    pdfFile.value = event.files[0].name;
 };
 /* FUNCTIONS */
 
@@ -448,7 +469,9 @@ watch(visible, () => {
 });
 </script>
 <template>
+    <!-- <LoadingSpinner v-if="spinner"/> -->
     <Toast />
+    <ConfirmDialog />
     <div class="">
         <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Deck"'
             :style="{ width: '80vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
@@ -574,7 +597,8 @@ watch(visible, () => {
 
                     <!-- PDF -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="pdf">PDF <span class="required-icon">*</span></label>
+                        <label class="form-label" for="pdf">PDF Link <span class="required-icon">*</span></label>
+                        <InputText readonly v-model="pdfFile" />
                         <FileUpload @select="onFileSelected" ref="pdf" mode="basic" name="pdf[]" :maxFileSize="1000000"
                             accept="application/pdf" />
                         <small class="error-messages" v-if="pdfFile$.$errors.length > 0">{{
@@ -597,16 +621,6 @@ watch(visible, () => {
                 </div>
 
             </div>
-        </Dialog>
-        <Dialog v-model:visible="deleteDeckDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-            <div class="flex items-center gap-4">
-                <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Are you sure you want to delete ?</span>
-            </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteDeckDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteDeck" />
-            </template>
         </Dialog>
 
         <div class="flex flex-col table-section min-height-750">

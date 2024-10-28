@@ -45,31 +45,87 @@ export const DeckFirestore = {
     if (lastDeck) { // get next {limit} doc
       docQuery = cateID
         ? query(
-            db,
-            orderBy("updated", "desc"),
-            where("category_id", "==", cateID),
-            startAfter(lastDeck),
-            limit(lim)
-          )
+          db,
+          orderBy("updated", "desc"),
+          where("category_id", "==", cateID),
+          startAfter(lastDeck),
+          limit(lim)
+        )
         : query(
-            db,
-            orderBy("updated", "desc"),
-            startAfter(lastDeck),
-            limit(lim)
-          );
+          db,
+          orderBy("updated", "desc"),
+          startAfter(lastDeck),
+          limit(lim)
+        );
     } else { // get first {limit} doc
       docQuery = cateID
         ? query(
-            db,
-            orderBy("updated", "desc"),
-            where("category_id", "==", cateID),
-            limit(lim)
-          )
+          db,
+          orderBy("updated", "desc"),
+          where("category_id", "==", cateID),
+          limit(lim)
+        )
         : query(db, orderBy("updated", "desc"), limit(lim));
     }
     let snapshot = await getDocs(docQuery);
 
     return snapshot.docs;
+  },
+
+  // Process file handler for deck highlight images and deck sub images and deck pdf file
+  async fileHandlerInDeck(deckForm) {
+    let pdfFile = {
+      downloadURL: '',
+      fileName: '',
+      fileNameID: '',
+    };
+    let highlight = {
+      downloadURL: '',
+      fileName: '',
+      fileNameID: '',
+    };
+    let subImages = [];
+    // There is changes like add new images or replace the old ones with new ones. this logic will catch it and process it
+    if (deckForm.images.length != 0) {
+      for (let i = 0; i < deckForm.images.length; i++) {
+        const folder = deckForm.images[i].type === "pdfFile" ? "deck/pdf" : "deck/images";
+        let downloadURL = "";
+        if (deckForm.images[i].isNew) {
+          downloadURL = await FirebaseStorage.uploadFile(deckForm.images[i].file_name_id, deckForm.images[i].file_data, folder);
+        } else {
+          downloadURL = deckForm.images[i].file_data.objectURL;
+        }
+        if (deckForm.images[i].type === 'pdfFile') {
+          pdfFile.downloadURL = downloadURL;
+          pdfFile.fileName = deckForm.images[i].file_name;
+          pdfFile.fileNameID = deckForm.images[i].file_name_id
+        } else if (deckForm.images[i].type === 'highlight') {
+          highlight.downloadURL = downloadURL;
+          highlight.fileName = deckForm.images[i].file_name;
+          highlight.fileNameID = deckForm.images[i].file_name_id
+        } else if (deckForm.images[i].type === 'subImages') {
+          subImages.push({
+            name: deckForm.images[i].file_name,
+            name_id: deckForm.images[i].file_name_id,
+            url: downloadURL
+          });
+        }
+      }
+    }
+    // There is deleted old files in sub images (pdf file and highlight is not done yet)
+    if (deckForm.deleted_sub_images) {
+      if (deckForm.deleted_sub_images.length > 0) {
+        deckForm.deleted_sub_images.forEach(async image => {
+          await FirebaseStorage.deleteFile("deck/images", image.name_id);
+        });
+      }
+    }
+
+    return {
+      pdfFile: pdfFile,
+      highlight: highlight,
+      subImages: subImages
+    }
   },
 
   async createDeck(deckForm) {
@@ -81,11 +137,30 @@ export const DeckFirestore = {
 
     try {
       // Set user with custom sys_id in firestore
+      const fileHandlerResult = await this.fileHandlerInDeck(deckForm);
+
+
       const colRef = collection(
         getFirestore(),
         useAppStore().getDecksCollection
       );
-      const dataObj = deckForm;
+      const dataObj = {
+        title: deckForm.title || "",
+          detail_description: deckForm.detail_description || "",
+          category_id: deckForm.category_id || "",
+          /* DECK HIGHLIGHT */
+          deck_highlight: fileHandlerResult.highlight.downloadURL ? fileHandlerResult.highlight.downloadURL : deckForm.deck_highlight,
+          deck_highlight_name: fileHandlerResult.highlight.fileName ? fileHandlerResult.highlight.fileName : deckForm.deck_highlight_name,
+          deck_highlight_name_id: fileHandlerResult.highlight.fileNameID ? fileHandlerResult.highlight.fileNameID : deckForm.deck_highlight_name_id,
+          /* DECK SUBIMAGES */
+          deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
+          pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
+          tag: deckForm.tag || [],
+          created: deckForm.created,
+          created_by: deckForm.created_by,
+          updated: deckForm.updated,
+          updated_by: deckForm.updated_by,
+      };
 
       await addDoc(colRef, dataObj).then(async (response) => {
         result.message = useAppStore().getMessageMaster.DATA(
@@ -111,51 +186,19 @@ export const DeckFirestore = {
     try {
       const docRef = getDoc(doc(db, deckForm.id));
       if ((await docRef).exists()) {
-        let pdfFile = {
-          downloadURL: '',
-          fileName: ''
-        };
-        let highlight = {
-          downloadURL: '',
-          fileName: ''
-        };
-        let subImages = [];
-        // There is changes like add new images or replace the old ones with new ones.
-        if (deckForm.images.length != 0) {
-          for (let i = 0; i < deckForm.images.length; i++) {
-            const folder = deckForm.images[i].type === "pdfFile" ? "deck/pdf" : "deck/images";
-            const downloadURL = await FirebaseStorage.uploadFile(deckForm.images[i].file_name, deckForm.images[i].file_data, folder);
-            if (deckForm.images[i].type === 'pdfFile') {
-              pdfFile.downloadURL = downloadURL;
-              pdfFile.fileName = deckForm.images[i].file_name;
-            } else if (deckForm.images[i].type === 'highlight') {
-              highlight.downloadURL = downloadURL;
-              highlight.fileName = deckForm.images[i].file_name;
-            } else if (deckForm.images[i].type === 'subImages') {
-              subImages.push({
-                name: deckForm.images[i].file_name,
-                url: downloadURL
-              });
-            }
-          }
-        }
-        // There is deleted old files in sub images (pdf file and highlight is not done yet)
-        if (deckForm.deleted_sub_images) {
-          if (deckForm.deleted_sub_images.length > 0) {
-            deckForm.deleted_sub_images.forEach(async image => {
-              await FirebaseStorage.deleteFile("deck/images", image.name);
-            });
-          }
-        }
+        const fileHandlerResult = await this.fileHandlerInDeck(deckForm);
 
         await updateDoc(doc(db, deckForm.id), {
           title: deckForm.title || "",
           detail_description: deckForm.detail_description || "",
           category_id: deckForm.category_id || "",
-          deck_highlight: highlight.downloadURL ? highlight.downloadURL : deckForm.deck_highlight,
-          deck_highlight_name: highlight.fileName ? highlight.fileName : deckForm.deck_highlight_name,
-          deck_images: subImages.length === 0 ? deckForm.deck_images : subImages,
-          pdf: pdfFile.downloadURL,
+          /* DECK HIGHLIGHT */
+          deck_highlight: fileHandlerResult.highlight.downloadURL ? fileHandlerResult.highlight.downloadURL : deckForm.deck_highlight,
+          deck_highlight_name: fileHandlerResult.highlight.fileName ? fileHandlerResult.highlight.fileName : deckForm.deck_highlight_name,
+          deck_highlight_name_id: fileHandlerResult.highlight.fileNameID ? fileHandlerResult.highlight.fileNameID : deckForm.deck_highlight_name_id,
+          /* DECK SUBIMAGES */
+          deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
+          pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
           tag: deckForm.tag || [],
           updated: deckForm.updated,
           updated_by: deckForm.updated_by,
@@ -179,7 +222,7 @@ export const DeckFirestore = {
     return result;
   },
 
-  async deleteDeck(id) {
+  async deleteDeck(deckData) {
     const result = {
       status: "success",
       message: "",
@@ -187,8 +230,25 @@ export const DeckFirestore = {
     };
 
     try {
+      const deckImages = [];
+      const imageFolder = "deck/images";
+      deckImages.push({
+        folder: imageFolder,
+        name: deckData.deck_highlight_name_id
+      });
+      deckData.deck_images.forEach(image => {
+        deckImages.push({
+          folder: imageFolder,
+          name: image.name_id
+        });
+      });
+
+      console.log(deckImages, "DECK IMAGES");
+      deckImages.forEach(async image => {
+        await FirebaseStorage.deleteFile(image.folder, image.name);
+      });
       await deleteDoc(
-        doc(getFirestore(), useAppStore().getDecksCollection, id)
+        doc(getFirestore(), useAppStore().getDecksCollection, deckData.id)
       ).then((response) => {
         result.message = useAppStore().getMessageMaster.DATA("").DECK_DELETED;
       });
