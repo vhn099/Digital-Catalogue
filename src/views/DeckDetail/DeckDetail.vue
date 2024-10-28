@@ -9,11 +9,17 @@ import PresentationIcon from '@/assets/img/icon/presentation.png';
 import router from '@/router';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
+import { FavoriteFirestore } from '@/lib/Favorite';
+import { getAuth } from 'firebase/auth';
 
 const deckDetails = ref({});
+const email = ref('');
+const deckID =ref();
 
 onMounted(async () => {
-    const { params } = router.currentRoute.value;
+    email.value = getAuth().currentUser.email;
+    const { params } = router.currentRoute.value; 
+    deckID.value =  params.id;
     deckDetails.value = await getDeckByID(params.id);
     setBreadcrumbs(createBreadcrumbObject(deckDetails.value), 'add');
 });
@@ -101,9 +107,9 @@ const setBreadcrumbs = (data, type) => {
         breadcrumbs.value.pop();
     }
 };
-const favoriteFN = () =>{
-    alert("Function is under development");
-}
+const favoriteFn = async (id) => {    
+await FavoriteFirestore.favoriteFn(email.value, id);
+};
 /* FUNCTIONS DEFINITION END */
 </script>
 
@@ -161,7 +167,7 @@ const favoriteFN = () =>{
                         </div>
                     </div>
                     <div class="deck-fav-button">
-                        <Button label="Favourite" @click="favoriteFN()">
+                        <Button label="Favourite" @click="favoriteFn(deckID)">
                             <img draggable="false" width="23" height="23" fill="none"
                                 src="../../assets/img/icon/favorite_white.png" />
                             <label>Add to my Favorite</label>
@@ -173,7 +179,7 @@ const favoriteFN = () =>{
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="favoriteFN()"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="favoriteFn(deckID)"></Tag>
                     </div>
                 </div>
             </div>
