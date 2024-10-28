@@ -75,7 +75,7 @@ const FavoriteIcon = async (userID, deckID) => {
 
 const backgroundImage = (img) => {
     return {
-        'background-image': `url(${img})`,
+        'background-image': `url('${img}')`,
         'background-size': 'cover'
     }
 }

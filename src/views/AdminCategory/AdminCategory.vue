@@ -158,12 +158,14 @@ const submitForm = async () => {
     if ((isValid && imageValue)) {
         const imageFile = image.value.files;
         let imageData = imageFile[0];
-        let imageName = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
+        let imageName = imageFile[0].name;
+        let imageNameId = `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${imageFile[0].name}`
         const categoryFormData = getCategoryFormData();
         let result = {};
-        const downloadURL = await FirebaseStorage.uploadFile(imageName, imageData, 'category');
+        const downloadURL = await FirebaseStorage.uploadFile(imageNameId, imageData, 'category');
         categoryFormData.image = downloadURL;
         categoryFormData.image_name = imageName;
+        categoryFormData.image_name_id = imageNameId;
         if (edit.value) {
             result = await CategoryFirestore.updateCategory(categoryFormData);
         } else {

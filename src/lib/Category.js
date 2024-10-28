@@ -83,6 +83,7 @@ export const CategoryFirestore = {
           name: categoryForm.name || "",
           image: categoryForm.image || "",
           image_name: categoryForm.image_name || "",
+          image_name_id: categoryForm.image_name_id || "",
           updated: categoryForm.updated,
           updated_by: categoryForm.updated_by,
         }).then((response) => {

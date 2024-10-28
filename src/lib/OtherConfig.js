@@ -21,10 +21,11 @@ export const OtherConfigFirestore = {
         try {
             let downloadedURL = "";
             if (!_.isEmpty(sliderForm.image)) {
-                downloadedURL = await FirebaseStorage.uploadFile(sliderForm.image.image_name, sliderForm.image.image_data, folderLocation);
+                downloadedURL = await FirebaseStorage.uploadFile(sliderForm.image.image_name_id, sliderForm.image.image_data, folderLocation);
                 const formData = {
                     image: downloadedURL,
                     image_name: sliderForm.image.image_name,
+                    image_name_id: sliderForm.image_name_id,
                     banner_title: sliderForm.banner_title,
                     banner_description: sliderForm.banner_description,
                     background_color: sliderForm.background_color,
@@ -45,6 +46,7 @@ export const OtherConfigFirestore = {
             }
         } catch (error) {
             result.status = 'error';
+            console.log(error);
             result.message = error.message;
         }
 
@@ -61,11 +63,12 @@ export const OtherConfigFirestore = {
             const db = collection(getFirestore(), useAppStore().getHomeSliderCollection);
             const docRef = doc(db, sliderForm.id);
             if (!_.isEmpty(sliderForm.image)) {
-                downloadedURL = await FirebaseStorage.uploadFile(sliderForm.image.image_name, sliderForm.image.image_data, folderLocation);
+                downloadedURL = await FirebaseStorage.uploadFile(sliderForm.image.image_name_id, sliderForm.image.image_data, folderLocation);
             }
             const formData = {
                 image: downloadedURL ? downloadedURL : sliderForm.image_link,
                 image_name: sliderForm.image_name,
+                image_name_id: sliderForm.image_name_id || "",
                 banner_title: sliderForm.banner_title,
                 banner_description: sliderForm.banner_description,
                 background_color: sliderForm.background_color,
@@ -80,6 +83,7 @@ export const OtherConfigFirestore = {
             });
         } catch (error) {
             result.status = 'error';
+            console.log(error);
             result.message = error.message;
         }
 

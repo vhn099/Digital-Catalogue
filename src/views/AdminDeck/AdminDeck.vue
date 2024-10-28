@@ -1,6 +1,6 @@
 <script setup>
 import useVuelidate from "@vuelidate/core";
-import { required, requiredIf } from "@vuelidate/validators";
+import { required } from "@vuelidate/validators";
 import { getAuth } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import Button from "primevue/button";
@@ -11,17 +11,20 @@ import InputText from "primevue/inputtext";
 import Toast from "primevue/toast";
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, useTemplateRef, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import { CategoryFirestore } from "@/lib/Category";
 import { DeckFirestore } from "@/lib/Deck";
-import { FirebaseStorage } from "@/lib/Storage";
 import FileUpload from "primevue/fileupload";
 import Textarea from "primevue/textarea";
 import Select from "primevue/select";
 import 'primeicons/primeicons.css';
 import InputChips from "primevue/inputchips";
+import _ from 'lodash';
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import ConfirmDialog from "primevue/confirmdialog";
+import { useConfirm } from "primevue/useconfirm";
 
 const formFields = reactive({
     id: '',
@@ -29,6 +32,8 @@ const formFields = reactive({
     detail_description: '',
     category_id: null,
     deck_highlight: '',
+    deck_highlight_name: '',
+    deck_highlight_name_id: '',
     deck_images: [],
     pdf: '',
     tag: [],
@@ -50,6 +55,27 @@ const rules = computed(() => {
             required,
         },
     };
+});
+const imageHighlightRule = computed(() => {
+    return {
+        deckHighlightPreview: {
+            required
+        }
+    };
+});
+const subImagesRule = computed(() => {
+    return {
+        deck_images: {
+            required
+        }
+    };
+});
+const pdfFileRule = computed(() => {
+    return {
+        pdfFile: {
+            required
+        }
+    }
 });
 /* COMPUTED VALUES */
 
@@ -140,6 +166,7 @@ const tableColumns = [
     }
 ]
 const toast = useToast();
+const confirm = useConfirm();
 
 /* REF DEFINITION START */
 const decks = ref();
@@ -148,31 +175,65 @@ const edit = ref();
 const datatable = ref();
 const visible = ref(false);
 const deck_highlight = ref(null);
-const deck_images = ref(null);
+const multiple_file_upload = useTemplateRef('multiple_file_upload');
+const deck_images = ref([]);
 const pdf = ref(null);
-const deleteDeckDialog = ref(false);
+const pdfFile = ref();
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
-const deckHighlightRule = ref(null);
 const deckHighlightPreview = ref(null);
-const deckImagesRule = ref(null);
-const pdfRule = ref(null);
+const deletedDeckSubImages = ref([]);
+const spinner = ref();
 /* REF DEFINITION END*/
 
+/* VALIDATION START */
 const v$ = useVuelidate(rules, formFields);
+const imageHighlight$ = useVuelidate(imageHighlightRule, { deckHighlightPreview });
+const subImages$ = useVuelidate(subImagesRule, { deck_images });
+const pdfFile$ = useVuelidate(pdfFileRule, { pdfFile });
+/* VALIDATION END */
 
 /* FUNCTIONS */
+const onRemoveTemplatingFile = (subImage, removeFileCallback, index) => {
+    // removeFileCallback(index);
+    deck_images.value.forEach(image => {
+        if (image.name === subImage.name) {
+            if (!image.isNew) {
+                deletedDeckSubImages.value.push(image);
+            }
+        }
+    });
+    deck_images.value = deck_images.value.filter(image => image.name !== subImage.name);
+    multiple_file_upload.value.files = multiple_file_upload.value.files.filter(image => image.name !== subImage.name); // Remove the image html element files element
+};
+const onClearFiles = (event) => {
+    deck_images.value = [];
+    event.files = [];
+};
+
+const onSelectedFiles = (event) => {
+    event.files.forEach(file => {
+        const exists = deck_images.value.some(deck_image => deck_image.name === file.name);
+        if (!exists) {
+            file.isNew = true;
+            deck_images.value.push(file);
+        }
+    });
+};
 const resetFormData = () => {
     formFields.id = '';
     formFields.title = '';
     formFields.detail_description = '';
     formFields.category_id = null;
     formFields.tag = '';
-    deck_highlight.value = null;
+    formFields.deck_highlight_name = "";
+    formFields.deck_highlight_name_id = "";
+
+    deck_images.value = [];
     deckHighlightPreview.value = null;
-    deck_images.value = null;
-    pdf.value = null;
+    deletedDeckSubImages.value = [];
+    pdfFile.value = null;
 };
 const closeDrawer = () => {
     visible.value = false;
@@ -194,6 +255,45 @@ const getDeckFormData = () => {
         deckForm.created_by = getAuth().currentUser.email;
     }
 
+    /* GET ALL FILES FROM FORM */
+    const uploadedPDFFile = pdf.value.files;
+    deckForm.images = [];
+    if (uploadedPDFFile.length != 0) {
+        deckForm.images.push({
+            file_data: uploadedPDFFile[0],
+            file_name: uploadedPDFFile[0].name,
+            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${uploadedPDFFile[0].name}`,
+            type: 'pdfFile',
+            isNew: true, // Check if table is added or replaced the old image
+        });
+    }
+
+    const imageHighlight = deck_highlight.value.files;
+    if (imageHighlight.length != 0) {
+        deckForm.images.push({
+            file_data: imageHighlight[0],
+            file_name: imageHighlight[0].name,
+            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${imageHighlight[0].name}`,
+            type: 'highlight',
+            isNew: true,
+        });
+    }
+
+    deck_images.value.forEach(image => {
+        deckForm.images.push({
+            file_data: image,
+            file_name: image.name,
+            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${image.name}`,
+            type: 'subImages',
+            isNew: image.isNew
+        });
+    });
+
+    if (!_.isEmpty(deletedDeckSubImages.value)) {
+        deckForm.deleted_sub_images = deletedDeckSubImages.value;
+    }
+    /* GET ALL FILES FROM FORM */
+
     return deckForm;
 }
 
@@ -210,6 +310,8 @@ const getDecks = async () => {
             category_id: data.category_id,
             category_name: categoryName,
             deck_highlight: data.deck_highlight,
+            deck_highlight_name: data.deck_highlight_name,
+            deck_highlight_name_id: data.deck_highlight_name_id,
             deck_images: data.deck_images,
             pdf: data.pdf,
             tag: data.tag,
@@ -239,63 +341,18 @@ const getCategories = async () => {
 };
 
 const submitForm = async () => {
+    spinner.value = true;
     const isValid = await v$.value.$validate();
+    const imageHighlightValid = await imageHighlight$.value.$validate();
+    const subImagesValid = await subImages$.value.$validate();
+    const pdfFileValid = await pdfFile$.value.$validate();
 
-    // validate Deck Highlight
-    const deckHighlightFile = deck_highlight.value.files;
-    if (deckHighlightFile.length === 0) {
-        deckHighlightRule.value = "Value is required";
-        return false;
-    } else {
-        deckHighlightRule.value = null;
-    }
-
-    // validate Deck Images
-    const deckImagesFile = deck_images.value.files;
-    if (deckImagesFile.length === 0) {
-        deckImagesRule.value = "Value is required";
-        return false;
-    } else {
-        deckImagesRule.value = null;
-    }
-
-    // validate Deck Highlight
-    const pdfFile = pdf.value.files;
-    if (pdfFile.length === 0) {
-        pdfRule.value = "Value is required";
-        return false;
-    } else {
-        pdfRule.value = null;
-    }
-
-    if (isValid || edit.value) {
-        let deckHighlightImage = deckHighlightFile[0];
-        let deckHighlightName = `${Math.floor(Math.random() * 60)}_${deckHighlightFile[0].name}_${new Date().toDateString()}`;
-        const deckHighlightURL = await FirebaseStorage.uploadFile(deckHighlightName, deckHighlightImage, 'deck/images');
-
-        let deckImagesURLs = [];
-        for (let i = 0; i < deckImagesFile.length; i++) {
-            let deckImagesImage = deckImagesFile[i];
-            let deckImagesName = `${Math.floor(Math.random() * 60)}_${deckImagesFile[i].name}_${new Date().toDateString()}`;
-            const deckImagesURL = await FirebaseStorage.uploadFile(deckImagesName, deckImagesImage, 'deck/images');
-            deckImagesURLs.push({
-                url: deckImagesURL,
-                name: deckImagesName,
-            })
-        }
-
-        let pdfFileUpload = pdfFile[0];
-        let pdfFileUploadName = `${Math.floor(Math.random() * 60)}_${pdfFile[0].name}_${new Date().toDateString()}`;
-        const pdfFileUploadURL = await FirebaseStorage.uploadFile(pdfFileUploadName, pdfFileUpload, 'deck/pdf');
+    if (isValid && imageHighlightValid && subImagesValid && pdfFileValid) {
 
         const deckFormData = getDeckFormData();
         let categoryID = deckFormData.category_id.id;
         let result = {};
         deckFormData.category_id = categoryID;
-        deckFormData.deck_highlight = deckHighlightURL;
-        deckFormData.deck_highlight_name = deckHighlightName;
-        deckFormData.deck_images = deckImagesURLs;
-        deckFormData.pdf = pdfFileUploadURL;
         if (edit.value) {
             result = await DeckFirestore.updateDeck(deckFormData);
         } else {
@@ -315,27 +372,39 @@ const submitForm = async () => {
     } else {
 
     }
-};
-const deleteDeck = async () => {
-    let result = await DeckFirestore.deleteDeck(formFields.id);
-    toast.add({
-        summary: 'System Message',
-        severity: result.status,
-        detail: result.message,
-        life: 3000 // 3s
-    });
-    if (result.status === 'success') {
-        visible.value = false;
-        decks.value = await getDecks();
-    }
-
-    formFields.id = '';
-    deleteDeckDialog.value = false;
+    spinner.value = false;
 };
 const deleteRow = (data) => {
-    formFields.id = data.id;
+    confirm.require({
+        message: 'Do you want to delete this deck ?',
+        header: 'ATTENTION',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: async () => {
+            let result = await DeckFirestore.deleteDeck(data);
+            toast.add({
+                summary: 'System Message',
+                severity: result.status,
+                detail: result.message,
+                life: 3000 // 3s
+            });
+            if (result.status === 'success') {
+                visible.value = false;
+                decks.value = await getDecks();
+            }
+        },
+        reject: () => {
 
-    deleteDeckDialog.value = true;
+        }
+    });
 };
 const editRow = (data) => {
     formFields.id = data.id;
@@ -345,14 +414,31 @@ const editRow = (data) => {
         id: data.category_id,
         name: data.category_name,
     };
-    deckHighlightPreview.value = data.deck_highlight;
-    formFields.deck_images = data.deck_images;
+    formFields.deck_highlight = data.deck_highlight;
+    formFields.deck_highlight_name = data.deck_highlight_name;
     formFields.pdf = data.pdf;
     formFields.tag = data.tag;
+    formFields.deck_images = data.deck_images;
+
+    deckHighlightPreview.value = data.deck_highlight;
+    deck_images.value = []; // Reset data of deck sub images when users click edit
+    if (!_.isEmpty(data.deck_images)) {
+        data.deck_images.forEach(async image => {
+            const object = {
+                name: image.name,
+                name_id: image.name_id,
+                objectURL: image.url,
+                isNew: false,
+            };
+            deck_images.value.push(object);
+        });
+    }
+    pdfFile.value = data.pdf;
 
     visible.value = true;
     edit.value = true;
 };
+// IMAGE PREVIEWER
 const onImageSelected = (event) => {
     const file = event.files[0];
     const reader = new FileReader();
@@ -363,10 +449,11 @@ const onImageSelected = (event) => {
 
     reader.readAsDataURL(file);
 };
-const onAdvancedUpload = () => {
-    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+
+// ON PDF SELECTED
+const onFileSelected = (event) => {
+    pdfFile.value = event.files[0].name;
 };
-const onFileSelected = (event) => { };
 /* FUNCTIONS */
 
 
@@ -382,7 +469,9 @@ watch(visible, () => {
 });
 </script>
 <template>
+    <LoadingSpinner v-if="spinner"/>
     <Toast />
+    <ConfirmDialog />
     <div class="">
         <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Deck"'
             :style="{ width: '80vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
@@ -415,14 +504,14 @@ watch(visible, () => {
 
                     <!-- Deck Highlight -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="deck_highlight">Deck Highlight <span
+                        <label class="form-label" for="deck_highlight">Deck Highlight (1200x800px) <span
                                 class="required-icon">*</span></label>
                         <img draggable="false" v-if="deckHighlightPreview" :src="deckHighlightPreview" alt="Image"
-                            width="64" />
+                            width="150" height="150" />
                         <FileUpload @select="onImageSelected" ref="deck_highlight" mode="basic" name="deck_highlight[]"
                             :maxFileSize="1000000" accept="image/*" />
-                        <small class="error-messages" v-if="deckHighlightRule" customUpload>{{
-                            deckHighlightRule }}</small>
+                        <small class="error-messages" v-if="imageHighlight$.$errors.length > 0">{{
+                            imageHighlight$.$errors[0].$message > 0 }}</small>
                     </div>
 
                     <!-- Category -->
@@ -451,32 +540,75 @@ watch(visible, () => {
 
                     <!-- Deck Images -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="deck_images">Deck Images <span
+                        <label class="form-label" for="deck_images">Deck Images (1200x800px) <span
                                 class="required-icon">*</span></label>
                         <Toast />
-                        <FileUpload name="deck_images[]" url="/api/upload" @upload="onAdvancedUpload($event)"
+                        <!-- <FileUpload name="deck_images[]" @upload="onAdvancedUpload($event)"
                             ref="deck_images" :multiple="true" accept="image/*" :maxFileSize="1000000">
                             <template #empty>
                                 <span>Drag and drop files to here to upload.</span>
                             </template>
+                        </FileUpload> -->
+                        <FileUpload ref="multiple_file_upload" :multiple="true" accept="image/*" :maxFileSize="1000000"
+                            @select="onSelectedFiles" @clear="onClearFiles">
+                            <template #header="{ chooseCallback, clearCallback, files }">
+                                <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
+                                    <div class="flex gap-2">
+                                        <Button @click="chooseCallback()" icon="pi pi-images" rounded outlined
+                                            severity="secondary"></Button>
+                                        <Button @click="clearCallback()" icon="pi pi-times" rounded outlined
+                                            severity="danger"
+                                            :disabled="!deck_images || deck_images.length === 0"></Button>
+                                    </div>
+                                </div>
+                            </template>
+                            <template #content="{ files, removeFileCallback }">
+                                <div class="flex flex-col gap-8 pt-4">
+                                    <div v-if="deck_images.length > 0">
+                                        <div class="flex flex-wrap gap-4">
+                                            <div v-for="(file, index) of deck_images" :key="file.name"
+                                                class="p-4 rounded-border flex flex-col items-center image-box gap-4">
+                                                <div>
+                                                    <img :alt="file.name" :src="file.objectURL" width="150"
+                                                        height="150" />
+                                                </div>
+                                                <span
+                                                    class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">
+                                                    {{ file.name }}
+                                                </span>
+                                                <Button icon="pi pi-times"
+                                                    @click="onRemoveTemplatingFile(file, removeFileCallback, index, event)"
+                                                    outlined rounded severity="danger" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template #empty v-if="deck_images.length === 0">
+                                <div class="flex items-center justify-center flex-col">
+                                    <i class="pi pi-cloud-upload border-2 p-6 rounded-full text-4xl text-muted-color" />
+                                    <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
+                                </div>
+                            </template>
                         </FileUpload>
-                        <small class="error-messages" v-if="deckImagesRule" customUpload>{{
-                            deckImagesRule }}</small>
+                        <small class="error-messages" v-if="subImages$.$errors.length > 0">{{
+                            subImages$.$errors[0].$message }}</small>
                     </div>
 
                     <!-- PDF -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="pdf">PDF <span class="required-icon">*</span></label>
+                        <label class="form-label" for="pdf">PDF Link <span class="required-icon">*</span></label>
+                        <InputText readonly v-model="pdfFile" />
                         <FileUpload @select="onFileSelected" ref="pdf" mode="basic" name="pdf[]" :maxFileSize="1000000"
                             accept="application/pdf" />
-                        <small class="error-messages" v-if="pdfRule" customUpload>{{
-                            pdfRule }}</small>
+                        <small class="error-messages" v-if="pdfFile$.$errors.length > 0">{{
+                            pdfFile$.$errors[0].$message }}</small>
                     </div>
 
                     <!-- Tag -->
                     <div class="flex flex-col">
                         <label class="form-label" for="tag">Tags <span class="required-icon">*</span></label>
-                        <InputChips v-model="formFields.tag" :invalid="v$.tag.$errors.length > 0" removable>
+                        <InputChips v-model="formFields.tag" placeholder="Input Tag and ENTER to seperate" :invalid="v$.tag.$errors.length > 0" removable>
                         </InputChips>
                         <small class="error-messages" v-if="v$.tag.$errors.length > 0">{{
                             v$.tag.$errors[0].$message }}</small>
@@ -489,16 +621,6 @@ watch(visible, () => {
                 </div>
 
             </div>
-        </Dialog>
-        <Dialog v-model:visible="deleteDeckDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-            <div class="flex items-center gap-4">
-                <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Are you sure you want to delete ?</span>
-            </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteDeckDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteDeck" />
-            </template>
         </Dialog>
 
         <div class="flex flex-col table-section min-height-750">
@@ -629,5 +751,35 @@ watch(visible, () => {
 .table-actions {
     display: flex;
     justify-content: center;
+}
+
+/* COMMON CSS START */
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.rounded-border {
+    border-radius: 6px;
+}
+
+.image-box {
+    border: 1px solid #e2e8f0;
+    width: 30%;
+}
+
+.image-box:hover {
+    background-color: rgb(239, 237, 237)
+}
+
+.rounded-full {
+    border-radius: 9999px;
 }
 </style>

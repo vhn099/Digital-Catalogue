@@ -11,23 +11,24 @@ import { defineAsyncComponent, markRaw, ref } from 'vue';
 
 /* REF DEFINITION START */
 const tabs = ref([
-    {
-        title: "Contact Email Config",
-        value: '0',
-        content: {
-            tabId: 'email_config',
-            // markRaw: Vue marks a component used in this function as not reactive 
-            component: markRaw(defineAsyncComponent(() => import ('./EmailContactConfig.vue')))
-        }
-    },
-    {
+{
         title: "Slider Config",
-        value: '1',
+        value: '0',
         content: {
             tabId: 'slider_config',
             component: markRaw(defineAsyncComponent(() => import ('./HomeSliderConfig.vue')))
         }
-    }
+    },
+    // {
+    //     title: "Contact Email Config",
+    //     value: '1',
+    //     content: {
+    //         tabId: 'email_config',
+    //         // markRaw: Vue marks a component used in this function as not reactive 
+    //         component: markRaw(defineAsyncComponent(() => import ('./EmailContactConfig.vue')))
+    //     }
+    // },
+    
 ]);
 const spinner = ref(false);
 

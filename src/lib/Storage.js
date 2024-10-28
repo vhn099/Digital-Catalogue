@@ -20,8 +20,8 @@ export const FirebaseStorage = {
     uploadFile: async (imageName, imageData, folder) => {
         const storage = getStorage();
         let downloadableURL = '';
-        const categoryRef = ref(storage, `${folder}/${imageName}`);
-        await uploadBytes(categoryRef, imageData);
+        const fileRef = ref(storage, `${folder}/${imageName}`);
+        await uploadBytes(fileRef, imageData);
         // Keep this code if we want to show image uploading progress
         // const uploadTask = uploadBytesResumable(categoryRef, imageData);
         // await uploadTask.on('state_changed', (snapshot) => {
@@ -39,7 +39,7 @@ export const FirebaseStorage = {
         // }, (error) => {
         //   console.log(error);  
         // });
-        downloadableURL = await getDownloadURL(categoryRef);
+        downloadableURL = await getDownloadURL(fileRef);
         return downloadableURL;
     },
     deleteFile: async (folder, imageName) => {

@@ -11,7 +11,7 @@
                         <span class="table-title">Manage User Favorite</span>
                         <div class="table-actions gap-2">
                             <div>
-                                <Button type="button" label="Switch view" @click="switchView"/>
+                                <Button type="button" label="Switch view" icon="pi pi-arrow-right-arrow-left" @click="switchView"/>
                             </div>
                             <div>
                                 <IconField>

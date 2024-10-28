@@ -57,7 +57,7 @@ const tableColumns = [
         field: 'order',
         label: 'Order',
         styles: {
-
+            textAlign: 'center'
         }
     }
 ];
@@ -138,7 +138,8 @@ const getSliderFormData = () => {
     }
     if (imageFile.length != 0) {
         sliderForm.image.image_data = imageFile[0];
-        sliderForm.image.image_name = `${Math.floor(Math.random() * 60)}_${imageFile[0].name}_${new Date().toTimeString()}`;
+        sliderForm.image.image_name = imageFile[0].name;
+        sliderForm.image.image_name_id = `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${imageFile[0].name}`;
     }
     return sliderForm;
 };
@@ -166,14 +167,12 @@ const deleteRow = (data) => {
                 detail: result.message,
                 life: 3000 // 3s
             });
-            // homeSliders.value = homeSliders.value.filter(slider => {
-            //     return slider.id !== data.id;
-            // });
+            homeSliders.value = await getHomeSliders();
         },
         reject: () => {
 
         }
-    })
+    });
 };
 
 const resetFormData = () => {
@@ -192,11 +191,14 @@ const editRow = (data) => {
     formFields.banner_title = data.banner_title;
     formFields.banner_description = data.banner_description;
     formFields.background_color = data.background_color;
-    if (data.deck_id) {
+    if (!_.isEmpty(data.deck_id)) {
+        
         const deckValue = decks.value.filter(deck => deck.id === data.deck_id);
-        selectedDeck.value = deckValue[0].id;
+        if (!_.isEmpty(deckValue)) {
+            selectedDeck.value = deckValue[0].id;
+        }
     } else {
-        selectedDeck.value = [];
+        selectedDeck.value = null;
     }
     formFields.image_link = data.image;
     formFields.image_name = data.image_name;
@@ -211,7 +213,6 @@ const submitForm = async () => {
     emits('setLoading', true);
     const isValid = await v$.value.$validate();
     const imageValid = await imageV$.value.$validate();
-    console.log(selectedDeck.value);
     if (isValid && imageValid) {
         let result = {};
         const formData = getSliderFormData();
@@ -231,6 +232,7 @@ const submitForm = async () => {
             visible.value = false;
             // categories.value = await getCategories();
         }
+        homeSliders.value = await getHomeSliders();
     }
     emits('setLoading', false);
 };

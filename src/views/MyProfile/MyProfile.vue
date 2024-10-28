@@ -15,6 +15,9 @@ import { auth } from '@/main';
 // Reset Link sent
 import MessagePage from '@/components/MessagePage.vue';
 import { COMMON_FUNCTIONS } from '@/lib/Common';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+import { Timestamp } from 'firebase/firestore';
 const messagePageIcon = "pi pi-check-circle";
 const messagePageBody = 'login';
 const messagePageIconCSS = {
@@ -33,26 +36,27 @@ const email = ref('');
 const isResetPassWord = ref(false);
 const isSendLink = ref(false);
 const siteKey = '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu';
+let userID = "";
 /* REF DEFINITION END */
 
-onMounted(async () => {
+const toast = useToast();
 
-    email.value = getAuth().currentUser.email;
-    useAppStore().setmail(email.value);
-    const cookie = UserFirestore.getCookie("user-auth");
-    let user = '';
-    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
-        user = JSON.parse(cookie);
+onMounted(async () => {
+    const currentUser = await UserFirestore.getCurrentUser();
+    if (currentUser.userData) {
+        firstname.value = currentUser.userData.firstname;
+        lastName.value = currentUser.userData.lastname;
+        userID = currentUser.userData.id;
+        email.value = currentUser.userData.email;
+        useAppStore().setmail(email.value);
     }
-    firstname.value = user.userData.firstname;
-    lastName.value = user.userData.lastname;
     const script = document.createElement('script');
     script.src = `https://www.google.com/recaptcha/api.js`; // import lib for grecaptcha function
     script.async = true;
     document.body.appendChild(script);
 });
 
-
+/* FUNCTIONS DEFINITION START */
 const resetPassWord = () => {
     isResetPassWord.value = true;
     renderRecaptcha('recaptcha_element');
@@ -72,8 +76,7 @@ const renderRecaptcha = (id) => {
 const clickReCaptcha = () => {
     document.getElementById("error_recaptcha").innerHTML = '';
 };
-
-async function sendLink() {
+const sendLink = async () => {
 
     if (typeof window.grecaptcha === 'undefined') {
         console.error('reCAPTCHA is not loaded');
@@ -98,6 +101,24 @@ async function sendLink() {
     isSendLink.value = true;
     useAppStore().setmail(email.value);
 };
+const submitForm = async () => {
+    const profileForm = {
+        firstname: firstname.value,
+        lastname: lastName.value,
+        id: userID,
+        updated: Timestamp.now().toDate(),
+        updated_by: getAuth().currentUser.email
+    };
+    let result = {};
+    result = await UserFirestore.updateMyProfile(profileForm);
+    toast.add({
+        summary: 'System Message',
+        severity: result.status,
+        detail: result.message,
+        life: 3000 // 3s
+    });
+};
+/* FUNCTIONS DEFINITION END */
 
 watch(isResetPassWord, () => {
     if (!isResetPassWord.value) {
@@ -108,6 +129,7 @@ watch(isResetPassWord, () => {
 </script>
 
 <template>
+    <Toast />
     <DockItem></DockItem>
     <Dialog v-model:visible="isResetPassWord" modal :header='isSendLink ? " " : "Forgot You Password?"'
         :style="{ width: '30vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
@@ -186,7 +208,7 @@ watch(isResetPassWord, () => {
 
                         <div class="flex">
                             <div class="flex-1 p-2">
-                                <Button label="Save" :fluid="true" @click="submitForm()" raised />
+                                <Button label="Save" :fluid="true" @click="submitForm" raised />
                             </div>
                             <div class="flex-1 p-2">
                                 <Button label="Reset Password" severity="warn" :fluid="true" @click="resetPassWord()"
