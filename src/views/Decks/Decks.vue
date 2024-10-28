@@ -15,13 +15,11 @@ import Checkbox from 'primevue/checkbox';
 import Divider from 'primevue/divider';
 
 import { onMounted, ref } from 'vue';
-import { db } from '@/main';
-import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
+import { FavoriteFirestore } from '@/lib/Favorite';
 import router from '@/router';
-import { Timestamp } from "firebase/firestore";
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
@@ -61,13 +59,8 @@ const favRecord = ref({
 const email = ref('');
 
 const favoriteFn = async (id) => {
-  favRecord.value.userID = email.value;
-  favRecord.value.deckID = id;
-  favRecord.value.created = Timestamp.now().toDate();
-  await addDoc(collection(db, 'favorite'), favRecord.value);
-  console.log('called' + id);
+  await FavoriteFirestore.favoriteFn(email.value, id);
 };
-
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
   const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 11, lastDeck);
@@ -97,6 +90,7 @@ const getDecks = async (cateID, lastDeck) => {
 };
 
 onMounted(async () => {
+
   email.value = getAuth().currentUser.email;
   const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = params.cateID;
@@ -180,10 +174,10 @@ const nextDecks = async (lastDeck) => {
       </div>
 
       <div class="card top-line">
-        <DeckItem v-for="top_deck in top_decks" :data="top_deck" @callFavoriteFn="favoriteFn"></DeckItem>
+        <DeckItem v-for="top_deck in top_decks" :data="top_deck" :email="email" @callFavoriteFn="favoriteFn"></DeckItem>
       </div>
       <div class="card normal-line">
-        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
+        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email" @callFavoriteFn="favoriteFn"></DeckItem>
       </div>
       <div class="view-more-router">
         <RouterLink v-if="last_deck" :to="{}" class="link-router" @click="nextDecks(last_deck)">View More</RouterLink>
