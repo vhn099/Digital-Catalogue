@@ -14,12 +14,15 @@ import { getAuth } from 'firebase/auth';
 
 const deckDetails = ref({});
 const email = ref('');
-const deckID =ref();
+const deckID = ref('');
+const isFav = ref();
 
 onMounted(async () => {
     email.value = getAuth().currentUser.email;
-    const { params } = router.currentRoute.value; 
-    deckID.value =  params.id;
+    const { params } = router.currentRoute.value;
+    deckID.value = params.id;
+    isFav.value = await FavoriteIcon(email.value, deckID.value);
+
     deckDetails.value = await getDeckByID(params.id);
     setBreadcrumbs(createBreadcrumbObject(deckDetails.value), 'add');
 });
@@ -107,8 +110,17 @@ const setBreadcrumbs = (data, type) => {
         breadcrumbs.value.pop();
     }
 };
-const favoriteFn = async (id) => {    
-await FavoriteFirestore.favoriteFn(email.value, id);
+const favoriteFn = async (id) => {
+    await FavoriteFirestore.favoriteFn(email.value, id);
+    isFav.value = !isFav.value;
+};
+
+const FavoriteIcon = async (userID, deckID) => {
+    const fav = await FavoriteFirestore.isFavorite(userID, deckID)
+    if (fav) {
+        return true;
+    }
+    else return false;
 };
 /* FUNCTIONS DEFINITION END */
 </script>
@@ -166,13 +178,13 @@ await FavoriteFirestore.favoriteFn(email.value, id);
                         </div>
                     </div>
                     <div class="deck-fav-button">
-                        <Button label="Favourite" @click="favoriteFn(deckID)">
+                        <Button label="Favourite" @click="favoriteFn(deckID)" v-if="!isFav">
                             <img draggable="false" width="23" height="23" fill="none"
                                 src="../../assets/img/icon/favorite_white.png" />
                             <label>Add to my Favorite</label>
                         </Button>
 
-                        <Button @click="favoriteFN()" severity="secondary" raised>
+                        <Button @click="favoriteFn(deckID)" severity="secondary" raised  v-if="isFav">
                             <img draggable="false" width="23" height="23" fill="none"
                                 src="../../assets/img/icon/favorite_red.png" />
                             <label>Favorited</label>
@@ -184,7 +196,8 @@ await FavoriteFirestore.favoriteFn(email.value, id);
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="favoriteFn(deckID)"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"
+                            @click="favoriteFn(deckID)"></Tag>
                     </div>
                 </div>
             </div>
