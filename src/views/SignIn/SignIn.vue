@@ -185,11 +185,16 @@ const handleSubmit = async () => {
         if (rememberMe.length === 0) {
             expire = 14;
         }
-
         await signInWithEmailAndPassword(getAuth(), username, password).then(async response => {
             spinner.value = true;
             const userData = await UserFirestore.getCurrentUser();
-            UserFirestore.setCookie('user-auth', JSON.stringify(userData), expire);
+            
+            const oneday = 24 * 60 * 60 * 1000; // 1 day
+            const expireDate = new Date();
+            userData.expires = expireDate.setTime(expireDate.getTime() + (expire * oneday));
+
+            UserFirestore.setCookie('user-auth', JSON.stringify(userData), userData.expires);
+            spinner.value = false;
             router.push({
                 name: 'home'
             });
@@ -197,6 +202,7 @@ const handleSubmit = async () => {
             if (error.code === 'auth/invalid-credential') {
                 document.getElementById("incorrectLogin").innerHTML = 'Username or Password entered is incorrect.';
             }
+            console.log(error);
         });
     } else {
         console.log('Invalid form');

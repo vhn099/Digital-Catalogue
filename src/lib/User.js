@@ -6,13 +6,10 @@ import axios from "axios";
 import { COMMON_VARIABLE } from "./Common";
 
 export const UserFirestore = {
-    setCookie(key, value, days) {
+    setCookie(key, value, expire) {
         let expires = '';
-        if (days) {
-            let date = new Date();
-            const oneDayTime = 24 * 60 * 60 * 1000 // 1 day
-            date.setTime(date.getTime() + (days * oneDayTime));
-            expires = "; expires=" + date.toUTCString();
+        if (expire) {
+            expires = "; expires=" + expire;
         }
         document.cookie = key + "=" + (value || "") + expires + "; path=/";
     },
@@ -32,12 +29,20 @@ export const UserFirestore = {
         }
         return "";
     },
+    updateCookie(key, value, expires) {
+        if (!expires) {
+            expires = 24 * 60 * 60 * 1000 * 7; // Expires in 7 days => This is for no days are specified 
+        }
+        let expireString = "; expires=" + expires;
+        document.cookie = key + "=" + (value || "") + expireString + "; path=/";
+    },
 
     async getCurrentUser() {
         const result = {
             status: 'success',
             message: '',
-            userData: {}
+            userData: {},
+            expires: ""
         };
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
         const currentUser = getAuth().currentUser;
@@ -193,7 +198,8 @@ export const UserFirestore = {
                     updated: userForm.updated,
                     updated_by: userForm.updated_by
                 }).then(response => {
-                    result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_UPDATE;
+                    
+                    result.message = useAppStore().getMessageMaster.DATA(userForm.email).USER_UPDATE;
                 });
             } else {
                 result.message = useAppStore().getMessageMaster.DATA(userForm.username).USER_NOT_EXISTED;

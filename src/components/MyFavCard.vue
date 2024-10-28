@@ -25,6 +25,9 @@ defineProps({
     tag_arr: {
         type: Array,
     },
+    deck_id: {
+        type: String,
+    },
 
 });
 
@@ -43,6 +46,13 @@ const callDeleteFav = (id) => {
 const favoriteFN = () =>{
     alert("Function is under development");
 }
+
+const deckDetailRouting = (deckID) => {
+    router.push({
+        name: 'deckdetail',
+        params: { id: deckID }
+    });
+}
 /* FUNCTION END */
 </script>
 
@@ -52,7 +62,7 @@ const favoriteFN = () =>{
             <template #header>
                 <img alt="user header" :src="deck_img" draggable="false" width="400" height="256" />
             </template>
-            <template #title><div class="title-fav" @click="favoriteFN()">{{ title }}</div></template>
+            <template #title><div class="title-fav" @click="deckDetailRouting(deck_id)">{{ title }}</div></template>
             <template #subtitle>
                 <div class="fav-tag">
                     <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag' @click="favoriteFN()"></Tag>

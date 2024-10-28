@@ -12,25 +12,53 @@ import InputText from 'primevue/inputtext';
 
 import { onMounted, ref, watch } from 'vue';
 import router from '@/router';
+import { SearchPageFirestore } from '@/lib/SearchPage';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 const sectionIcon = SupplyChainIcon;
 const sectionText = "Decks";
 
+/* REF DEFINITION START */
 const inputSearch = ref("");
+const decks = ref([]);
+const spinner = ref(false);
+/* REF DEFINITION END */
+
+/* NORMAL VARIABLE */
+let isTag = "";
+/* NORMAL VARIABLE */
 
 /* FUNCTION START */
-onMounted(() => {
+const createQuery = async () => {
+    spinner.value = true;
+    if (inputSearch.value.startsWith("#")) {
+        isTag = true;
+    } else {
+        isTag = false;
+    }
+
+    decks.value = await SearchPageFirestore.searchDeck(inputSearch.value, isTag);
+    spinner.value = false;
+};
+const search = async () => {
+    await createQuery();
+};
+/* FUNCTION END */
+
+onMounted(async () => {
     const { query } = router.currentRoute.value;
     inputSearch.value = query.query;
+    await createQuery();
 })
 
-watch(() => router.currentRoute.value.query, () => {
+watch(() => router.currentRoute.value.query, async () => {
     const { query } = router.currentRoute.value;
     inputSearch.value = query.query;
+    await createQuery();
 });
-/* FUNCTION END */
 </script>
 
 <template>
+    <LoadingSpinner v-if="spinner"/>
     <DockItem></DockItem>
 
     <div class="flex min-height-750">
@@ -48,24 +76,13 @@ watch(() => router.currentRoute.value.query, () => {
                 </div>
                 <div class="input-field">
                     <IconField>
-                        <InputText v-model="inputSearch" placeholder="Search" />
-                        <InputIcon class="pi pi-search" variant="filled" />
+                        <InputText v-model="inputSearch" placeholder="text or #tag search ..." v-on:keyup.enter="search"/>
+                        <InputIcon class="pi pi-search cursor" variant="filled" @click="search"/>
                     </IconField>
                 </div>
             </div>
-            <div class="card normal-line">
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
-                <DeckItem></DeckItem>
+            <div class="card normal-line" v-if="decks.length > 0">
+                <DeckItem v-for="deck in decks" :data="deck"></DeckItem>
             </div>
         </div>
 
@@ -114,5 +131,9 @@ watch(() => router.currentRoute.value.query, () => {
         width: 100%;
 
     }
+}
+
+.cursor {
+    cursor: pointer;
 }
 </style>
