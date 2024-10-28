@@ -52,7 +52,7 @@ const favoriteFN = () =>{
             <template #header>
                 <img alt="user header" :src="deck_img" draggable="false" width="400" height="256" />
             </template>
-            <template #title><div class="title-fav">{{ title }}</div></template>
+            <template #title><div class="title-fav" @click="favoriteFN()">{{ title }}</div></template>
             <template #subtitle>
                 <div class="fav-tag">
                     <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag' @click="favoriteFN()"></Tag>
@@ -109,6 +109,11 @@ const favoriteFN = () =>{
     -webkit-box-orient: vertical;
     overflow: hidden;
     /* min-height: 155px; */
+}
+
+.title-fav:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 :deep(.p-card-body) {
