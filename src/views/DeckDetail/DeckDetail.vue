@@ -173,7 +173,7 @@ const favoriteFN = () =>{
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="favoriteFN()"></Tag>
                     </div>
                 </div>
             </div>
