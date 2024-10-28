@@ -40,6 +40,9 @@ const emit = defineEmits(['callFunction']);
 const callDeleteFav = (id) => {
   emit('callFunction', id);
 };
+const favoriteFN = () =>{
+    alert("Function is under development");
+}
 /* FUNCTION END */
 </script>
 
@@ -52,7 +55,7 @@ const callDeleteFav = (id) => {
             <template #title>{{ title }}</template>
             <template #subtitle>
                 <div class="fav-tag">
-                    <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag'></Tag>
+                    <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag' @click="favoriteFN()"></Tag>
                 </div>
 
             </template>
