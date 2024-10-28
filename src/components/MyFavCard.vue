@@ -95,6 +95,22 @@ const favoriteFN = () =>{
     border-radius: 25px;
 }
 
+.fav-tag {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.title-fav {
+    /* min-height: 70px; */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* min-height: 155px; */
+}
+
 :deep(.p-card-body) {
     height: 100%;
 }
