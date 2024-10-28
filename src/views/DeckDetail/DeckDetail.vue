@@ -101,7 +101,9 @@ const setBreadcrumbs = (data, type) => {
         breadcrumbs.value.pop();
     }
 };
-
+const favoriteFN = () => {
+    alert("Function is under development");
+}
 /* FUNCTIONS DEFINITION END */
 </script>
 
@@ -118,8 +120,7 @@ const setBreadcrumbs = (data, type) => {
                 <span class="breadcrumb-header">Selected: </span>
                 <div class="breadcrumb-content">
                     <span v-for="(breadcrumb, index) in breadcrumbs" :key="breadcrumb.id"
-                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }"
-                        class="cursor-element"
+                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }" class="cursor-element"
                         @click="changeActiveBreadCrumb(index)">
                         {{ breadcrumb.label }}
                         <span v-if="(index + 1) < breadcrumbs.length" style="padding: 10px">></span>
@@ -159,10 +160,16 @@ const setBreadcrumbs = (data, type) => {
                         </div>
                     </div>
                     <div class="deck-fav-button">
-                        <Button label="Favourite">
+                        <Button @click="favoriteFN()" raised>
                             <img draggable="false" width="23" height="23" fill="none"
                                 src="../../assets/img/icon/favorite_white.png" />
                             <label>Add to my Favorite</label>
+                        </Button>
+
+                        <Button @click="favoriteFN()" severity="secondary" raised>
+                            <img draggable="false" width="23" height="23" fill="none"
+                                src="../../assets/img/icon/favorite_red.png" />
+                            <label>Favorited</label>
                         </Button>
                     </div>
                     <div class="deck-description">
@@ -171,16 +178,23 @@ const setBreadcrumbs = (data, type) => {
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="favoriteFN()">
+                        </Tag>
                     </div>
                 </div>
             </div>
             <div v-if="isViewDeck" class="pdf-canva">
                 <div class="pdf-fav-button">
-                    <Button label="Favourite">
+                    <Button @click="favoriteFN()" raised>
                         <img draggable="false" width="23" height="23" fill="none"
                             src="../../assets/img/icon/favorite_white.png" />
                         <label>Add to my Favorite</label>
+                    </Button>
+
+                    <Button @click="favoriteFN()" severity="secondary" raised>
+                        <img draggable="false" width="23" height="23" fill="none"
+                            src="../../assets/img/icon/favorite_red.png" />
+                        <label>Favorited</label>
                     </Button>
                 </div>
                 <div class="pdf-place">
@@ -302,6 +316,7 @@ const setBreadcrumbs = (data, type) => {
 .active-breadcrumb {
     font-weight: 500;
 }
+
 .cursor-element {
     cursor: pointer;
 }

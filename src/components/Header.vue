@@ -19,7 +19,7 @@
                 <InputIcon class="pi pi-search" variant="filled" @click="searchData" style="cursor: pointer;"/>
             </IconField>
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
-            <img draggable="false" width="45" height="45" @click="routing('myfavorite')" style="cursor: pointer;"
+            <img draggable="false" width="45" class="fav-header" height="45" @click="routing('myfavorite')"
                 fill="none" src="../assets/img/icon/favorite_white.png" />
             <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
         </div>
@@ -204,5 +204,17 @@ onBeforeMount(() => {
     .my-nav-1 {
         display: none !important;
     }
+}
+
+.my-avatar:hover {
+    background-color: white;
+}
+
+.fav-header {
+    cursor: pointer;
+}
+
+.fav-header:hover{
+    content: url('../assets/img/icon/favorite_red.png')
 }
 </style>

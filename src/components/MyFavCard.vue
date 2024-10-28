@@ -25,6 +25,9 @@ defineProps({
     tag_arr: {
         type: Array,
     },
+    deck_id: {
+        type: String,
+    },
 
 });
 
@@ -40,6 +43,16 @@ const emit = defineEmits(['callFunction']);
 const callDeleteFav = (id) => {
   emit('callFunction', id);
 };
+const favoriteFN = () =>{
+    alert("Function is under development");
+}
+
+const deckDetailRouting = (deckID) => {
+    router.push({
+        name: 'deckdetail',
+        params: { id: deckID }
+    });
+}
 /* FUNCTION END */
 </script>
 
@@ -49,15 +62,15 @@ const callDeleteFav = (id) => {
             <template #header>
                 <img alt="user header" :src="deck_img" draggable="false" width="400" height="256" />
             </template>
-            <template #title>{{ title }}</template>
+            <template #title><div class="title-fav" @click="deckDetailRouting(deck_id)">{{ title }}</div></template>
             <template #subtitle>
                 <div class="fav-tag">
-                    <Tag severity="secondary" v-for="tag in tag_arr" :key="tag" :value='"#" + tag'></Tag>
+                    <Tag severity="secondary" class="tag-fav" v-for="tag in tag_arr" :key="tag" :value='"#" + tag' @click="favoriteFN()"></Tag>
                 </div>
 
             </template>
             <template #content>
-                <p class="m-0">
+                <p class="m-0 content-fav">
                     {{ description }}
                 </p>
             </template>
@@ -90,6 +103,27 @@ const callDeleteFav = (id) => {
     font-weight: 600;
     margin-right: 5px;
     border-radius: 25px;
+}
+
+.fav-tag {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.title-fav {
+    /* min-height: 70px; */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* min-height: 155px; */
+}
+
+.title-fav:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 :deep(.p-card-body) {
@@ -126,4 +160,17 @@ const callDeleteFav = (id) => {
 .add-more-text {
     padding: 15px;
 }
+
+.tag-fav {
+    cursor: pointer;
+}
+
+.content-fav {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 155px;
+}
+
 </style>

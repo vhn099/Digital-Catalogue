@@ -16,11 +16,13 @@ import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
 import MegaphoneIcon from '@/assets/img/icon/megaphone.png';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
+import { getAuth } from 'firebase/auth';
+import { FavoriteFirestore } from '@/lib/Favorite';
 
 const value2 = ref(null);
 const top_decks = ref([]);
 const normal_decks = ref([]);
-
+const email = ref('');
 
 function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark');
@@ -60,8 +62,11 @@ const getDecks = async () => {
 
   return deckList;
 };
-
+const favoriteFn = async (id) => {
+  await FavoriteFirestore.favoriteFn(email.value, id);
+};
 onMounted(async () => {
+  email.value = getAuth().currentUser.email;
   const decks = await getDecks();
   for (let i = 0; i < decks.length; i++) {
     if (i < 2) {
@@ -89,10 +94,11 @@ onMounted(async () => {
 
       <SectionItem :icon="deckSectionIcon" :icon_text="deckSectionText" :title="deckPageHeader" />
       <div class="top-line" style="padding-top: 15px">
-        <DeckItem v-for="top_deck in top_decks" :data="top_deck"></DeckItem>
+        <DeckItem v-for="top_deck in top_decks" :data="top_deck" :email="email" @callFavoriteFn="favoriteFn"></DeckItem>
       </div>
       <div class="normal-line">
-        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck"></DeckItem>
+        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email" @callFavoriteFn="favoriteFn">
+        </DeckItem>
       </div>
       <div class="view-more-router">
         <RouterLink :to="{ name: 'decks' }" class="link-router">View More</RouterLink>

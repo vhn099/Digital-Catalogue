@@ -469,7 +469,7 @@ watch(visible, () => {
 });
 </script>
 <template>
-    <!-- <LoadingSpinner v-if="spinner"/> -->
+    <LoadingSpinner v-if="spinner"/>
     <Toast />
     <ConfirmDialog />
     <div class="">
@@ -504,7 +504,7 @@ watch(visible, () => {
 
                     <!-- Deck Highlight -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="deck_highlight">Deck Highlight <span
+                        <label class="form-label" for="deck_highlight">Deck Highlight (1200x800px) <span
                                 class="required-icon">*</span></label>
                         <img draggable="false" v-if="deckHighlightPreview" :src="deckHighlightPreview" alt="Image"
                             width="150" height="150" />
@@ -540,7 +540,7 @@ watch(visible, () => {
 
                     <!-- Deck Images -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="deck_images">Deck Images <span
+                        <label class="form-label" for="deck_images">Deck Images (1200x800px) <span
                                 class="required-icon">*</span></label>
                         <Toast />
                         <!-- <FileUpload name="deck_images[]" @upload="onAdvancedUpload($event)"
@@ -608,7 +608,7 @@ watch(visible, () => {
                     <!-- Tag -->
                     <div class="flex flex-col">
                         <label class="form-label" for="tag">Tags <span class="required-icon">*</span></label>
-                        <InputChips v-model="formFields.tag" :invalid="v$.tag.$errors.length > 0" removable>
+                        <InputChips v-model="formFields.tag" placeholder="Input Tag and ENTER to seperate" :invalid="v$.tag.$errors.length > 0" removable>
                         </InputChips>
                         <small class="error-messages" v-if="v$.tag.$errors.length > 0">{{
                             v$.tag.$errors[0].$message }}</small>

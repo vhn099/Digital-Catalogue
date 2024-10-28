@@ -52,6 +52,7 @@ const getDeckInfo = async (arr) => {
         if (docSnap.exists()) {
             const obj = {
                 fav_id: fav.favID,
+                deck_id: fav.deckID,
                 deck_image: docSnap.data().deck_highlight || '',
                 deck_name: docSnap.data().title || '',
                 deck_description: docSnap.data().detail_description || '',
@@ -86,7 +87,7 @@ onMounted(async () => {
             <div class="fav-canva">
                 <div v-for="fav in decks" :key="fav">
                     <MyFavCardItem :fav_id="fav.fav_id" :tag_arr="fav.deck_tag" :deck_img="fav.deck_image"
-                        :title="fav.deck_name" :description="fav.deck_description" @callFunction="deleteFav">
+                        :title="fav.deck_name" :description="fav.deck_description" :deck_id="fav.deck_id" @callFunction="deleteFav">
                     </MyFavCardItem>
                 </div>
                 <MyFavCardItem :isnew="true"></MyFavCardItem>

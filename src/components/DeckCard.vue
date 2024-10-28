@@ -8,14 +8,16 @@
                 <div class="deck-info-desc">
                     <span class="deck-name" @click="routingDeck(data.id)">{{ data.title }}</span>
                     <div class="deck-tag gap-2">
-                        <Tag v-for="t in data.tag" severity="secondary" :value="'#' + t"></Tag>
+                        <Tag v-for="t in data.tag" severity="secondary" :value="'#' + t" @click="favoriteFN()"></Tag>
                     </div>
                 </div>
                 <div class="deck-info-like">
                     <div class="button-like">
                         <Button severity="secondary" label="Favourite" @click="favoriteFn(data.id)">
-                            <!-- <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon" /> -->
-                            <img draggable="false" width="40" height="40" fill="none" :src="FavoriteRedIcon" />
+                            <img draggable="false" width="40" height="40" fill="none" :src="FavoriteBlackIcon"
+                                v-if="!fav" />
+                            <img draggable="false" width="40" height="40" fill="none" :src="FavoriteRedIcon"
+                                v-if="fav" />
                             <label>Favourite</label>
                         </Button>
                         <!-- <Button label="Favourite" icon="pi pi-heart" iconPos="top" /> -->
@@ -31,14 +33,18 @@ import Chip from 'primevue/chip';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import router from '@/router';
-import { computed, defineEmits } from 'vue';
+import { ref, defineEmits, onMounted } from 'vue';
 
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 import FavoriteRedIcon from '@/assets/img/icon/favorite_red.png';
+import { FavoriteFirestore } from '@/lib/Favorite';
 
-defineProps({
+const props = defineProps({
     data: {
         type: Object,
+    },
+    email: {
+        type: String,
     }
 });
 
@@ -51,9 +57,20 @@ const routingDeck = (deckID) => {
 }
 
 const emit = defineEmits(['callFavoriteFn']);
+const fav = ref(false);
 
 const favoriteFn = (id) => {
     emit('callFavoriteFn', id);
+    fav.value = !fav.value;
+};
+
+const FavoriteIcon = async (userID, deckID) => {
+
+    const fav = await FavoriteFirestore.isFavorite(userID, deckID)
+    if (fav) {
+        return true;
+    }
+    else return false;
 };
 
 const backgroundImage = (img) => {
@@ -62,6 +79,12 @@ const backgroundImage = (img) => {
         'background-size': 'cover'
     }
 }
+const favoriteFN = () =>{
+    alert("Function is under development");
+}
+onMounted(async () => {
+    fav.value = await FavoriteIcon(props.email, props.data.id);
+});
 /* FUNCTION END */
 </script>
 
