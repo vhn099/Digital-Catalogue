@@ -101,7 +101,9 @@ const setBreadcrumbs = (data, type) => {
         breadcrumbs.value.pop();
     }
 };
-
+const favoriteFN = () =>{
+    alert("Function is under development");
+}
 /* FUNCTIONS DEFINITION END */
 </script>
 
@@ -159,7 +161,7 @@ const setBreadcrumbs = (data, type) => {
                         </div>
                     </div>
                     <div class="deck-fav-button">
-                        <Button label="Favourite">
+                        <Button label="Favourite" @click="favoriteFN()">
                             <img draggable="false" width="23" height="23" fill="none"
                                 src="../../assets/img/icon/favorite_white.png" />
                             <label>Add to my Favorite</label>
@@ -177,7 +179,7 @@ const setBreadcrumbs = (data, type) => {
             </div>
             <div v-if="isViewDeck" class="pdf-canva">
                 <div class="pdf-fav-button">
-                    <Button label="Favourite">
+                    <Button label="Favourite" @click="favoriteFN()">
                         <img draggable="false" width="23" height="23" fill="none"
                             src="../../assets/img/icon/favorite_white.png" />
                         <label>Add to my Favorite</label>
