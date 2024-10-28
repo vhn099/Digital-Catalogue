@@ -110,14 +110,20 @@ onMounted(async () => {
     font-size: 36px;
     font-weight: 500;
     line-height: 54px;
-    cursor: pointer;
     padding: 0 10px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .deck-name:hover {
     /* background-color: rgba(115, 38, 217, 0.1); */
-    background-color: var(--p-button-secondary-hover-background);
-    border-radius: 20px;
+    /* background-color: var(--p-button-secondary-hover-background); */
+    /* border-radius: 20px; */
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .my-card-deck {
