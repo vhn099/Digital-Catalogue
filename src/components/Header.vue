@@ -15,7 +15,7 @@
             <Menubar :model="items" class="admin-menu" v-if="admin" />
             <!-- <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" /> -->
             <IconField>
-                <InputText v-model="inputSearch" placeholder="Search" v-on:keyup.enter="searchData" />
+                <InputText v-model="inputSearch" placeholder="text or #tag search ..." v-on:keyup.enter="searchData" />
                 <InputIcon class="pi pi-search" variant="filled" @click="searchData" style="cursor: pointer;"/>
             </IconField>
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->

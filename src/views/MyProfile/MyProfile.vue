@@ -30,6 +30,7 @@ const sectionIcon = ProfileIcon;
 const sectionText = "My Profile";
 
 /* REF DEFINITION START */
+const currentUser = ref('');
 const firstname = ref('');
 const lastName = ref('');
 const email = ref('');
@@ -42,13 +43,16 @@ let userID = "";
 const toast = useToast();
 
 onMounted(async () => {
-    const currentUser = await UserFirestore.getCurrentUser();
-    if (currentUser.userData) {
-        firstname.value = currentUser.userData.firstname;
-        lastName.value = currentUser.userData.lastname;
-        userID = currentUser.userData.id;
-        email.value = currentUser.userData.email;
-        useAppStore().setmail(email.value);
+    const cookie = UserFirestore.getCookie("user-auth");
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        currentUser.value = JSON.parse(cookie); // Check custom authen of users.
+        if (currentUser.value.userData) {
+            firstname.value = currentUser.value.userData.firstname;
+            lastName.value = currentUser.value.userData.lastname;
+            userID = currentUser.value.userData.id;
+            email.value = currentUser.value.userData.email;
+            useAppStore().setmail(email.value);
+        }
     }
     const script = document.createElement('script');
     script.src = `https://www.google.com/recaptcha/api.js`; // import lib for grecaptcha function
@@ -103,6 +107,7 @@ const sendLink = async () => {
 };
 const submitForm = async () => {
     const profileForm = {
+        email: email.value,
         firstname: firstname.value,
         lastname: lastName.value,
         id: userID,
@@ -117,6 +122,11 @@ const submitForm = async () => {
         detail: result.message,
         life: 3000 // 3s
     });
+    if (result.status == 'success') {
+        const userData = await UserFirestore.getCurrentUser();
+        userData.expires = currentUser.value.expires;
+        UserFirestore.updateCookie("user-auth", JSON.stringify(userData), userData.expires);
+    }
 };
 /* FUNCTIONS DEFINITION END */
 
