@@ -94,10 +94,10 @@ onMounted(async () => {
 
       <SectionItem :icon="deckSectionIcon" :icon_text="deckSectionText" :title="deckPageHeader" />
       <div class="top-line" style="padding-top: 15px">
-        <DeckItem v-for="top_deck in top_decks" :data="top_deck" :email="email" @callFavoriteFn="favoriteFn"></DeckItem>
+        <DeckItem v-for="top_deck in top_decks" :data="top_deck" :email="email"></DeckItem>
       </div>
       <div class="normal-line">
-        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email" @callFavoriteFn="favoriteFn">
+        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email">
         </DeckItem>
       </div>
       <div class="view-more-router">

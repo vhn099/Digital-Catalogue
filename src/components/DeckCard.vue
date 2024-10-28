@@ -56,11 +56,14 @@ const routingDeck = (deckID) => {
     });
 }
 
-const emit = defineEmits(['callFavoriteFn']);
 const fav = ref(false);
 
-const favoriteFn = (id) => {
-    emit('callFavoriteFn', id);
+const favoriteClicked = async (id) => {
+    await FavoriteFirestore.favoriteFn(props.email, id);
+};
+
+const favoriteFn = async (id) => {
+    await favoriteClicked(id);
     fav.value = !fav.value;
 };
 

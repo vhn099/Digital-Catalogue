@@ -63,7 +63,7 @@ const favoriteFn = async (id) => {
 };
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 11, lastDeck);
+  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 14, lastDeck);
   last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
@@ -174,10 +174,10 @@ const nextDecks = async (lastDeck) => {
       </div>
 
       <div class="card top-line">
-        <DeckItem v-for="top_deck in top_decks" :data="top_deck" :email="email" @callFavoriteFn="favoriteFn"></DeckItem>
+        <DeckItem v-for="top_deck in top_decks" :data="top_deck" :email="email"></DeckItem>
       </div>
       <div class="card normal-line">
-        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email" @callFavoriteFn="favoriteFn"></DeckItem>
+        <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email"></DeckItem>
       </div>
       <div class="view-more-router">
         <RouterLink v-if="last_deck" :to="{}" class="link-router" @click="nextDecks(last_deck)">View More</RouterLink>

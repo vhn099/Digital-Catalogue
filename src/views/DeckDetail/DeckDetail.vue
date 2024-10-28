@@ -203,13 +203,13 @@ const FavoriteIcon = async (userID, deckID) => {
             </div>
             <div v-if="isViewDeck" class="pdf-canva">
                 <div class="pdf-fav-button">
-                    <Button @click="favoriteFN()" raised>
+                    <Button @click="favoriteFn(deckID)" v-if="!isFav" raised>
                         <img draggable="false" width="23" height="23" fill="none"
                             src="../../assets/img/icon/favorite_white.png" />
                         <label>Add to my Favorite</label>
                     </Button>
 
-                    <Button @click="favoriteFN()" severity="secondary" raised>
+                    <Button @click="favoriteFn(deckID)" v-if="isFav" severity="secondary" raised>
                         <img draggable="false" width="23" height="23" fill="none"
                             src="../../assets/img/icon/favorite_red.png" />
                         <label>Favorited</label>

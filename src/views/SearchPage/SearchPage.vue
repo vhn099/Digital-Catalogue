@@ -14,6 +14,8 @@ import { onMounted, ref, watch } from 'vue';
 import router from '@/router';
 import { SearchPageFirestore } from '@/lib/SearchPage';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { getAuth } from 'firebase/auth';
+import { FavoriteFirestore } from '@/lib/Favorite';
 const sectionIcon = SupplyChainIcon;
 const sectionText = "Decks";
 
@@ -21,6 +23,7 @@ const sectionText = "Decks";
 const inputSearch = ref("");
 const decks = ref([]);
 const spinner = ref(false);
+const email = ref('');
 /* REF DEFINITION END */
 
 /* NORMAL VARIABLE */
@@ -47,6 +50,7 @@ const search = async () => {
 onMounted(async () => {
     const { query } = router.currentRoute.value;
     inputSearch.value = query.query;
+    email.value = getAuth().currentUser.email;
     await createQuery();
 })
 
@@ -58,7 +62,7 @@ watch(() => router.currentRoute.value.query, async () => {
 </script>
 
 <template>
-    <LoadingSpinner v-if="spinner"/>
+    <LoadingSpinner v-if="spinner" />
     <DockItem></DockItem>
 
     <div class="flex min-height-750">
@@ -76,13 +80,14 @@ watch(() => router.currentRoute.value.query, async () => {
                 </div>
                 <div class="input-field">
                     <IconField>
-                        <InputText v-model="inputSearch" placeholder="text or #tag search ..." v-on:keyup.enter="search"/>
-                        <InputIcon class="pi pi-search cursor" variant="filled" @click="search"/>
+                        <InputText v-model="inputSearch" placeholder="text or #tag search ..."
+                            v-on:keyup.enter="search" />
+                        <InputIcon class="pi pi-search cursor" variant="filled" @click="search" />
                     </IconField>
                 </div>
             </div>
             <div class="card normal-line" v-if="decks.length > 0">
-                <DeckItem v-for="deck in decks" :data="deck"></DeckItem>
+                <DeckItem v-for="deck in decks" :data="deck" :email="email"></DeckItem>
             </div>
         </div>
 
