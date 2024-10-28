@@ -2,7 +2,7 @@
     <div class="col">
         <div class="my-card-deck" :style="backgroundImage(data.deck_highlight)" :key="data.id">
             <div class="deck-date">
-                <Chip :label="data.created" />
+                <Chip :label="moment(data.created).format('MMM YYYY')" />
             </div>
             <div class="deck-info">
                 <div class="deck-info-desc">
@@ -38,6 +38,7 @@ import { ref, defineEmits, onMounted } from 'vue';
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 import FavoriteRedIcon from '@/assets/img/icon/favorite_red.png';
 import { FavoriteFirestore } from '@/lib/Favorite';
+import moment from 'moment';
 
 const props = defineProps({
     data: {
