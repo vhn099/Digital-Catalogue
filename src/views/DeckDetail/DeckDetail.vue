@@ -48,11 +48,11 @@ const responsiveOptions = ref([
 const getDeckByID = async (id) => {
     const deck = {};
     const data = await DeckFirestore.getDeck(id);
-    const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
+    // const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
     deck.title = data.title;
     deck.detail_description = data.detail_description;
-    deck.category_id = data.category_id;
-    deck.category_name = categoryName;
+    // deck.category_id = data.category_id;
+    // deck.category_name = categoryName;
     deck.deck_highlight = data.deck_highlight;
     deck.deck_images = data.deck_images;
     deck.pdf = data.pdf;

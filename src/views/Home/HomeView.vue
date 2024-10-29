@@ -41,21 +41,21 @@ const getDecks = async () => {
   const decksSnapshot = await DeckFirestore.getLimitDecks('', 5, '');
   for (const deck of decksSnapshot) {
     const data = deck.data();
-    const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
+    // const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
     const object = {
       id: deck.id,
       title: data.title,
-      detail_description: data.detail_description,
-      category_id: data.category_id,
-      category_name: categoryName,
+      // detail_description: data.detail_description,
+      // category_id: data.category_id,
+      // category_name: categoryName,
       deck_highlight: data.deck_highlight,
-      deck_images: data.deck_images,
-      pdf: data.pdf,
+      // deck_images: data.deck_images,
+      // pdf: data.pdf,
       tag: data.tag,
       created: data.created ? data.created.toDate().toLocaleString() : '',
-      created_by: data.created_by || '',
+      // created_by: data.created_by || '',
       updated: data.updated ? data.updated.toDate().toLocaleString() : '',
-      updated_by: data.updated_by || ''
+      // updated_by: data.updated_by || ''
     };
     deckList.push(object);
   }
