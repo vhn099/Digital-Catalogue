@@ -35,23 +35,18 @@ const toggle = (event) => {
   op.value.toggle(event);
 }
 
-const selectedCity = ref();
-const cities = ref([
-  { name: 'A-z', code: 'NY' },
-  { name: 'z-A', code: 'RM' },
-  { name: 'Latest Update', code: 'LDN' },
-  { name: 'Most Favorited', code: 'IST' },
+const orderedBy = ref({ name: 'Latest Update', code: 'lu' });
+const orderBy = ref([
+  { name: 'A-z', code: 'az' },
+  { name: 'z-A', code: 'za' },
+  { name: 'Latest Update', code: 'lu' },
+  { name: 'Most Favorited', code: 'mf' },
 ]);
 const deckSectionPageHeader = "Lastest Decks";
 
-const categories = ref([
-  { name: "Accounting", key: "A" },
-  { name: "Marketing", key: "M" },
-  { name: "Production", key: "P" },
-  { name: "Research", key: "R" }
-]);
+const selectedCategories = ref();
+const categories = ref();
 
-const selectedCategories = ref(['Marketing']);
 const favRecord = ref({
   created: '',
   userID: '',
@@ -60,22 +55,36 @@ const favRecord = ref({
 const email = ref('');
 const spinner = ref(false);
 
+const getCategories = async () => {
+    const categoryList = [];
+    (await CategoryFirestore.getCategories()).forEach(category => {
+        const data = category.data();
+        const object = {
+            key: category.id,
+            name: data.name,
+        };
+        categoryList.push(object);
+    });
+
+    return categoryList;
+};
+
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
   const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 14, lastDeck);
   last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
-    const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
+    // const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
     const object = {
       id: deck.id,
       title: data.title,
-      detail_description: data.detail_description,
+      // detail_description: data.detail_description,
       category_id: data.category_id,
-      category_name: categoryName,
+      // category_name: categoryName,
       deck_highlight: data.deck_highlight,
-      deck_images: data.deck_images,
-      pdf: data.pdf,
+      // deck_images: data.deck_images,
+      // pdf: data.pdf,
       tag: data.tag,
       created: data.created ? data.created.toDate().toLocaleString() : '',
       created_by: data.created_by || '',
@@ -92,6 +101,9 @@ const onLoadEvents = async () => {
   spinner.value = true;
   const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = params.cateID;
+
+  categories.value = await getCategories();
+  selectedCategories.value = [cateIDParm.value];
 
   const decks = await getDecks(cateIDParm.value);
   for (let i = 0; i < decks.length; i++) {
@@ -144,7 +156,7 @@ const nextDecks = async (lastDeck) => {
         <span class="filter-text">Category</span>
         <div class="checkbox-area">
           <div v-for="category of categories" :key="category.key" class="checkbox-item gap-2">
-            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.name" />
+            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key" />
             <label :for="category.key">{{ category.name }}</label>
           </div>
         </div>
@@ -172,7 +184,7 @@ const nextDecks = async (lastDeck) => {
         </div>
         <div class="deck-filter gap-2">
           <div class="filter-input">
-            <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="Sort By:" />
+            <Select v-model="orderedBy" :options="orderBy" optionLabel="name" placeholder="Sort By:" />
 
           </div>
           <div class="filter-popover">
