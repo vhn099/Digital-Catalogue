@@ -20,6 +20,12 @@ import DeckIcon from '@/assets/img/homepage/deck.png';
 import SupportIcon from '@/assets/img/homepage/support.png';
 import LogoutIcon from '@/assets/img/homepage/logout.png';
 
+import HomeWhiteIcon from '@/assets/img/icon/home_white.png';
+import CateWhiteIcon from '@/assets/img/icon/supply-chain_white.png';
+import DeckWhiteIcon from '@/assets/img/icon/presentation_white.png';
+import SPWhiteIcon from '@/assets/img/icon/support_white.png';
+import LogoutWhiteIcon from '@/assets/img/icon/logout_white.png';
+
 import { ref } from "vue";
 import { UserFirestore } from '@/lib/User';
 
