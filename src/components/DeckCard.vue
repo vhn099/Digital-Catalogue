@@ -53,7 +53,7 @@ const props = defineProps({
 const routingDeck = (deckID) => {
     router.push({
         name: 'deckdetail',
-        params: { id: deckID }
+        params: { deckID: deckID }
     });
 }
 

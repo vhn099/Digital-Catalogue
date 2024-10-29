@@ -138,7 +138,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/deck/:id',
+      path: '/deck/:deckID',
       name: 'deckdetail',
       component: DeckDetail,
       meta: {

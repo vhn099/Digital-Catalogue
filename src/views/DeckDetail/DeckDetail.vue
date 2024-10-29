@@ -20,10 +20,10 @@ const isFav = ref();
 onMounted(async () => {
     email.value = getAuth().currentUser.email;
     const { params } = router.currentRoute.value;
-    deckID.value = params.id;
+    deckID.value = params.deckID;
     isFav.value = await FavoriteIcon(email.value, deckID.value);
 
-    deckDetails.value = await getDeckByID(params.id);
+    deckDetails.value = await getDeckByID(params.deckID);
     setBreadcrumbs(createBreadcrumbObject(deckDetails.value), 'add');
 });
 
@@ -144,9 +144,9 @@ const FavoriteIcon = async (userID, deckID) => {
                 <span class="breadcrumb-header">Selected: </span>
                 <div class="breadcrumb-content">
                     <span v-for="(breadcrumb, index) in breadcrumbs" :key="breadcrumb.id"
-                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }" class="cursor-element"
+                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }" 
                         @click="changeActiveBreadCrumb(index)">
-                        {{ breadcrumb.label }}
+                        <span class="cursor-element">{{ breadcrumb.label }}</span>
                         <span v-if="(index + 1) < breadcrumbs.length" style="padding: 10px">></span>
                     </span>
                 </div>
@@ -344,8 +344,9 @@ const FavoriteIcon = async (userID, deckID) => {
     font-weight: 500;
 }
 
-.cursor-element {
+.cursor-element:hover {
     cursor: pointer;
+    text-decoration: underline;
 }
 
 /* BREADCRUMB CSS END */
