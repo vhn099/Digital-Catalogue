@@ -21,12 +21,14 @@ import { CategoryFirestore } from '@/lib/Category';
 import { FavoriteFirestore } from '@/lib/Favorite';
 import router from '@/router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import _ from 'lodash';
 
 const sectionIcon = Presentation;
 const sectionText = "Decks";
 
 const op = ref();
 const cateIDParm = ref('');
+const all_decks = ref([]);
 const top_decks = ref([]);
 const normal_decks = ref([]);
 const last_deck = ref({});
@@ -35,16 +37,17 @@ const toggle = (event) => {
   op.value.toggle(event);
 }
 
-const orderedBy = ref({ name: 'Latest Update', code: 'lu' });
+const orderedBy = ref();
 const orderBy = ref([
-  { name: 'A-z', code: 'az' },
-  { name: 'z-A', code: 'za' },
-  { name: 'Latest Update', code: 'lu' },
-  { name: 'Most Favorited', code: 'mf' },
+  { name: 'A-z', code: 'title-asc' },
+  { name: 'z-A', code: 'title-desc' },
+  { name: 'Latest Update', code: 'updated-desc' },
+  { name: 'Most Favorited', code: 'fav_count-desc' },
 ]);
 const deckSectionPageHeader = "Lastest Decks";
 
-const selectedCategories = ref();
+const tagInputed = ref('');
+const selectedCategories = ref([]);
 const categories = ref();
 
 const favRecord = ref({
@@ -56,17 +59,17 @@ const email = ref('');
 const spinner = ref(false);
 
 const getCategories = async () => {
-    const categoryList = [];
-    (await CategoryFirestore.getCategories()).forEach(category => {
-        const data = category.data();
-        const object = {
-            key: category.id,
-            name: data.name,
-        };
-        categoryList.push(object);
-    });
+  const categoryList = [];
+  (await CategoryFirestore.getCategories()).forEach(category => {
+    const data = category.data();
+    const object = {
+      key: category.id,
+      name: data.name,
+    };
+    categoryList.push(object);
+  });
 
-    return categoryList;
+  return categoryList;
 };
 
 const getDecks = async (cateID, lastDeck) => {
@@ -99,30 +102,39 @@ const getDecks = async (cateID, lastDeck) => {
 
 const onLoadEvents = async () => {
   spinner.value = true;
+
   const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = params.cateID;
-
-  categories.value = await getCategories();
+  orderedBy.value = { name: 'Latest Update', code: 'updated-desc' };
   selectedCategories.value = [cateIDParm.value];
 
-  const decks = await getDecks(cateIDParm.value);
-  for (let i = 0; i < decks.length; i++) {
+  all_decks.value = await getDecks(cateIDParm.value);
+  loadDataForDecks();
+
+  spinner.value = false;
+}
+
+function loadDataForDecks() {
+  top_decks.value = [];
+  normal_decks.value = [];
+  for (let i = 0; i < all_decks.value.length; i++) {
     if (i < 2) {
-      top_decks.value.push(decks[i]);
+      top_decks.value.push(all_decks.value[i]);
     } else {
-      normal_decks.value.push(decks[i]);
+      normal_decks.value.push(all_decks.value[i]);
     }
   }
-  spinner.value = false;
 }
 
 onMounted(async () => {
   email.value = getAuth().currentUser.email;
+  categories.value = await getCategories();
+
   await onLoadEvents();
 });
 
 watch(() => router.currentRoute.value.params, async () => {
-  await onLoadEvents()
+  await onLoadEvents();
 });
 
 const nextDecks = async (lastDeck) => {
@@ -131,10 +143,35 @@ const nextDecks = async (lastDeck) => {
     normal_decks.value.push(decks[i]);
   }
 };
+
+function sortData() {
+  spinner.value = true;
+
+  let selectedValue = orderedBy.value.code;
+  selectedValue = selectedValue.split('-');
+  all_decks.value = _.orderBy(all_decks.value, selectedValue[0], selectedValue[1]);
+  loadDataForDecks();
+
+  spinner.value = false;
+};
+
+function addFilter() {
+  spinner.value = true;
+  console.log('all_decks.value before', all_decks.value);
+  console.log('filter:', tagInputed.value);
+  console.log('filter:', selectedCategories.value);
+  all_decks.value = _.filter(all_decks.value, function(o) {
+    if (selectedCategories.value && selectedCategories.value.indexOf(o.category_id) !== -1) {
+      return o;
+    }
+  });
+  console.log('all_decks.value after', all_decks.value);
+  spinner.value = false;
+};
 </script>
 
 <template>
-  <LoadingSpinner v-if="spinner"/>
+  <LoadingSpinner v-if="spinner" />
   <Popover ref="op">
     <div class="custom-dropdown">
       <div class="block-search">
@@ -145,7 +182,7 @@ const nextDecks = async (lastDeck) => {
       <div class="block-search">
         <span class="filter-text">Search Tags</span>
         <IconField>
-          <InputText v-model="value1" placeholder="Search" />
+          <InputText v-model="tagInputed" placeholder="#tag search" />
           <InputIcon class="pi pi-search" variant="filled" />
         </IconField>
       </div>
@@ -165,7 +202,7 @@ const nextDecks = async (lastDeck) => {
 
       <div class="block-search">
         <a style="padding-right: 10px;" class="close" href="#" @click="">Clear</a>
-        <Button label="Save" />
+        <Button label="Save" @click="addFilter" />
       </div>
     </div>
   </Popover>
@@ -184,7 +221,8 @@ const nextDecks = async (lastDeck) => {
         </div>
         <div class="deck-filter gap-2">
           <div class="filter-input">
-            <Select v-model="orderedBy" :options="orderBy" optionLabel="name" placeholder="Sort By:" />
+            <Select v-model="orderedBy" :options="orderBy" optionLabel="name" placeholder="Sort By:"
+              @change="sortData" />
 
           </div>
           <div class="filter-popover">
