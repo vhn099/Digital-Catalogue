@@ -236,4 +236,8 @@ onBeforeMount(() => {
 :deep(.p-menubar-item-link) {
     height: 100%;
 }
+
+:deep(.p-menubar-submenu) {
+    border-radius: 25px;
+}
 </style>
