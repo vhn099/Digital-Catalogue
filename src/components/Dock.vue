@@ -28,6 +28,7 @@ import LogoutWhiteIcon from '@/assets/img/icon/logout_white.png';
 
 import { ref } from "vue";
 import { UserFirestore } from '@/lib/User';
+import { useAppStore } from '@/stores';
 
 const items = ref([
     {
@@ -52,6 +53,7 @@ const items = ref([
         label: 'Decks',
         icon: DeckIcon,
         eventHandler: () => {
+            useAppStore().setDeckCategory("");
             router.push({
                 name: 'decks'
             });

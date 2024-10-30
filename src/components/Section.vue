@@ -2,6 +2,7 @@
 import router from "@/router";
 import { onMounted, ref, watch } from "vue";
 import _ from 'lodash';
+import { useAppStore } from "@/stores";
 const items = ref([
     { label: 'Electronics' },
     { label: 'Computer' },
@@ -35,10 +36,12 @@ const back = () => {
 
 onMounted(() => {
     const { params } = router.currentRoute.value;
+    const cateID = useAppStore().getDeckCategory;
+
     if (_.isEmpty(params)) {
         showBack.value = false;
     }
-    if (params.cateID || params.deckID) {
+    if (cateID || params.deckID) {
         showBack.value = true;
     }
 });
@@ -48,7 +51,7 @@ watch(() => router.currentRoute.value.params, () => {
     if (_.isEmpty(params)) {
         showBack.value = false;
     }
-    if (params.cateID || params.deckID) {
+    if (params.deckID) {
         showBack.value = true;
     }
 });

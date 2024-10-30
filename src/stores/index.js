@@ -43,10 +43,12 @@ export const useAppStore = defineStore("storeId", {
       }
     },
     DATA: {
-      USER_EMAIL_RESET: ''
+      USER_EMAIL_RESET: '',
+      DECK_CATEGORY: '',
     }
   }),
   getters: {
+    // COLLECTION NAMES
     getFavoriteCollection: (state) => {
       return state.collections.favorite;
     },
@@ -62,16 +64,24 @@ export const useAppStore = defineStore("storeId", {
     getMessageMaster: (state) => {
       return state.MessageMaster;
     },
+    getHomeSliderCollection: (state) => {
+      return state.collections.home_slider
+    },
+
+    // DATA NAMES
     getUserEmailReset: (state) => {
       return state.DATA.USER_EMAIL_RESET;
     },
-    getHomeSliderCollection: (state) => {
-      return state.collections.home_slider
+    getDeckCategory: (state) => {
+      return state.DATA.DECK_CATEGORY;
     }
   },
   actions: {
     setmail(email) {
       this.DATA.USER_EMAIL_RESET = email;
+    },
+    setDeckCategory(category) {
+      this.DATA.DECK_CATEGORY = category;
     }
   }
 });

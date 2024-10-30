@@ -61,6 +61,8 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: SearchView,
+      // Using this props to get query dynamically from URL
+      props: (route) => ({ query: route.query.query }),
       meta: {
         requireAuth: true,
         pageTitle: 'Search',
@@ -78,7 +80,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/decks/:cateID?',
+      path: '/decks',
       name: 'decks',
       component: Decks,
       meta: {

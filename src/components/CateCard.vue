@@ -13,6 +13,7 @@
 </template>
 <script setup>
 import router from '@/router';
+import { useAppStore } from '@/stores';
 
 defineProps({
     data: {
@@ -34,10 +35,14 @@ defineProps({
 });
 
 const deckRouting = (id) => {
+    useAppStore().setDeckCategory(id);
     router.push({
-        name: 'decks',
-        params: { cateID: id }
-    })
+        name: 'decks'
+    });
+    // router.push({
+    //     name: 'decks',
+    //     params: { cateID: id },
+    // });
 };
 </script>
 <style scoped>

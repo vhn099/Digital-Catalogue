@@ -130,6 +130,9 @@ const getEmails = async () => {
     });
     return emailList;
 };
+const exportMyList = (event) => {
+    datatable.value.exportCSV();
+}
 
 const viewRow = (data) => {
     formFields.email = data.email;
@@ -232,12 +235,16 @@ watch(visible, () => {
                     tableStyle="width: 100%"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" ref="datatable" :filters="filters"
-                    :paginator="true">
+                    :paginator="true"
+                    export-filename="email_received"
+                    >
                     <template #header>
                         <div class="header-table">
                             <span class="table-title">Received Messages</span>
                             <div class="table-actions gap-2">
-
+                                <div>
+                                    <Button type="button" label="Export" icon="pi pi-external-link" @click="exportMyList($event)" />
+                                </div>
                                 <div>
                                     <IconField>
                                         <InputIcon>

@@ -1,6 +1,7 @@
 <script setup>
 import { CategoryFirestore } from '@/lib/Category';
 import router from '@/router';
+import { useAppStore } from '@/stores';
 import Button from 'primevue/button';
 import { computed, watch, onMounted, ref, nextTick } from 'vue';
 
@@ -95,10 +96,14 @@ async function getCategories() {
 };
 
 const categoryRouting = (id) => {
+  useAppStore().setDeckCategory(id);
   router.push({
     name: 'decks',
-    params: { cateID: id }
-  })
+  });
+  // router.push({
+  //   name: 'decks',
+  //   params: { cateID: id }
+  // });
 }
 /* FUNCTION END */
 

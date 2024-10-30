@@ -22,21 +22,15 @@ import { FavoriteFirestore } from '@/lib/Favorite';
 import router from '@/router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import _ from 'lodash';
+import { useAppStore } from '@/stores';
 
-const sectionIcon = Presentation;
-const sectionText = "Decks";
-
+/* REF DEFINITION START */
 const op = ref();
 const cateIDParm = ref('');
 const all_decks = ref([]);
 const top_decks = ref([]);
 const normal_decks = ref([]);
 const last_deck = ref({});
-
-const toggle = (event) => {
-  op.value.toggle(event);
-}
-
 const orderedBy = ref();
 const orderBy = ref([
   { name: 'A-z', code: 'title-asc' },
@@ -44,12 +38,9 @@ const orderBy = ref([
   { name: 'Latest Update', code: 'updated-desc' },
   { name: 'Most Favorited', code: 'fav_count-desc' },
 ]);
-const deckSectionPageHeader = "Lastest Decks";
-
 const tagInputed = ref('');
 const selectedCategories = ref();
 const categories = ref();
-
 const favRecord = ref({
   created: '',
   userID: '',
@@ -58,6 +49,16 @@ const favRecord = ref({
 const email = ref('');
 const spinner = ref(false);
 
+/* STATIC VARIABLES */
+const deckSectionPageHeader = "Lastest Decks";
+const sectionIcon = Presentation;
+const sectionText = "Decks";
+const limit = 14;
+
+/* FUNCTION DEFINTION START */
+const toggle = (event) => {
+  op.value.toggle(event);
+}
 const getCategories = async () => {
   const categoryList = [];
   (await CategoryFirestore.getCategories()).forEach(category => {
@@ -71,10 +72,9 @@ const getCategories = async () => {
 
   return categoryList;
 };
-
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 14, lastDeck);
+  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, limit, lastDeck);
   last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
@@ -97,15 +97,14 @@ const getDecks = async (cateID, lastDeck) => {
     };
     deckList.push(object);
   }
-
   return deckList;
 };
 
 const onLoadEvents = async () => {
   spinner.value = true;
 
-  const { params } = router.currentRoute.value; // open from Category
-  cateIDParm.value = params.cateID;
+  // const { params } = router.currentRoute.value; // open from Category
+  cateIDParm.value = useAppStore().getDeckCategory;
   orderedBy.value = { name: 'Latest Update', code: 'updated-desc' };
   selectedCategories.value = [cateIDParm.value];
   tagInputed.value = '';
@@ -127,17 +126,6 @@ function loadDataForDecks() {
     }
   }
 }
-
-onMounted(async () => {
-  email.value = getAuth().currentUser.email;
-  categories.value = await getCategories();
-
-  await onLoadEvents();
-});
-
-watch(() => router.currentRoute.value.params, async () => {
-  await onLoadEvents();
-});
 
 const nextDecks = async (lastDeck) => {
   // spinner.value = true;
@@ -226,6 +214,17 @@ function clearFilter() {
   }
   loadDataForDecks();
 };
+
+/* VUE EVENTS */
+onMounted(async () => {
+  email.value = getAuth().currentUser.email;
+  categories.value = await getCategories();
+  await onLoadEvents();
+});
+
+watch(() => router.currentRoute.value.params, async () => {
+  await onLoadEvents();
+});
 </script>
 
 <template>
@@ -251,8 +250,7 @@ function clearFilter() {
         <span class="filter-text">Category</span>
         <div class="checkbox-area">
           <div v-for="category of categories" :key="category.key" class="checkbox-item gap-2">
-            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key"
-              :disabled="cateIDParm" />
+            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key"/>
             <label :for="category.key">{{ category.name }}</label>
           </div>
         </div>
@@ -298,7 +296,7 @@ function clearFilter() {
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email"></DeckItem>
       </div>
       <div class="view-more-router">
-        <RouterLink v-if="last_deck" :to="{}" class="link-router" @click="nextDecks(last_deck)">View More</RouterLink>
+        <p v-if="last_deck" class="link-router" @click="nextDecks(last_deck)">View More</p>
       </div>
     </div>
 
@@ -390,5 +388,6 @@ function clearFilter() {
   font-weight: 600;
   line-height: 30px;
   text-align: center;
+  cursor: pointer;
 }
 </style>

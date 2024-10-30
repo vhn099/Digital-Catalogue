@@ -24,11 +24,12 @@ const inputSearch = ref("");
 const decks = ref([]);
 const spinner = ref(false);
 const email = ref('');
-/* REF DEFINITION END */
 
 /* NORMAL VARIABLE */
 let isTag = "";
-/* NORMAL VARIABLE */
+
+/* DEFINE PROPS */
+const props = defineProps(['query']); // Receiving props data from URL everytime users search on header
 
 /* FUNCTION START */
 const createQuery = async () => {
@@ -45,18 +46,15 @@ const createQuery = async () => {
 const search = async () => {
     await createQuery();
 };
-/* FUNCTION END */
 
+/* VUE EVENTS */
 onMounted(async () => {
-    const { query } = router.currentRoute.value;
-    inputSearch.value = query.query;
     email.value = getAuth().currentUser.email;
+    inputSearch.value = props.query;
     await createQuery();
-})
-
-watch(() => router.currentRoute.value.query, async () => {
-    const { query } = router.currentRoute.value;
-    inputSearch.value = query.query;
+});
+watch(() => props.query, async () => {
+    inputSearch.value = props.query;
     await createQuery();
 });
 </script>
