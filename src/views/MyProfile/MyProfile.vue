@@ -42,24 +42,6 @@ let userID = "";
 
 const toast = useToast();
 
-onMounted(async () => {
-    const cookie = UserFirestore.getCookie("user-auth");
-    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
-        currentUser.value = JSON.parse(cookie); // Check custom authen of users.
-        if (currentUser.value.userData) {
-            firstname.value = currentUser.value.userData.firstname;
-            lastName.value = currentUser.value.userData.lastname;
-            userID = currentUser.value.userData.id;
-            email.value = currentUser.value.userData.email;
-            useAppStore().setmail(email.value);
-        }
-    }
-    const script = document.createElement('script');
-    script.src = `https://www.google.com/recaptcha/api.js`; // import lib for grecaptcha function
-    script.async = true;
-    document.body.appendChild(script);
-});
-
 /* FUNCTIONS DEFINITION START */
 const resetPassWord = () => {
     isResetPassWord.value = true;
@@ -129,6 +111,25 @@ const submitForm = async () => {
     }
 };
 
+/* VUE EVENTS */
+onMounted(async () => {
+    const cookie = UserFirestore.getCookie("user-auth");
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        currentUser.value = JSON.parse(cookie); // Check custom authen of users.
+        if (currentUser.value.userData) {
+            firstname.value = currentUser.value.userData.firstname || "";
+            lastName.value = currentUser.value.userData.lastname || "";
+            userID = currentUser.value.userData.id;
+            email.value = currentUser.value.userData.email;
+            useAppStore().setmail(email.value);
+        }
+    }
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js`; // import lib for grecaptcha function
+    script.async = true;
+    document.body.appendChild(script);
+});
+
 watch(isResetPassWord, () => {
     if (!isResetPassWord.value) {
         closeDrawer();
@@ -146,7 +147,7 @@ watch(isResetPassWord, () => {
 
             <div class="form-container" v-if="!isSendLink">
                 <FloatLabel variant="in">
-                    <InputText id="in_label" disabled :fluid="true" v-model="email" autocomplete="off" />
+                    <InputText id="in_label" disabled :fluid="true" v-model="email" autocomplete="off" maxLength="150"/>
                     <label for="in_label">Email</label>
                 </FloatLabel>
                 <div class="flex flex-col mt-3">
@@ -188,13 +189,13 @@ watch(isResetPassWord, () => {
                         <div class="flex">
                             <div class="flex-1 p-2">
                                 <FloatLabel variant="in">
-                                    <InputText id="in_label" :fluid="true" v-model="firstname" autocomplete="off" />
+                                    <InputText id="in_label" :fluid="true" v-model="firstname" autocomplete="off" maxlength="150"/>
                                     <label for="in_label">First Name</label>
                                 </FloatLabel>
                             </div>
                             <div class="flex-1 p-2">
                                 <FloatLabel variant="in">
-                                    <InputText id="in_label" :fluid="true" v-model="lastName" autocomplete="off" />
+                                    <InputText id="in_label" :fluid="true" v-model="lastName" autocomplete="off" maxlength="150"/>
                                     <label for="in_label">Last Name</label>
                                 </FloatLabel>
                             </div>

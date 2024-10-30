@@ -176,7 +176,7 @@ export const UserFirestore = {
         } catch (error) {
             result.status = 'error';
             result.message = error.message;
-
+            console.log(error);
         }
 
         return result;
@@ -208,7 +208,7 @@ export const UserFirestore = {
         } catch (error) {
             result.status = 'error';
             result.message = error.message;
-
+            console.log(error);
         }
         return result;
     },
@@ -228,12 +228,8 @@ export const UserFirestore = {
         try {
             const docRef = getDoc(doc(db, userForm.id));
             if ((await docRef).exists()) {
-                let disabled = false;
-                if (userForm.deactive.length > 0) {
-                    disabled = true;
-                }
                 await updateDoc(doc(db, userForm.id), {
-                    disabled: disabled,
+                    disabled: userForm.disabled,
                     isAdmin: userForm.isAdmin || false,
                     firstname: userForm.firstname || "",
                     lastname: userForm.lastname || "",
@@ -249,7 +245,7 @@ export const UserFirestore = {
         } catch (error) {
             result.status = 'error';
             result.message = error.message;
-
+            console.log(error);
         }
         return result;
     },

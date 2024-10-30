@@ -28,9 +28,7 @@ const formFields = reactive({
     firstname: '',
     lastname: '',
     password: '',
-    confirmPassword: '',
-    isAdmin: false,
-    deactive: ['deactive'],
+    confirmPassword: ''
 });
 
 /* COMPUTED VALUES */
@@ -128,6 +126,8 @@ const filters = ref({
 });
 const visible = ref(false);
 const spinner = ref(false);
+const isAdmin = ref(false);
+const isDisabled = ref(false);
 
 /* FUNCTIONS */
 const resetFormData = () => {
@@ -137,8 +137,9 @@ const resetFormData = () => {
     formFields.username = '';
     formFields.password = '';
     formFields.confirmPassword = '';
-    formFields.isAdmin = false;
-    formFields.deactive = [];
+
+    isAdmin.value = false;
+    isDisabled.value = false;
 };
 const closeDrawer = () => {
     visible.value = false;
@@ -159,6 +160,9 @@ const getUserFormData = () => {
         userForm.created = Timestamp.now().toDate();
         userForm.created_by = getAuth().currentUser.email;
     }
+
+    userForm.isAdmin = isAdmin.value;
+    userForm.disabled = isDisabled.value;
     return userForm;
 };
 const getUsers = async () => {
@@ -203,8 +207,6 @@ const submitForm = async () => {
             visible.value = false;
             users.value = await getUsers();
         }
-    } else {
-
     }
     spinner.value = false;
 };
@@ -242,10 +244,11 @@ const editRow = (data) => {
     formFields.username = data.email;
     formFields.firstname = data.firstname;
     formFields.lastname = data.lastname;
-    formFields.isAdmin = data.isAdmin;
 
     visible.value = true;
     edit.value = true;
+    isAdmin.value = data.isAdmin === 'YES' ? true : false;
+    isDisabled.value = data.disabled === 'YES' ? true : false;
 };
 /* FUNCTIONS */
 
@@ -275,25 +278,25 @@ onMounted(async () => {
                 <div class="flex flex-col">
                     <label class="form-label" for="email">Email <span class="required-icon">*</span></label>
                     <InputText :readonly="edit" :fluid="true" placeholder="Email" id="email"
-                        v-model="formFields.username" :invalid="v$.username.$errors.length > 0" />
+                        v-model="formFields.username" :invalid="v$.username.$errors.length > 0" maxlength="150"/>
                     <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                         v$.username.$errors[0].$message }}</small>
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="firstname">First Name</label>
-                    <InputText :fluid="true" placeholder="First Name" id="firstname" v-model="formFields.firstname" />
+                    <InputText :fluid="true" placeholder="First Name" id="firstname" v-model="formFields.firstname" maxlength="150"/>
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="lastname">Last Name</label>
-                    <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" />
+                    <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" maxlength="150"/>
                 </div>
 
                 <div class="flex flex-col" v-if="!edit">
                     <label class="form-label" for="password">Password <span class="required-icon">*</span></label>
                     <Password :feedback="false" :fluid="true" placeholder="Password" id="password"
-                        v-model="formFields.password" :invalid="v$.password.$errors.length > 0" />
+                        v-model="formFields.password" :invalid="v$.password.$errors.length > 0" maxlength="150"/>
                     <small class="error-messages" v-if="v$.password.$errors.length > 0">{{
                         v$.password.$errors[0].$message }}</small>
                 </div>
@@ -302,14 +305,14 @@ onMounted(async () => {
                     <label class="form-label" for="confirmPassword">Confirm Password <span
                             class="required-icon">*</span></label>
                     <Password :feedback="false" :fluid="true" placeholder="Confirm Password" id="confirmPassword"
-                        v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0" />
+                        v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0" maxlength="150"/>
                     <small class="error-messages" v-if="v$.confirmPassword.$errors.length > 0">{{
                         v$.confirmPassword.$errors[0].$message }}</small>
                 </div>
 
                 <div class="flex justify-center mt-3" v-if="edit">
                     <div class="flex items-center">
-                        <Checkbox v-model="formFields.deactive" inputId="deactive" name="deactive" value="deactive" />
+                        <Checkbox v-model="isDisabled" :binary="true"/>
 
                         <label for="deactive" class="ml-2"> Deactive ? </label>
                     </div>
@@ -318,10 +321,10 @@ onMounted(async () => {
                 
 
                 <div class="flex items-center mt-3">
-                    <ToggleSwitch v-model="formFields.isAdmin">
-                        <template #handle="{ checked }">
+                    <ToggleSwitch v-model="isAdmin">
+                        <!-- <template #handle="{ checked }">
                             <i :class="['!text-xs pi', { 'pi-check': checked, 'pi-times': !checked }]" />
-                        </template>
+                        </template> -->
                     </ToggleSwitch>
 
                     <label for="isAdmin" class="ml-2"> Admin? </label>
@@ -355,7 +358,7 @@ onMounted(async () => {
                                         <InputIcon>
                                             <i class="pi pi-search" />
                                         </InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Search..." />
+                                        <InputText v-model="filters['global'].value" placeholder="Search..." maxlength="150"/>
                                     </IconField>
                                 </div>
 
