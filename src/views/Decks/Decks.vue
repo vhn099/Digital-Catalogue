@@ -297,7 +297,7 @@ function clearFilter() {
         <DeckItem v-for="nornal_deck in normal_decks" :data="nornal_deck" :email="email"></DeckItem>
       </div>
       <div class="view-more-router">
-        <RouterLink v-if="last_deck" :to="{}" class="link-router" @click="nextDecks(last_deck)">View More</RouterLink>
+        <p v-if="last_deck" class="link-router" @click="nextDecks(last_deck)">View More</p>
       </div>
     </div>
 
@@ -389,5 +389,6 @@ function clearFilter() {
   font-weight: 600;
   line-height: 30px;
   text-align: center;
+  cursor: pointer;
 }
 </style>
