@@ -88,6 +88,7 @@ const getDecks = async (cateID, lastDeck) => {
       deck_highlight: data.deck_highlight,
       // deck_images: data.deck_images,
       // pdf: data.pdf,
+      fav_count: await FavoriteFirestore.countFavoriteDecks(deck.id),
       tag: data.tag,
       created: data.created ? data.created.toDate().toLocaleString() : '',
       created_by: data.created_by || '',
@@ -251,7 +252,7 @@ function clearFilter() {
         <div class="checkbox-area">
           <div v-for="category of categories" :key="category.key" class="checkbox-item gap-2">
             <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key"
-              :disabled="cateIDParm && !cateIDParm.value" />
+              :disabled="cateIDParm" />
             <label :for="category.key">{{ category.name }}</label>
           </div>
         </div>

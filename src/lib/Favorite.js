@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getCountFromServer,
   getDoc,
   getDocs,
   getFirestore,
@@ -79,5 +80,12 @@ export const FavoriteFirestore = {
     }
 
     return result;
+  },
+
+  async countFavoriteDecks(deck_id) {
+    const db = collection(getFirestore(), useAppStore().getFavoriteCollection);
+    const q = query(db, where("deckID", "==", deck_id));
+    const snapshot = await getCountFromServer(q);
+    return snapshot.data().count;
   },
 };
