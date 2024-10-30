@@ -217,4 +217,23 @@ onBeforeMount(() => {
 .fav-header:hover{
     content: url('../assets/img/icon/favorite_red.png')
 }
+
+:deep(.p-menubar){
+    min-height: 43px;
+    border-radius: 25px;
+}
+
+:deep(.p-menubar-root-list) {
+    height: 43px;
+    border-radius: 25px;
+}
+
+:deep(.p-menubar-item-content) {
+    height: 43px;
+    border-radius: 25px !important;
+}
+
+:deep(.p-menubar-item-link) {
+    height: 100%;
+}
 </style>
