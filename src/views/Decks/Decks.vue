@@ -47,7 +47,7 @@ const orderBy = ref([
 const deckSectionPageHeader = "Lastest Decks";
 
 const tagInputed = ref('');
-const selectedCategories = ref([]);
+const selectedCategories = ref();
 const categories = ref();
 
 const favRecord = ref({
@@ -74,7 +74,7 @@ const getCategories = async () => {
 
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 14, lastDeck);
+  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 2, lastDeck);
   last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
@@ -107,6 +107,7 @@ const onLoadEvents = async () => {
   cateIDParm.value = params.cateID;
   orderedBy.value = { name: 'Latest Update', code: 'updated-desc' };
   selectedCategories.value = [cateIDParm.value];
+  tagInputed.value = '';
 
   all_decks.value = await getDecks(cateIDParm.value);
   loadDataForDecks();
@@ -138,10 +139,22 @@ watch(() => router.currentRoute.value.params, async () => {
 });
 
 const nextDecks = async (lastDeck) => {
+  spinner.value = true;
+
   const decks = await getDecks(cateIDParm.value, lastDeck);
   for (let i = 0; i < decks.length; i++) {
-    normal_decks.value.push(decks[i]);
+    all_decks.value.push(decks[i]);
   }
+
+  if (orderedBy.value) { // is sorting
+    let selectedValue = orderedBy.value.code;
+    selectedValue = selectedValue.split('-');
+    all_decks.value = _.orderBy(all_decks.value, selectedValue[0], selectedValue[1]);
+  }
+  
+  loadDataForDecks();
+
+  spinner.value = false;
 };
 
 function sortData() {
@@ -157,16 +170,55 @@ function sortData() {
 
 function addFilter() {
   spinner.value = true;
-  console.log('all_decks.value before', all_decks.value);
-  console.log('filter:', tagInputed.value);
-  console.log('filter:', selectedCategories.value);
-  all_decks.value = _.filter(all_decks.value, function(o) {
-    if (selectedCategories.value && selectedCategories.value.indexOf(o.category_id) !== -1) {
-      return o;
+
+  const tagFilter = tagInputed.value ? tagInputed.value.split(',') : [];
+  const cateFilter = (selectedCategories.value.length == 1 && selectedCategories.value[0]) || selectedCategories.value.length > 1 ? selectedCategories.value : [];
+  const filteredDecks = _.filter(all_decks.value, (deck) => {
+    // Check if tagFilter is not empty
+    const matchesTagFilter = tagFilter.length > 0
+      ? _.some(deck.tag, (val) => _.includes(tagFilter, val))
+      : true; // If tagFilter is empty, ignore this filter
+
+    // Check if cateFilter is not empty
+    const matchesCateFilter = cateFilter.length > 0
+      ? _.includes(cateFilter, deck.category_id)
+      : true; // If cateFilter is empty, ignore this filter
+
+
+    if (tagFilter.length > 0 && cateFilter.length > 0) {
+      return matchesTagFilter && matchesCateFilter;
+    }
+    if (tagFilter.length > 0) {
+      return matchesTagFilter;
+    }
+    if (cateFilter.length > 0) {
+      return matchesCateFilter;
     }
   });
-  console.log('all_decks.value after', all_decks.value);
+
+  if ((tagFilter.length > 0 || cateFilter.length > 0) || filteredDecks.length > 0) {
+    top_decks.value = [];
+    normal_decks.value = [];
+    for (let i = 0; i < filteredDecks.length; i++) {
+      if (i < 2) {
+        top_decks.value.push(filteredDecks[i]);
+      } else {
+        normal_decks.value.push(filteredDecks[i]);
+      }
+    }
+  } else {
+    loadDataForDecks();
+  }
+
   spinner.value = false;
+};
+
+function clearFilter() {
+  tagInputed.value = '';
+  if (!cateIDParm.value) {
+    selectedCategories.value = [];
+  }
+  loadDataForDecks();
 };
 </script>
 
@@ -182,7 +234,7 @@ function addFilter() {
       <div class="block-search">
         <span class="filter-text">Search Tags</span>
         <IconField>
-          <InputText v-model="tagInputed" placeholder="#tag search" />
+          <InputText v-model="tagInputed" placeholder="tag search" />
           <InputIcon class="pi pi-search" variant="filled" />
         </IconField>
       </div>
@@ -193,7 +245,8 @@ function addFilter() {
         <span class="filter-text">Category</span>
         <div class="checkbox-area">
           <div v-for="category of categories" :key="category.key" class="checkbox-item gap-2">
-            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key" />
+            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key"
+              :disabled="cateIDParm && !cateIDParm.value" />
             <label :for="category.key">{{ category.name }}</label>
           </div>
         </div>
@@ -201,8 +254,9 @@ function addFilter() {
       <Divider />
 
       <div class="block-search">
-        <a style="padding-right: 10px;" class="close" href="#" @click="">Clear</a>
-        <Button label="Save" @click="addFilter" />
+        <!-- <a style="padding-right: 10px;" class="close" href="" @click="clearFilter">Clear</a> -->
+        <Button label="Clear" @click="clearFilter" />
+        <Button label="Save" @click="addFilter" style="margin-left: 5px;" />
       </div>
     </div>
   </Popover>
