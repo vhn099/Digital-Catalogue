@@ -256,7 +256,8 @@ onMounted(async () => {
 
                     <div class="flex flex-col">
                         <Password id="password" :feedback="false" :fluid="true" class="input" placeholder="Password"
-                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"  v-on:change="clearInvalidEmailMess('incorrectLogin')"/>
+                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"  v-on:change="clearInvalidEmailMess('incorrectLogin')"
+                            toggleMask/>
                             <small id="incorrectLogin" class="error-messages"></small>
                     </div>
 
@@ -480,5 +481,12 @@ onMounted(async () => {
 .is-loggining {
     display: flex;
     padding: 25px 0;
+}
+
+:deep(.p-password-toggle-mask-icon) {
+    top: 60%;
+}
+:deep(.p-password-toggle-mask-icon):hover {
+    cursor: pointer;
 }
 </style>

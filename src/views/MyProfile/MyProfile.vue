@@ -108,8 +108,8 @@ const sendLink = async () => {
 const submitForm = async () => {
     const profileForm = {
         email: email.value,
-        firstname: firstname.value,
-        lastname: lastName.value,
+        firstname: firstname.value.trim(),
+        lastname: lastName.value.trim(),
         id: userID,
         updated: Timestamp.now().toDate(),
         updated_by: getAuth().currentUser.email

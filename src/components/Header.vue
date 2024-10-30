@@ -16,12 +16,12 @@
             <!-- <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" /> -->
             <IconField>
                 <InputText v-model="inputSearch" placeholder="text or #tag search ..." v-on:keyup.enter="searchData" />
-                <InputIcon class="pi pi-search" variant="filled" @click="searchData" style="cursor: pointer;"/>
+                <InputIcon class="pi pi-search" variant="filled" @click="searchData" style="cursor: pointer;" />
             </IconField>
             <!-- <i @click="routing('myfavorite')" class="pi pi-heart" style="font-size: 43px; color: white; cursor: pointer;"></i> -->
-            <img draggable="false" width="45" class="fav-header" height="45" @click="routing('myfavorite')"
-                fill="none" src="../assets/img/icon/favorite_white.png" />
-            <Avatar @click="routing('profile')" label="T" class="my-avatar" shape="circle" />
+            <img draggable="false" width="45" class="fav-header" height="45" @click="routing('myfavorite')" fill="none"
+                src="../assets/img/icon/favorite_white.png" />
+            <Avatar @click="routing('profile')" :label="avatarName" class="my-avatar" shape="circle" />
         </div>
     </div>
 
@@ -35,13 +35,14 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 
-import { nextTick, onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import router from '@/router';
 import { UserFirestore } from '@/lib/User';
 import { COMMON_FUNCTIONS } from '@/lib/Common';
 
 /* REF DEFINITIONS START */
 const currentUser = ref({});
+const avatarName = ref("");
 const admin = ref(false);
 const inputSearch = ref("");
 /* REF DEFINITION END */
@@ -146,6 +147,22 @@ onBeforeMount(() => {
         }
     }
 });
+
+watch(() => router.currentRoute.value, async () => {
+    const cookie = UserFirestore.getCookie("user-auth");
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        currentUser.value = JSON.parse(cookie);
+        if (currentUser.value.userData) {
+            const fullName = currentUser.value.userData.firstname + " " + currentUser.value.userData.lastname;
+            const nameArray = fullName.split(" ");
+            let finalName = "";
+            nameArray.forEach(name => {
+                finalName += name[0]
+            });
+            avatarName.value = finalName;
+        }
+    }
+});
 </script>
 
 <style scoped>
@@ -214,7 +231,7 @@ onBeforeMount(() => {
     cursor: pointer;
 }
 
-.fav-header:hover{
+.fav-header:hover {
     content: url('../assets/img/icon/favorite_red.png')
 }
 </style>
