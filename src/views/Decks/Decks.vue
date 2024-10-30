@@ -74,7 +74,7 @@ const getCategories = async () => {
 
 const getDecks = async (cateID, lastDeck) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 2, lastDeck);
+  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, 14, lastDeck);
   last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
@@ -139,7 +139,7 @@ watch(() => router.currentRoute.value.params, async () => {
 });
 
 const nextDecks = async (lastDeck) => {
-  spinner.value = true;
+  // spinner.value = true;
 
   const decks = await getDecks(cateIDParm.value, lastDeck);
   for (let i = 0; i < decks.length; i++) {
@@ -147,30 +147,37 @@ const nextDecks = async (lastDeck) => {
   }
 
   if (orderedBy.value) { // is sorting
-    let selectedValue = orderedBy.value.code;
-    selectedValue = selectedValue.split('-');
-    all_decks.value = _.orderBy(all_decks.value, selectedValue[0], selectedValue[1]);
+    sortAllDeck();
   }
-  
-  loadDataForDecks();
+  filterOnDecks();
 
-  spinner.value = false;
+  // spinner.value = false;
 };
 
 function sortData() {
-  spinner.value = true;
+  // spinner.value = true;
 
+  sortAllDeck();
+  loadDataForDecks();
+
+  // spinner.value = false;
+};
+
+function sortAllDeck() {
   let selectedValue = orderedBy.value.code;
   selectedValue = selectedValue.split('-');
   all_decks.value = _.orderBy(all_decks.value, selectedValue[0], selectedValue[1]);
-  loadDataForDecks();
-
-  spinner.value = false;
-};
+}
 
 function addFilter() {
-  spinner.value = true;
+  // spinner.value = true;
 
+  filterOnDecks();
+
+  // spinner.value = false;
+};
+
+function filterOnDecks() {
   const tagFilter = tagInputed.value ? tagInputed.value.split(',') : [];
   const cateFilter = (selectedCategories.value.length == 1 && selectedCategories.value[0]) || selectedCategories.value.length > 1 ? selectedCategories.value : [];
   const filteredDecks = _.filter(all_decks.value, (deck) => {
@@ -209,9 +216,7 @@ function addFilter() {
   } else {
     loadDataForDecks();
   }
-
-  spinner.value = false;
-};
+}
 
 function clearFilter() {
   tagInputed.value = '';
