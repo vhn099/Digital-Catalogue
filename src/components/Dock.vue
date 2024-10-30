@@ -2,12 +2,18 @@
     <Dock class="myDock" :model="items" :position="position">
         <template #itemicon="{ item }">
             <div class="icon-hover" @click="item.eventHandler">
-                <img class="icon-image" :alt="item.label" :src="item.icon"
-                    draggable="false" />
+                <img class="icon-image" :alt="item.label" :src="item.icon" draggable="false" />
             </div>
             <span> {{ item.label }}</span>
         </template>
     </Dock>
+    <div class="hidden-image-load">
+        <img :src="HomeWhiteIcon" />
+        <img :src="CateWhiteIcon" />
+        <img :src="DeckWhiteIcon" />
+        <img :src="SPWhiteIcon" />
+        <img :src="LogoutWhiteIcon" />
+    </div>
 </template>
 
 <script setup>
@@ -130,40 +136,45 @@ const position = 'left';
 /* Cực khổ vãi cái lồn, xin đừng đụng vào CSS này */
 :deep(.p-dock-list) li:nth-child(1):hover .icon-hover {
     background-color: #7326D9;
-    border-radius: 50px;   
+    border-radius: 50px;
 }
+
 :deep(.p-dock-list) li:nth-child(1):hover img {
     content: url('../assets/img/icon/home_white.png')
 }
 
 :deep(.p-dock-list) li:nth-child(2):hover .icon-hover {
     background-color: #7326D9;
-    border-radius: 50px;   
+    border-radius: 50px;
 }
+
 :deep(.p-dock-list) li:nth-child(2):hover img {
     content: url('../assets/img/icon/supply-chain_white.png')
 }
 
 :deep(.p-dock-list) li:nth-child(3):hover .icon-hover {
     background-color: #7326D9;
-    border-radius: 50px;   
+    border-radius: 50px;
 }
+
 :deep(.p-dock-list) li:nth-child(3):hover img {
     content: url('../assets/img/icon/presentation_white.png')
 }
 
 :deep(.p-dock-list) li:nth-child(4):hover .icon-hover {
     background-color: #7326D9;
-    border-radius: 50px;   
+    border-radius: 50px;
 }
+
 :deep(.p-dock-list) li:nth-child(4):hover img {
     content: url('../assets/img/icon/support_white.png')
 }
 
 :deep(.p-dock-list) li:nth-child(5):hover .icon-hover {
     background-color: #7326D9;
-    border-radius: 50px;   
+    border-radius: 50px;
 }
+
 :deep(.p-dock-list) li:nth-child(5):hover img {
     content: url('../assets/img/icon/logout_white.png')
 }
@@ -177,5 +188,9 @@ const position = 'left';
     width: 60px;
     height: 60px;
     padding: 10px;
+}
+
+.hidden-image-load {
+    display: none;
 }
 </style>
