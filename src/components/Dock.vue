@@ -8,6 +8,13 @@
             <span> {{ item.label }}</span>
         </template>
     </Dock>
+    <div class="hidden-image-load">
+        <img :src="HomeWhiteIcon" />
+        <img :src="CateWhiteIcon" />
+        <img :src="DeckWhiteIcon" />
+        <img :src="SPWhiteIcon" />
+        <img :src="LogoutWhiteIcon" />
+    </div>
 </template>
 
 <script setup>
@@ -179,5 +186,9 @@ const position = 'left';
     width: 60px;
     height: 60px;
     padding: 10px;
+}
+
+.hidden-image-load {
+    display: none;
 }
 </style>
