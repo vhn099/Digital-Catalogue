@@ -249,14 +249,14 @@ onMounted(async () => {
                     <div class="flex flex-col">
 
                         <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
-                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" v-on:change="clearInvalidEmailMess('incorrectLogin')"/>
+                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" v-on:change="clearInvalidEmailMess('incorrectLogin')" maxLength="150"/>
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
                     </div>
 
                     <div class="flex flex-col">
                         <Password id="password" :feedback="false" :fluid="true" class="input" placeholder="Password"
-                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"  v-on:change="clearInvalidEmailMess('incorrectLogin')"/>
+                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"  v-on:change="clearInvalidEmailMess('incorrectLogin')" maxLength="150"/>
                             <small id="incorrectLogin" class="error-messages"></small>
                     </div>
 
@@ -292,7 +292,9 @@ onMounted(async () => {
                         reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
                         id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
-                        v-on:change="clearInvalidEmailMess('emailInput')" />
+                        v-on:change="clearInvalidEmailMess('emailInput')"
+                        maxLength="150"
+                    />
                     <small class="error-messages" v-if="vEmailInput.emailInput.$errors.length > 0">{{
                         vEmailInput.emailInput.$errors[0].$message }}</small>
                     <small id="invalidEmail" class="error-messages"></small>

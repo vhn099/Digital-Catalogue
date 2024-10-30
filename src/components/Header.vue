@@ -146,13 +146,15 @@ watch(() => router.currentRoute.value, () => {
             admin.value = currentUser.value.userData.isAdmin;
             const firstname = currentUser.value.userData.firstname;
             const lastname = currentUser.value.userData.lastname;
-            const fullName = firstname + " " + lastname;
-            const arrayName = fullName.split(" ");
-            let finalName = "";
-            arrayName.forEach(name => {
-                finalName += name[0].toUpperCase();
-            });
-            avatarName.value = finalName
+            if (firstname || lastname) {
+                let finalName = "";
+                const fullName = firstname + " " + lastname;
+                const arrayName = fullName.split(" ");
+                arrayName.forEach(name => {
+                    finalName += name[0].toUpperCase();
+                });
+                avatarName.value = finalName
+            }
         }
     }
 });
