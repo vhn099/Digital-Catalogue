@@ -278,25 +278,27 @@ onMounted(async () => {
                 <div class="flex flex-col">
                     <label class="form-label" for="email">Email <span class="required-icon">*</span></label>
                     <InputText :readonly="edit" :fluid="true" placeholder="Email" id="email"
-                        v-model="formFields.username" :invalid="v$.username.$errors.length > 0" maxlength="150"/>
+                        v-model="formFields.username" :invalid="v$.username.$errors.length > 0" maxlength="150" />
                     <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                         v$.username.$errors[0].$message }}</small>
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="firstname">First Name</label>
-                    <InputText :fluid="true" placeholder="First Name" id="firstname" v-model="formFields.firstname" maxlength="150"/>
+                    <InputText :fluid="true" placeholder="First Name" id="firstname" v-model="formFields.firstname"
+                        maxlength="150" />
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="lastname">Last Name</label>
-                    <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname" maxlength="150"/>
+                    <InputText :fluid="true" placeholder="Last Name" id="lastname" v-model="formFields.lastname"
+                        maxlength="150" />
                 </div>
 
                 <div class="flex flex-col" v-if="!edit">
                     <label class="form-label" for="password">Password <span class="required-icon">*</span></label>
                     <Password :feedback="false" :fluid="true" placeholder="Password" id="password"
-                        v-model="formFields.password" :invalid="v$.password.$errors.length > 0" maxlength="150"/>
+                        v-model="formFields.password" :invalid="v$.password.$errors.length > 0" maxlength="150" />
                     <small class="error-messages" v-if="v$.password.$errors.length > 0">{{
                         v$.password.$errors[0].$message }}</small>
                 </div>
@@ -305,20 +307,22 @@ onMounted(async () => {
                     <label class="form-label" for="confirmPassword">Confirm Password <span
                             class="required-icon">*</span></label>
                     <Password :feedback="false" :fluid="true" placeholder="Confirm Password" id="confirmPassword"
-                        v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0" maxlength="150"/>
+                        v-model="formFields.confirmPassword" :invalid="v$.confirmPassword.$errors.length > 0"
+                        maxlength="150" />
                     <small class="error-messages" v-if="v$.confirmPassword.$errors.length > 0">{{
                         v$.confirmPassword.$errors[0].$message }}</small>
                 </div>
 
                 <div class="flex justify-center mt-3" v-if="edit">
                     <div class="flex items-center">
-                        <Checkbox v-model="isDisabled" :binary="true"/>
+                        <ToggleSwitch v-model="isDisabled">
+                        </ToggleSwitch>
 
                         <label for="deactive" class="ml-2"> Deactive ? </label>
                     </div>
-                    
+
                 </div>
-                
+
 
                 <div class="flex items-center mt-3">
                     <ToggleSwitch v-model="isAdmin">
@@ -327,7 +331,7 @@ onMounted(async () => {
                         </template> -->
                     </ToggleSwitch>
 
-                    <label for="isAdmin" class="ml-2"> Admin? </label>
+                    <label for="isAdmin" class="ml-2"> Admin ? </label>
                 </div>
             </form>
 
@@ -358,7 +362,8 @@ onMounted(async () => {
                                         <InputIcon>
                                             <i class="pi pi-search" />
                                         </InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Search..." maxlength="150"/>
+                                        <InputText v-model="filters['global'].value" placeholder="Search..."
+                                            maxlength="150" />
                                     </IconField>
                                 </div>
 
@@ -443,6 +448,7 @@ onMounted(async () => {
     display: flex;
     justify-content: center;
 }
+
 /* DATATABLE CSS END */
 
 .items-center {
