@@ -3,9 +3,7 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
-
-
-import {reactive, ref, onMounted, computed } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -18,15 +16,9 @@ import Checkbox from 'primevue/checkbox';
 import MessagePage from '@/components/MessagePage.vue';
 import { useAppStore } from '@/stores';
 import { UserFirestore } from '@/lib/User';
-const messagePageIcon = "pi pi-check-circle";
-const messagePageIconCSS = {
-    fontSize: "62px",
-    color: "#58DA67",
-    fontWeight: "bold"
-};
-const messagePageBody = 'login';
+import { COMMON_FUNCTIONS } from '@/lib/Common';
 
-/* PAGE VARIABLES START */
+/* REF DEFINITION START */
 const formFields = reactive({
     username: '',
     password: '',
@@ -40,8 +32,26 @@ const spinner = ref(false);
 const isSignIn = ref(true);
 const isForgotPassword = ref(false);
 const isSendLink = ref(false);
+const isDisabled = ref(false);
+
+/* STATIC VARIABLE */
 const siteKey = '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu';
-/* PAGE VARIABLES END */
+const messagePageIcon = "pi pi-check-circle";
+const messagePageIconCSS = {
+    fontSize: "62px",
+    color: "#58DA67",
+    fontWeight: "bold"
+};
+const messagePageBody = 'login';
+const disabledPageTitle = "Account Locked";
+const disabledPageIcon = "pi pi-times-circle";
+const disabledPageIconCSS = {
+    fontSize: "62px",
+    color: "#EE404C",
+    fontWeight: "bold"
+};
+const disabledPageBody = 'blocked';
+
 
 /* VALIDATION DEFINITION START */
 const rules = computed(() => {
@@ -64,7 +74,6 @@ const ruleEmailInput = computed(() => {
 });
 
 const vEmailInput = useVuelidate(ruleEmailInput, formForgotPW);
-/* VALIDATION DEFINITION END */
 
 /* FUNCTION START */
 function forgotPassWord() {
@@ -153,6 +162,7 @@ const backLogin = () => {
     isForgotPassword.value = false;
     isSendLink.value = false;
     isSignIn.value = true;
+    isDisabled.value = false;
     renderRecaptcha('recaptcha_element');
 };
 const renderRecaptcha = (id) => {
@@ -188,16 +198,22 @@ const handleSubmit = async () => {
         await signInWithEmailAndPassword(getAuth(), username, password).then(async response => {
             spinner.value = true;
             const userData = await UserFirestore.getCurrentUser();
-            
+
             const oneday = 24 * 60 * 60 * 1000; // 1 day
             const expireDate = new Date();
             userData.expires = expireDate.setTime(expireDate.getTime() + (expire * oneday));
 
             UserFirestore.setCookie('user-auth', JSON.stringify(userData), userData.expires);
             spinner.value = false;
-            router.push({
-                name: 'home'
-            });
+
+            if (userData.userData.disabled) {
+                isDisabled.value = true;
+                UserFirestore.setCookie('user-auth', "", 0);
+            } else {
+                router.push({
+                    name: 'home',
+                });
+            }
         }).catch(error => {
             if (error.code === 'auth/invalid-credential') {
                 document.getElementById("incorrectLogin").innerHTML = 'Username or Password entered is incorrect.';
@@ -211,17 +227,28 @@ const handleSubmit = async () => {
 const focusPassword = () => {
     document.getElementById('password').firstChild.focus()
 }
-/* FUNCTION END */
 
-
+/* VUE EVENTS */
 onMounted(async () => {
-    // console.log('Site Key:', siteKey); // Checking sitekey value
     globalThis.onReCaptchaLoad = onReCaptchaLoad;
     globalThis.clickReCaptcha = clickReCaptcha;
     const script = document.createElement('script');
     script.src = `https://www.google.com/recaptcha/api.js?onload=onReCaptchaLoad`; // import lib for grecaptcha function
     script.async = true;
     document.body.appendChild(script);
+
+    /* HANDLE DISABLED USERS */
+    const cookie = UserFirestore.getCookie("user-auth");
+    let currentUser = "";
+    if (COMMON_FUNCTIONS.isJSONString(cookie)) {
+        currentUser = JSON.parse(cookie); // Check custom authen of users.
+        if (currentUser.userData) {
+            isDisabled.value = currentUser.userData.disabled;
+            if (isDisabled.value === true) {
+                UserFirestore.setCookie('user-auth', "", 0);
+            }
+        }
+    }
 });
 </script>
 
@@ -244,20 +271,24 @@ onMounted(async () => {
                     </div>
                     <Button style="margin-top: 30px;" :fluid="true" severity="secondary" disabled label="Loading" />
                 </div>
-                <div v-if="isSignIn && !isForgotPassword && !isSendLink && !spinner">
+
+                <!-- MAIN LOGIN FORM -->
+                <div v-if="isSignIn && !isForgotPassword && !isSendLink && !spinner && !isDisabled">
                     <span>Sign in to your account</span>
                     <div class="flex flex-col">
 
                         <InputText :fluid="true" placeholder="Email" id="username" v-model="formFields.username"
-                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture="" v-on:change="clearInvalidEmailMess('incorrectLogin')" maxLength="150"/>
+                            :invalid="v$.username.$errors.length > 0" v-on:keyup.enter="focusPassword" capture=""
+                            v-on:change="clearInvalidEmailMess('incorrectLogin')" maxLength="150" />
                         <small class="error-messages" v-if="v$.username.$errors.length > 0">{{
                             v$.username.$errors[0].$message }}</small>
                     </div>
 
                     <div class="flex flex-col">
                         <Password id="password" :feedback="false" :fluid="true" class="input" placeholder="Password"
-                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"  v-on:change="clearInvalidEmailMess('incorrectLogin')" maxLength="150"/>
-                            <small id="incorrectLogin" class="error-messages"></small>
+                            v-model="formFields.password" v-on:keyup.enter="handleSubmit"
+                            v-on:change="clearInvalidEmailMess('incorrectLogin')" maxLength="150" />
+                        <small id="incorrectLogin" class="error-messages"></small>
                     </div>
 
                     <div class="flex items-center" style="margin-top: 5px;justify-content: space-between;">
@@ -279,11 +310,19 @@ onMounted(async () => {
                     </div>
 
                     <div class="flex flex-col button-container">
-                        <!-- <Button type="link" label="Forgotten username/password?" :fluid="true"
-                            @click="forgotPassWord()" /> -->
                         <Button :fluid="true" @click="handleSubmit" label="Login" />
                     </div>
                 </div>
+
+                <!-- DISABLED FORM -->
+                <div v-if="isDisabled">
+                    <MessagePage :title="disabledPageTitle" :iconName="disabledPageIcon"
+                        :iconStyle="disabledPageIconCSS" :pageBody="disabledPageBody" />
+                    <p class="back-home" @click="backLogin()"
+                        style="padding-top: 20px; width: 100%; text-align: center;">Back to Login Page</p>
+                </div>
+
+                <!-- SEND LINK FORM -->
                 <div v-if="!isSignIn && isForgotPassword && !isSendLink && !spinner">
 
                     <span style="font-size: 15px; font-weight: 500;">Forgot Your Password?</span>
@@ -292,9 +331,7 @@ onMounted(async () => {
                         reset your password.</p>
                     <InputText :fluid="true" class="input" placeholder="Email address" v-model="formForgotPW.emailInput"
                         id="emailInput" :invalid="vEmailInput.emailInput.$errors.length > 0"
-                        v-on:change="clearInvalidEmailMess('emailInput')"
-                        maxLength="150"
-                    />
+                        v-on:change="clearInvalidEmailMess('emailInput')" maxLength="150" />
                     <small class="error-messages" v-if="vEmailInput.emailInput.$errors.length > 0">{{
                         vEmailInput.emailInput.$errors[0].$message }}</small>
                     <small id="invalidEmail" class="error-messages"></small>
@@ -309,8 +346,8 @@ onMounted(async () => {
                     <Button label="Send Reset Link" :fluid="true" @click="sendLink(vEmailInput)" />
                     <div class="flex flex-col mt-3">
                         <div class="back-router">
-                            <RouterLink :to="{ name: 'home' }" class="back-home" @click="backLogin()">Back to Login Page
-                            </RouterLink>
+                            <p class="back-home" @click="backLogin()">Back to Login Page
+                            </p>
                         </div>
                     </div>
 
@@ -320,8 +357,8 @@ onMounted(async () => {
                     <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS"
                         :pageBody="messagePageBody" />
                     <div class="back-home-router">
-                        <RouterLink :to="{ name: 'home' }" class="back-home" @click="backLogin()">Back to Login Page
-                        </RouterLink>
+                        <p class="back-home" @click="backLogin()">Back to Login Page
+                        </p>
                     </div>
                 </div>
             </div>
@@ -450,6 +487,7 @@ onMounted(async () => {
     font-weight: 700;
     font-style: italic;
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .sign-logo {

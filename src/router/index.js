@@ -47,7 +47,7 @@ const router = createRouter({
       meta: {
         pageTitle: "Sign In",
       }
-    },{
+    }, {
       path: '/contact-us',
       name: 'contactus',
       component: ContactView,
@@ -188,22 +188,33 @@ router.beforeEach(async (to, from, next) => {
   if (COMMON_FUNCTIONS.isJSONString(cookie)) {
     currentUser = JSON.parse(cookie); // Check custom authen of users.
     if (currentUser.userData) {
-      disabled = currentUser.userData.disabled || false;
-      isAdmin = currentUser.userData.isAdmin || false;
+      if (to.name === 'home') {
+        const userData = await UserFirestore.getCurrentUser();
+        UserFirestore.updateCookie("user-auth", JSON.stringify(userData), currentUser.expires);
+        disabled = userData.userData.disabled;
+      } else {
+        disabled = currentUser.userData.disabled;
+        isAdmin = currentUser.userData.isAdmin || false;
+      }
     }
   }
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
   const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
-  if (disabled) {
-    next('sign-in');
+  if (currentUser && disabled) {
+    if (to.name !== 'signin') {
+      next('/sign-in');
+    } else {
+      next();
+    }
+    return;
   }
 
   if (requireAuth && !currentUser) { // User is not authen will be redirected to sign in page
     next('/sign-in');
   } else if (requireAuth && requireAdmin && !isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
     next('/home');
-  } else if (currentUser && !requireAuth) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
+  } else if (currentUser && !requireAuth && !disabled) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
     next('/home');
   } else {
     next();

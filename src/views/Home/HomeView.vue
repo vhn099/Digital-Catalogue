@@ -1,12 +1,6 @@
 <script setup>
-import InputText from 'primevue/inputtext';
-import FloatLabel from 'primevue/floatlabel';
-import Button from 'primevue/button';
-
-
 // components
 import DockItem from '../../components/Dock.vue';
-import HeaderItem from '../../components/Header.vue';
 import CarouselItem from '../../components/Carousel.vue'
 import CateHorizonItem from '../../components/CateHorizon.vue'
 import SectionItem from '../../components/Section.vue'
@@ -15,11 +9,8 @@ import { onMounted, ref } from 'vue';
 import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
 import MegaphoneIcon from '@/assets/img/icon/megaphone.png';
 import { DeckFirestore } from '@/lib/Deck';
-import { CategoryFirestore } from '@/lib/Category';
 import { getAuth } from 'firebase/auth';
-import { FavoriteFirestore } from '@/lib/Favorite';
 
-const value2 = ref(null);
 const top_decks = ref([]);
 const normal_decks = ref([]);
 const email = ref('');
@@ -36,6 +27,7 @@ const deckSectionIcon = MegaphoneIcon;
 const deckSectionText = "Deck";
 const deckPageHeader = "Latest Decks";
 
+/* FUNCTIONS DEFINITION START */
 const getDecks = async () => {
   const deckList = [];
   const decksSnapshot = await DeckFirestore.getLimitDecks('', 5, '');
@@ -62,9 +54,8 @@ const getDecks = async () => {
 
   return deckList;
 };
-const favoriteFn = async (id) => {
-  await FavoriteFirestore.favoriteFn(email.value, id);
-};
+
+/* VUE EVENTS */
 onMounted(async () => {
   email.value = getAuth().currentUser.email;
   const decks = await getDecks();
@@ -74,8 +65,8 @@ onMounted(async () => {
     } else {
       normal_decks.value.push(decks[i]);
     }
-  }
-})
+  }  
+});
 </script>
 
 <template>
