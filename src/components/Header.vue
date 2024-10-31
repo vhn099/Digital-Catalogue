@@ -35,7 +35,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 
-import { onBeforeMount, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import router from '@/router';
 import { UserFirestore } from '@/lib/User';
 import { COMMON_FUNCTIONS } from '@/lib/Common';
@@ -136,9 +136,7 @@ const searchData = () => {
         query: { query: inputSearch.value }
     });
 };
-/* FUNCTION END */
-
-watch(() => router.currentRoute.value, () => {
+const handleCheckingAdmin = () => {
     const cookie = UserFirestore.getCookie("user-auth");
     if (COMMON_FUNCTIONS.isJSONString(cookie)) {
         currentUser.value = JSON.parse(cookie);
@@ -157,6 +155,15 @@ watch(() => router.currentRoute.value, () => {
             }
         }
     }
+}
+/* FUNCTION END */
+
+onMounted(() => {
+    handleCheckingAdmin();
+});
+
+watch(() => router.currentRoute.value.name, () => {
+    handleCheckingAdmin()
 });
 </script>
 

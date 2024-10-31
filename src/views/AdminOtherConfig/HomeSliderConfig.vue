@@ -7,7 +7,6 @@ import { required } from '@vuelidate/validators';
 import { getAuth } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import Button from 'primevue/button';
-import ColorPicker from 'primevue/colorpicker';
 import Column from 'primevue/column';
 import ConfirmDialog from 'primevue/confirmdialog';
 import DataTable from 'primevue/datatable';

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Blocked from './Blocked.vue';
 import ContactUsSuccessPage from './ContactUsSuccessPage.vue';
 import LinkSent from './LinkSent.vue';
 
@@ -26,11 +27,18 @@ defineProps({
         <div class="page-body-container">
             <ContactUsSuccessPage v-if="pageBody === 'contact'"></ContactUsSuccessPage>
             <LinkSent v-if="pageBody === 'login'"></LinkSent>
+            <Blocked v-if="pageBody === 'blocked'"></Blocked>
         </div>
     </div>
 </template>
 
 <style scoped>
+.message-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
 .page-title {
     padding-bottom: 5%;
     padding-top: 4%;
@@ -38,14 +46,6 @@ defineProps({
     font-weight: 500;
     font-family: 'Poppins';
 }
-
-.message-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
 .page-body-container {
     padding: 20px;
     display: flex;
