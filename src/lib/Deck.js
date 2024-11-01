@@ -39,6 +39,14 @@ export const DeckFirestore = {
     return snapshot.docs;
   },
 
+  async getTopDecks() {
+    const db = collection(getFirestore(), useAppStore().getDecksCollection);
+    let docQuery = query(db, orderBy("catalogue_edition", "desc"), limit(5));
+    let snapshot = await getDocs(docQuery);
+
+    return snapshot.docs;
+  },
+
   async getLimitDecks(cateID, lim, lastDeck) {
     const db = collection(getFirestore(), useAppStore().getDecksCollection);
     let docQuery = "";
@@ -46,14 +54,14 @@ export const DeckFirestore = {
       docQuery = cateID
         ? query(
           db,
-          orderBy("updated", "desc"),
+          orderBy("catalogue_edition", "desc"),
           where("category_id", "==", cateID),
           startAfter(lastDeck),
           limit(lim)
         )
         : query(
           db,
-          orderBy("updated", "desc"),
+          orderBy("catalogue_edition", "desc"),
           startAfter(lastDeck),
           limit(lim)
         );
@@ -61,11 +69,11 @@ export const DeckFirestore = {
       docQuery = cateID
         ? query(
           db,
-          orderBy("updated", "desc"),
+          orderBy("catalogue_edition", "desc"),
           where("category_id", "==", cateID),
           limit(lim)
         )
-        : query(db, orderBy("updated", "desc"), limit(lim));
+        : query(db, orderBy("catalogue_edition", "desc"), limit(lim));
     }
     let snapshot = await getDocs(docQuery);
 
@@ -156,6 +164,7 @@ export const DeckFirestore = {
           deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
           pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
           tag: deckForm.tag || [],
+          catalogue_edition: deckForm.catalogue_edition,
           created: deckForm.created,
           created_by: deckForm.created_by,
           updated: deckForm.updated,
@@ -200,6 +209,7 @@ export const DeckFirestore = {
           deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
           pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
           tag: deckForm.tag || [],
+          catalogue_edition: deckForm.catalogue_edition,
           updated: deckForm.updated,
           updated_by: deckForm.updated_by,
         }).then((response) => {

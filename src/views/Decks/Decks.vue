@@ -35,7 +35,7 @@ const orderedBy = ref();
 const orderBy = ref([
   { name: 'A-z', code: 'title-asc' },
   { name: 'z-A', code: 'title-desc' },
-  { name: 'Latest Update', code: 'updated-desc' },
+  { name: 'Latest Update', code: 'catalogue_edition-desc' },
   { name: 'Most Favorited', code: 'fav_count-desc' },
 ]);
 const tagInputed = ref('');
@@ -90,10 +90,11 @@ const getDecks = async (cateID, lastDeck) => {
       // pdf: data.pdf,
       fav_count: await FavoriteFirestore.countFavoriteDecks(deck.id),
       tag: data.tag,
-      created: data.created ? data.created.toDate().toLocaleString() : '',
-      created_by: data.created_by || '',
-      updated: data.updated ? data.updated.toDate().toLocaleString() : '',
-      updated_by: data.updated_by || ''
+      catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
+      // created: data.created ? data.created.toDate().toLocaleString() : '',
+      // created_by: data.created_by || '',
+      // updated: data.updated ? data.updated.toDate().toLocaleString() : '',
+      // updated_by: data.updated_by || ''
     };
     deckList.push(object);
   }
@@ -105,7 +106,7 @@ const onLoadEvents = async () => {
 
   // const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = useAppStore().getDeckCategory;
-  orderedBy.value = { name: 'Latest Update', code: 'updated-desc' };
+  orderedBy.value = { name: 'Latest Update', code: 'catalogue_edition-desc' };
   selectedCategories.value = [cateIDParm.value];
   tagInputed.value = '';
 
