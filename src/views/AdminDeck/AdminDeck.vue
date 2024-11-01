@@ -25,6 +25,8 @@ import _ from 'lodash';
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
+import DatePicker from "primevue/datepicker";
+import moment from "moment";
 
 const formFields = reactive({
     id: '',
@@ -37,6 +39,7 @@ const formFields = reactive({
     deck_images: [],
     pdf: '',
     tag: [],
+    catalogue_edition: '',
 });
 
 /* COMPUTED VALUES */
@@ -52,6 +55,9 @@ const rules = computed(() => {
             required,
         },
         tag: {
+            required,
+        },
+        catalogue_edition: {
             required,
         },
     };
@@ -134,6 +140,13 @@ const tableColumns = [
         label: 'Tags',
         styles: {
 
+        }
+    },
+    {
+        field: 'catalogue_edition',
+        label: 'Catalogue Edition',
+        styles: {
+            width: "10%"
         }
     },
     {
@@ -229,6 +242,7 @@ const resetFormData = () => {
     formFields.tag = '';
     formFields.deck_highlight_name = "";
     formFields.deck_highlight_name_id = "";
+    formFields.catalogue_edition = "";
 
     deck_images.value = [];
     deckHighlightPreview.value = null;
@@ -315,6 +329,7 @@ const getDecks = async () => {
             deck_images: data.deck_images,
             pdf: data.pdf,
             tag: data.tag,
+            catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
             updated: data.updated ? data.updated.toDate().toLocaleString() : '',
@@ -419,6 +434,7 @@ const editRow = (data) => {
     formFields.pdf = data.pdf;
     formFields.tag = data.tag;
     formFields.deck_images = data.deck_images;
+    formFields.catalogue_edition = formatDate(data.catalogue_edition);
 
     deckHighlightPreview.value = data.deck_highlight;
     deck_images.value = []; // Reset data of deck sub images when users click edit
@@ -453,6 +469,10 @@ const onImageSelected = (event) => {
 // ON PDF SELECTED
 const onFileSelected = (event) => {
     pdfFile.value = event.files[0].name;
+};
+
+const formatDate = (value) => {
+    return value ? moment(value).format('MMM/YYYY') : '';
 };
 /* FUNCTIONS */
 
@@ -613,6 +633,14 @@ watch(visible, () => {
                         <small class="error-messages" v-if="v$.tag.$errors.length > 0">{{
                             v$.tag.$errors[0].$message }}</small>
                     </div>
+
+                    <!-- Catalogue Edition -->
+                    <div class="flex flex-col">
+                        <label class="form-label" for="catalogue_edition">Catalogue Edition <span class="required-icon">*</span></label>
+                        <DatePicker v-model="formFields.catalogue_edition" id="catalogue_edition" view="month" dateFormat="M/yy" />
+                        <small class="error-messages" v-if="v$.catalogue_edition.$errors.length > 0">{{
+                            v$.catalogue_edition.$errors[0].$message }}</small>
+                    </div>
                 </form>
 
                 <div class="flex items-center mt-3 gap-2">
@@ -656,6 +684,9 @@ watch(visible, () => {
                                 v-if="column.field === 'deck_highlight'" width="64" />
                             <p v-else-if="column.field === 'pdf'">
                                 <span v-if="slotProps.data[column.field]" class="pi pi-file-pdf"></span>
+                            </p>
+                            <p v-else-if="column.field === 'catalogue_edition'">
+                                {{ formatDate(slotProps.data[column.field]) }}
                             </p>
                             <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>

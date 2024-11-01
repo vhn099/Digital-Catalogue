@@ -30,7 +30,7 @@ const deckPageHeader = "Latest Decks";
 /* FUNCTIONS DEFINITION START */
 const getDecks = async () => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getLimitDecks('', 5, '');
+  const decksSnapshot = await DeckFirestore.getTopDecks();
   for (const deck of decksSnapshot) {
     const data = deck.data();
     // const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
@@ -44,9 +44,10 @@ const getDecks = async () => {
       // deck_images: data.deck_images,
       // pdf: data.pdf,
       tag: data.tag,
-      created: data.created ? data.created.toDate().toLocaleString() : '',
+      catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
+      // created: data.created ? data.created.toDate().toLocaleString() : '',
       // created_by: data.created_by || '',
-      updated: data.updated ? data.updated.toDate().toLocaleString() : '',
+      // updated: data.updated ? data.updated.toDate().toLocaleString() : '',
       // updated_by: data.updated_by || ''
     };
     deckList.push(object);
