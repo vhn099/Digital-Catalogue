@@ -175,9 +175,9 @@ const FavoriteIcon = async (userID, deckID) => {
                         <div class="deck-title-right">
                             <div class="button-like">
 
-                                <Button severity="secondary" label="Favourite" @click="viewDeck(1)">
+                                <Button label="Favourite" @click="viewDeck(1)">
                                     <img draggable="false" width="40" height="40" fill="none"
-                                        src="../../assets/img/icon/search_file.png" />
+                                        src="../../assets/img/icon/search_file_white.png" />
                                     <label>View Deck</label>
                                 </Button>
                             </div>

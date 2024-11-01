@@ -202,8 +202,6 @@ onMounted(async () => {
 .cate-name {
   height: 40%;
   width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
   text-align: center;
   white-space: normal !important;
   font-size: 15px;
