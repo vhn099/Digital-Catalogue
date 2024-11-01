@@ -14,6 +14,10 @@ import {
 } from "firebase/firestore";
 
 import { useAppStore } from "@/stores";
+import { FirebaseStorage } from "./Storage";
+import _ from 'lodash';
+
+const folder = "category";
 
 export const CategoryFirestore = {
   async getCategoryName(id) {
@@ -37,7 +41,13 @@ export const CategoryFirestore = {
     return snapshot.docs;
   },
 
-  async createCategory(categoryForm) {
+  async fileHandler(fileName, fileData) {
+    let downloadURL = "";
+    downloadURL = await FirebaseStorage.uploadFile(fileName, fileData, folder);
+    return downloadURL;
+  },
+
+  async createCategory(categoryForm, categoryImage) {
     const result = {
       status: "success",
       message: "",
@@ -50,6 +60,13 @@ export const CategoryFirestore = {
         getFirestore(),
         useAppStore().getCategoriesCollection
       );
+
+      if (!_.isEmpty(categoryImage)) {
+        categoryForm.image = await this.fileHandler(categoryImage.file_name_id, categoryImage.file_data);
+        categoryForm.image_name = categoryImage.file_name;
+        categoryForm.image_name_id = categoryImage.file_name_id;
+      }
+
       const dataObj = categoryForm;
 
       await addDoc(colRef, dataObj).then(async (response) => {
@@ -65,7 +82,7 @@ export const CategoryFirestore = {
     return result;
   },
 
-  async updateCategory(categoryForm) {
+  async updateCategory(categoryForm, categoryImage) {
     const db = collection(
       getFirestore(),
       useAppStore().getCategoriesCollection
@@ -78,6 +95,21 @@ export const CategoryFirestore = {
 
     try {
       const docRef = getDoc(doc(db, categoryForm.id));
+      if (!_.isEmpty(categoryImage)) {
+        const checkCurrentFile = await FirebaseStorage.checkFileExists(folder, categoryForm.image_name_id);
+        if(checkCurrentFile) {
+          // Each category must have image when they are created successful which means when users update images will remove the old image and replace it with new image
+          const deleteOldFile = await FirebaseStorage.deleteFile(folder, categoryForm.image_name_id);
+          if (!deleteOldFile) { // Error happens in replacing old image
+            result.status = "error";
+            result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_REPLACE_OLD_IMAGE_ERROR;
+            return result;
+          }
+        }
+        categoryForm.image = await this.fileHandler(categoryImage.file_name_id, categoryImage.file_data);
+        categoryForm.image_name = categoryImage.file_name;
+        categoryForm.image_name_id = categoryImage.file_name_id;
+      }
       if ((await docRef).exists()) {
         await updateDoc(doc(db, categoryForm.id), {
           name: categoryForm.name || "",
@@ -105,7 +137,7 @@ export const CategoryFirestore = {
     return result;
   },
 
-  async deleteCategory(id) {
+  async deleteCategory(id, fileNameID) {
     const result = {
       status: "success",
       message: "",
@@ -113,12 +145,18 @@ export const CategoryFirestore = {
     };
 
     try {
-      await deleteDoc(
-        doc(getFirestore(), useAppStore().getCategoriesCollection, id)
-      ).then((response) => {
-        result.message =
-          useAppStore().getMessageMaster.DATA("").CATEGORY_DELETED;
-      });
+      const deleted = await FirebaseStorage.deleteFile(folder, fileNameID);
+      if (deleted.deleted) {
+        await deleteDoc(
+          doc(getFirestore(), useAppStore().getCategoriesCollection, id)
+        ).then((response) => {
+          result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_DELETED;
+        });
+      } else {
+        result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_IMAGE_NOT_FOUND;
+        result.status = 'error'
+      }
+
     } catch (error) {
       result.status = "error";
       result.message = error.message;

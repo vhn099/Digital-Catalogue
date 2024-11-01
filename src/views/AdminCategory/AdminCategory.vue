@@ -17,10 +17,14 @@ import InputIcon from "primevue/inputicon";
 import { CategoryFirestore } from "@/lib/Category";
 import { FirebaseStorage } from "@/lib/Storage";
 import FileUpload from "primevue/fileupload";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 const formFields = reactive({
     id: '',
     name: '',
+    image: '',
+    image_name: '',
+    image_name_id: '',
 });
 
 /* COMPUTED VALUES */
@@ -97,7 +101,7 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const imagePreview = ref(null);
-/* REF DEFINITION END*/
+const spinner = ref(false);
 
 const v$ = useVuelidate(rules, formFields);
 const imageRule$ = useVuelidate(imageRule, { imagePreview });
@@ -106,6 +110,10 @@ const imageRule$ = useVuelidate(imageRule, { imagePreview });
 const resetFormData = () => {
     formFields.id = '';
     formFields.name = '';
+    formFields.image = '';
+    formFields.image_name = '';
+    formFields.image_name_id = '';
+
     image.value = null;
     imagePreview.value = null;
 };
@@ -140,6 +148,8 @@ const getCategories = async () => {
             id: category.id,
             name: data.name,
             image: data.image,
+            image_name: data.image_name,
+            image_name_id: data.image_name_id,
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
             updated: data.updated ? data.updated.toDate().toLocaleString() : '',
@@ -155,21 +165,22 @@ const submitForm = async () => {
     const isValid = await v$.value.$validate();
     const imageValue = await imageRule$.value.$validate();
 
-    if ((isValid && imageValue)) {
+    if (isValid && imageValue) {
+        spinner.value = true;
         const imageFile = image.value.files;
-        let imageData = imageFile[0];
-        let imageName = imageFile[0].name;
-        let imageNameId = `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${imageFile[0].name}`
-        const categoryFormData = getCategoryFormData();
+        const categoryImage = {};
         let result = {};
-        const downloadURL = await FirebaseStorage.uploadFile(imageNameId, imageData, 'category');
-        categoryFormData.image = downloadURL;
-        categoryFormData.image_name = imageName;
-        categoryFormData.image_name_id = imageNameId;
+
+        imageFile.forEach(file => {
+            categoryImage.file_data = file,
+            categoryImage.file_name = file.name,
+            categoryImage.file_name_id = `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${file.name}`;
+        });
+        const categoryFormData = getCategoryFormData();
         if (edit.value) {
-            result = await CategoryFirestore.updateCategory(categoryFormData);
+            result = await CategoryFirestore.updateCategory(categoryFormData, categoryImage);
         } else {
-            result = await CategoryFirestore.createCategory(categoryFormData);
+            result = await CategoryFirestore.createCategory(categoryFormData, categoryImage);
         }
         toast.add({
             summary: 'System Message',
@@ -182,12 +193,14 @@ const submitForm = async () => {
             visible.value = false;
             categories.value = await getCategories();
         }
+        spinner.value = false;
     } else {
 
     }
 };
 const deleteCategory = async () => {
-    let result = await CategoryFirestore.deleteCategory(formFields.id);
+    spinner.value = true;
+    let result = await CategoryFirestore.deleteCategory(formFields.id, formFields.image_name_id);
     toast.add({
         summary: 'System Message',
         severity: result.status,
@@ -200,18 +213,24 @@ const deleteCategory = async () => {
     }
 
     formFields.id = '';
+    formFields.image_name_id = '';
     deleteCategoryDialog.value = false;
+    spinner.value = false;
 };
 const deleteRow = (data) => {
     formFields.id = data.id;
+    formFields.image_name_id = data.image_name_id;
 
     deleteCategoryDialog.value = true;
 };
 const editRow = (data) => {
     formFields.id = data.id;
     formFields.name = data.name;
-    imagePreview.value = data.image;
+    formFields.image = data.image;
+    formFields.image_name = data.image_name;
+    formFields.image_name_id = data.image_name_id;
 
+    imagePreview.value = data.image;
     visible.value = true;
     edit.value = true;
 };
@@ -239,6 +258,7 @@ watch(visible, () => {
 });
 </script>
 <template>
+    <LoadingSpinner v-if="spinner"/>
     <Toast />
     <div class="">
         <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Category"'
@@ -260,8 +280,9 @@ watch(visible, () => {
 
                     <div class="flex flex-col">
                         <label class="form-label" for="image">Image <span class="required-icon">*</span></label>
-                        <img draggable="false" v-if="imagePreview" :src="imagePreview" alt="Image" width="64"/>
-                        <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="1000000" accept="image/*" />
+                        <img draggable="false" v-if="imagePreview" :src="imagePreview" alt="Image" width="64" />
+                        <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]"
+                            :maxFileSize="1000000" accept="image/*" />
                         <small class="error-messages" v-if="imageRule$.imagePreview.$errors.length > 0">{{
                             imageRule$.imagePreview.$errors[0].$message }}</small>
                     </div>
@@ -314,7 +335,8 @@ watch(visible, () => {
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
                         <template #body="slotProps">
-                            <img draggable="false" :src="slotProps.data[column.field]" v-if="column.field === 'image'" width="64" />
+                            <img draggable="false" :src="slotProps.data[column.field]" v-if="column.field === 'image'"
+                                width="64" />
                             <p v-else>{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
