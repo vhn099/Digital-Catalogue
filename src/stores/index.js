@@ -26,6 +26,8 @@ export const useAppStore = defineStore("storeId", {
           CATEGORY_UPDATED: `Update category with name ${data} successfully`,
           CATEGORY_NOT_EXISTED: `Name ${data} is not existed`,
           CATEGORY_DELETED: "Delete category successfully",
+          CATEGORY_IMAGE_NOT_FOUND: "This category image has already been deleted or not found in storage",
+          CATEGORY_REPLACE_OLD_IMAGE_ERROR: "Can not replace current image with new image at the moment, please contact admin to resolve this",
 
           DECK_CREATED: `Created deck with ${data}`,
           DECK_UPDATED: `Update deck with name ${data} successfully`,
@@ -35,7 +37,7 @@ export const useAppStore = defineStore("storeId", {
           SLIDER_CREATED: "Created slider successfully",
           IMAGE_SLIDER_ERROR: `No images were found during the upload process`,
           SLIDER_DELETED: "Deleted slider successfully",
-          SLIDER_UPDATED: "Updated slider successfully"
+          SLIDER_UPDATED: "Updated slider successfully",
         }
       },
       ADMIN_SITE: {
