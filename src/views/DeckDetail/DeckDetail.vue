@@ -283,8 +283,7 @@ const FavoriteIcon = async (userID, deckID) => {
                 </div>
                 <div class="pdf-place">
                     <!-- <PdfObject class="pdf-view" :url="deckDetails.pdf + '#toolbar=0'" :options="pdfOptions" /> -->
-                    <VuePdfApp style="height: 100vh;" :pdf="deckDetails.pdf" :config="pdfOptions"></VuePdfApp>
-
+                    <VuePdfApp class="pdf-custom" :pdf="deckDetails.pdf" :config="pdfOptions"></VuePdfApp>
                     <!-- <PDFJS></PDFJS> -->
                 </div>
             </div>
@@ -437,5 +436,16 @@ const FavoriteIcon = async (userID, deckID) => {
     z-index: auto;
 }
 
+:deep(.pdf-app #thumbnailView ) {
+    width: 100%;
+}
+
+:deep(.pdf-app .thumbnailSelectionRing) {
+    padding: 0;
+}
+
+.pdf-custom {
+    height: 800px;
+}
 /* END PDF CSS */
 </style>
