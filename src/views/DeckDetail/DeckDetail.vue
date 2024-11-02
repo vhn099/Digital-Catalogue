@@ -28,15 +28,15 @@ const pdfOptions1 = {
 const pdfOptions = {
   sidebar: {
     viewThumbnail: true,
-    viewOutline: true,
-    viewAttachments: true,
+    viewOutline: false,
+    viewAttachments: false,
   },
   secondaryToolbar: {
     secondaryPresentationMode: true,
     secondaryOpenFile: false,
     secondaryPrint: false,
     secondaryDownload: false,
-    secondaryViewBookmark: true,
+    secondaryViewBookmark: false,
     firstPage: true,
     lastPage: true,
     pageRotateCw: true,
@@ -49,7 +49,7 @@ const pdfOptions = {
     spreadNone: true,
     spreadOdd: true,
     spreadEven: true,
-    documentProperties: true,
+    documentProperties: false,
   },
   toolbar: {
     toolbarViewerLeft: {
@@ -63,7 +63,7 @@ const pdfOptions = {
       openFile: false,
       print: false,
       download: false,
-      viewBookmark: true,
+      viewBookmark: false,
     },
     toolbarViewerMiddle: {
       zoomOut: true,
@@ -415,4 +415,19 @@ const FavoriteIcon = async (userID, deckID) => {
 }
 
 /* BREADCRUMB CSS END */
+
+
+/* PDF CSS */
+:deep(.pdf-app #sidebarContent) {
+    top: 0 !important;
+}
+
+:deep(.pdf-app #toolbarSidebar) {
+    display: none;
+}
+
+:deep(.pdf-app .toolbar ){
+    z-index: auto;
+}
+/* END PDF CSS */
 </style>
