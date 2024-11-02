@@ -94,11 +94,11 @@ const formFields = reactive({
     banner_title: '',
     banner_description: '',
     background_color: "",
+    view_deck_url: "",
     image_link: '',
     image_name: '',
     order: 0
 });
-const selectedDeck = ref();
 const imagePreviewer = ref(null);
 const image = ref(null);
 /* REF DEFINITION END */
@@ -130,11 +130,6 @@ const getSliderFormData = () => {
     }
     const imageFile = image.value.files;
     sliderForm.image = {};
-    if (selectedDeck.value) {
-        sliderForm.deck_id = selectedDeck.value;
-    } else {
-        sliderForm.deck_id = "";
-    }
     if (imageFile.length != 0) {
         sliderForm.image.image_data = imageFile[0];
         sliderForm.image.image_name = imageFile[0].name;
@@ -179,10 +174,10 @@ const resetFormData = () => {
     formFields.background_color = "";
     formFields.banner_description = "";
     formFields.banner_title = "";
+    formFields.view_deck_url = "";
     formFields.image_link = "";
     formFields.image_name = "";
     formFields.order = 0;
-    selectedDeck.value = null;
     imagePreviewer.value = null;
 };
 const editRow = (data) => {
@@ -190,15 +185,7 @@ const editRow = (data) => {
     formFields.banner_title = data.banner_title;
     formFields.banner_description = data.banner_description;
     formFields.background_color = data.background_color;
-    if (!_.isEmpty(data.deck_id)) {
-        
-        const deckValue = decks.value.filter(deck => deck.id === data.deck_id);
-        if (!_.isEmpty(deckValue)) {
-            selectedDeck.value = deckValue[0].id;
-        }
-    } else {
-        selectedDeck.value = null;
-    }
+    formFields.view_deck_url = data.view_deck_url;
     formFields.image_link = data.image;
     formFields.image_name = data.image_name;
 
@@ -245,7 +232,7 @@ const getHomeSliders = async () => {
             image_name: data.image_name,
             banner_title: data.banner_title,
             banner_description: data.banner_description,
-            deck_id: data.deck_id,
+            view_deck_url: data.view_deck_url || "",
             order: data.order,
             background_color: data.background_color,
             created: data.created ? data.created.toDate().toLocaleString() : '',
@@ -303,7 +290,7 @@ const emits = defineEmits(['setLoading']);
             <form>
                 <div class="flex flex-col" v-if="edit">
                     <label class="form-label" for="id">ID</label>
-                    <InputText readonly :fluid="true" id="id" v-model="formFields.id" />
+                    <InputText readonly :fluid="true" id="id" v-model="formFields.id" maxLength="150"/>
                 </div>
 
                 <div class="flex flex-col">
@@ -319,7 +306,7 @@ const emits = defineEmits(['setLoading']);
                 <div class="flex flex-col">
                     <label class="form-label" for="banner_title">Line 1<span class="required-icon">*</span></label>
                     <InputText :fluid="true" placeholder="Line 1" id="banner_title"
-                        v-model="formFields.banner_title" :invalid="v$.banner_title.$errors.length > 0" />
+                        v-model="formFields.banner_title" :invalid="v$.banner_title.$errors.length > 0" maxLength="150"/>
                     <small class="error-messages" v-if="v$.banner_title.$errors.length > 0">{{
                         v$.banner_title.$errors[0].$message }}</small>
                 </div>
@@ -328,21 +315,22 @@ const emits = defineEmits(['setLoading']);
                     <label class="form-label" for="banner_description">Line 2<span
                             class="required-icon">*</span></label>
                     <InputText :fluid="true" placeholder="Line 2" id="banner_description"
-                        v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0" />
+                        v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0" maxLength="150"/>
                     <small class="error-messages" v-if="v$.banner_description.$errors.length > 0">{{
                         v$.banner_description.$errors[0].$message }}</small>
                 </div>
 
                 <div class="flex flex-col">
-                    <label class="form-label" for="banner_description">Linked Deck</label>
-                    <Select id="deck_id" v-model="selectedDeck" :options="decks" showClear optionLabel="name" optionValue="id"/>
+                    <label class="form-label" for="view_deck_url">View Deck URL</label>
+                    <!-- <Select id="deck_id" v-model="selectedDeck" :options="decks" showClear optionLabel="name" optionValue="id"/> -->
+                    <InputText :fluid="true" v-model="formFields.view_deck_url" maxLength="150"/>
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="background_color">Background Color</label>
                     <div class="flex items-center">
                         <!-- <ColorPicker id="background_color" v-model="formFields.background_color"/> -->
-                        <InputText :fluid="true" v-model="formFields.background_color" />
+                        <InputText :fluid="true" v-model="formFields.background_color" maxLength="150"/>
                     </div>
                 </div>
 

@@ -531,7 +531,7 @@ watch(visible, () => {
                         <FileUpload @select="onImageSelected" ref="deck_highlight" mode="basic" name="deck_highlight[]"
                             :maxFileSize="1000000" accept="image/*" />
                         <small class="error-messages" v-if="imageHighlight$.$errors.length > 0">{{
-                            imageHighlight$.$errors[0].$message > 0 }}</small>
+                            imageHighlight$.$errors[0].$message }}</small>
                     </div>
 
                     <!-- Category -->

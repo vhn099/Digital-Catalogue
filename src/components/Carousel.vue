@@ -4,14 +4,15 @@
         :showIndicatorsOnItem="inside" :indicatorsPosition="position">
         <template #item="slotProps">
 
-            <div class="slideshow-canva" :style="{background: `${slotProps.item.background_color}`}">
+            <div class="slideshow-canva" :style="{ background: `${slotProps.item.background_color}` }">
                 <div class="slideshow-text">
                     <span class="line-1">{{ slotProps.item.banner_title }}</span>
                     <span class="line-2">{{ slotProps.item.banner_description }}</span>
-                    <Button class="button-view-deck" @click="viewDeck" label="View Deck" />
+                    <Button class="button-view-deck" @click="viewDeck(slotProps.item.view_deck_url)"
+                        label="View Deck" />
                 </div>
                 <div class="slideshow-image">
-                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.image"/>
+                    <img draggable="false" height="100%" fill="none" :src="slotProps.item.image" />
                 </div>
             </div>
 
@@ -37,10 +38,17 @@ const sliders = ref();
 const inside = ref(true);
 
 /* FUNCTIONS START */
-const viewDeck = () => {
-    router.push({
-        name: 'decks'
-    });
+const viewDeck = (url) => {
+    if (url) {
+        const currentDomain = window.location.origin + "/";
+        const arrayURLs = url.split(currentDomain);
+        const route = arrayURLs[1];
+        if (route) { // If url is directed to other pages like: https://domain.com/deck/:deckID. If our domain like this it will runs into error https://domain.com
+            router.push({
+                path: route
+            });
+        }
+    }
 };
 const getHomeSliders = async () => {
     const sliderList = [];
@@ -51,6 +59,7 @@ const getHomeSliders = async () => {
             banner_title: data.banner_title,
             banner_description: data.banner_description,
             background_color: data.background_color,
+            view_deck_url: data.view_deck_url
         };
         if (object.background_color.indexOf(";") !== -1) {
             object.background_color = object.background_color.replaceAll(";", ""); // Putting ; inside this property will break CSS and it won't run the dynamic style
