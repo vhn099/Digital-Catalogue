@@ -93,10 +93,11 @@ const formFields = reactive({
     id: '',
     banner_title: '',
     banner_description: '',
-    background_color: "",
-    view_deck_url: "",
+    background_color: '',
+    view_deck_url: '',
     image_link: '',
     image_name: '',
+    image_name_id: '',
     order: 0
 });
 const imagePreviewer = ref(null);
@@ -153,7 +154,7 @@ const deleteRow = (data) => {
         },
         accept: async () => {
             emits('setLoading', true);
-            const result = await OtherConfigFirestore.deleteSlider(data.id, data.image_name);
+            const result = await OtherConfigFirestore.deleteSlider(data.id, data.image_name_id);
             emits('setLoading', false);
             toast.add({
                 summary: 'System Message',
@@ -177,6 +178,7 @@ const resetFormData = () => {
     formFields.view_deck_url = "";
     formFields.image_link = "";
     formFields.image_name = "";
+    formFields.image_name_id = "";
     formFields.order = 0;
     imagePreviewer.value = null;
 };
@@ -188,6 +190,7 @@ const editRow = (data) => {
     formFields.view_deck_url = data.view_deck_url;
     formFields.image_link = data.image;
     formFields.image_name = data.image_name;
+    formFields.image_name_id = data.image_name_id;
 
     formFields.order = data.order;
     imagePreviewer.value = data.image;
@@ -196,12 +199,13 @@ const editRow = (data) => {
     edit.value = true;
 };
 const submitForm = async () => {
-    emits('setLoading', true);
     const isValid = await v$.value.$validate();
     const imageValid = await imageV$.value.$validate();
     if (isValid && imageValid) {
+        emits('setLoading', true);
         let result = {};
         const formData = getSliderFormData();
+        console.log(formData, "FORM DATA");
         if (edit.value) {
             result = await OtherConfigFirestore.updateSlider(formData);
         } else {
@@ -219,8 +223,8 @@ const submitForm = async () => {
             // categories.value = await getCategories();
         }
         homeSliders.value = await getHomeSliders();
+        emits('setLoading', false);
     }
-    emits('setLoading', false);
 };
 const getHomeSliders = async () => {
     const sliderList = [];
@@ -230,6 +234,7 @@ const getHomeSliders = async () => {
             id: slider.id,
             image: data.image,
             image_name: data.image_name,
+            image_name_id: data.image_name_id,
             banner_title: data.banner_title,
             banner_description: data.banner_description,
             view_deck_url: data.view_deck_url || "",

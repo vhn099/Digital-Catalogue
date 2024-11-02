@@ -13,16 +13,14 @@ import ProgressSpinner from 'primevue/progressspinner';
 <style>
 .container {
     position: fixed;
-    text-align: center;
-    background: #eee;
-    opacity: 0.6;
+    top: 0; /* Ensure it starts at the top */
+    left: 0; /* Ensure it starts at the left */
+    height: 100vh;
+    width: 100vw;
+    background: rgba(238, 238, 238, 0.6); /* Use rgba for background to maintain opacity */
     z-index: 99999;
-    height: 100%;
-    width: 100%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    display: flex;
-    overflow-x: hidden;
-    overflow-y: hidden;
 }
 </style>

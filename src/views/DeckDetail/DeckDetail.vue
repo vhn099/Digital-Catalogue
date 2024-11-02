@@ -393,6 +393,9 @@ const FavoriteIcon = async (userID, deckID) => {
     border: none;
     box-shadow: none;
 }
+.p-textarea {
+    padding: 0;
+}
 /* DECK DETAIL CSS END */
 
 /* BREADCRUMB CSS START */

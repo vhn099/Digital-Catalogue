@@ -1,7 +1,7 @@
 <script setup>
 import { UserFirestore } from "@/lib/User";
 import useVuelidate from "@vuelidate/core";
-import { minLength, required, sameAs, email, helpers } from "@vuelidate/validators";
+import { minLength, required, sameAs, email } from "@vuelidate/validators";
 import { getAuth } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import Button from "primevue/button";

@@ -59,7 +59,7 @@ const setLoading = (value) => {
         </div>
         <Divider class="divider"/>
         <div class="email-config">
-            <EmailContactConfig />
+            <EmailContactConfig @setLoading="setLoading"/>
         </div>
     </div>
 </template>
