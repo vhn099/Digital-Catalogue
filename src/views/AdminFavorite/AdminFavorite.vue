@@ -177,7 +177,6 @@ const getAllFavorites_Deck = async () => {
         const user = await UserFirestore.getUser(data.userID);
         const deck = await DeckFirestore.getDeck(data.deckID);
         //const category_name = await CategoryFirestore.getCategoryName(deck.category_id);
-        console.log(user.disabled);
         const obj = {
             // fist name , last name , email, status, date
             id: fav.id,
