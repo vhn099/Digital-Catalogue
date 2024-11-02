@@ -179,6 +179,6 @@ const searchPage = (value) => {
     -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 155px;
+    min-height: 150px;
 }
 </style>

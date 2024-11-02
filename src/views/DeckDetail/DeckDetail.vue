@@ -1,6 +1,10 @@
 <script setup>
 import DockItem from '../../components/Dock.vue';
 import SectionItem from '../../components/Section.vue'
+
+import VuePdfApp from "vue3-pdf-app";
+import "vue3-pdf-app/dist/icons/main.css";
+
 import Galleria from 'primevue/galleria';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
@@ -17,6 +21,59 @@ const email = ref('');
 const deckID = ref('');
 const isFav = ref();
 
+const pdfOptions1 = {
+
+}
+
+const pdfOptions = {
+  sidebar: {
+    viewThumbnail: true,
+    viewOutline: true,
+    viewAttachments: true,
+  },
+  secondaryToolbar: {
+    secondaryPresentationMode: true,
+    secondaryOpenFile: false,
+    secondaryPrint: false,
+    secondaryDownload: false,
+    secondaryViewBookmark: true,
+    firstPage: true,
+    lastPage: true,
+    pageRotateCw: true,
+    pageRotateCcw: true,
+    cursorSelectTool: true,
+    cursorHandTool: true,
+    scrollVertical: true,
+    scrollHorizontal: true,
+    scrollWrapped: true,
+    spreadNone: true,
+    spreadOdd: true,
+    spreadEven: true,
+    documentProperties: true,
+  },
+  toolbar: {
+    toolbarViewerLeft: {
+      findbar: true,
+      previous: true,
+      next: true,
+      pageNumber: true,
+    },
+    toolbarViewerRight: {
+      presentationMode: true,
+      openFile: false,
+      print: false,
+      download: false,
+      viewBookmark: true,
+    },
+    toolbarViewerMiddle: {
+      zoomOut: true,
+      zoomIn: true,
+      scaleSelectContainer: true,
+    },
+  },
+  errorWrapper: true,
+};
+
 onMounted(async () => {
     email.value = getAuth().currentUser.email;
     const { params } = router.currentRoute.value;
@@ -25,6 +82,10 @@ onMounted(async () => {
 
     deckDetails.value = await getDeckByID(params.deckID);
     setBreadcrumbs(createBreadcrumbObject(deckDetails.value), 'add');
+
+    document.addEventListener("pagerendered", function (e) {
+        console.log(e);
+    });
 });
 
 const sectionIcon = PresentationIcon;
@@ -144,7 +205,7 @@ const FavoriteIcon = async (userID, deckID) => {
                 <span class="breadcrumb-header">Selected: </span>
                 <div class="breadcrumb-content">
                     <span v-for="(breadcrumb, index) in breadcrumbs" :key="breadcrumb.id"
-                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }" 
+                        v-bind:class="{ 'active-breadcrumb': index === isActiveBreadCrumb }"
                         @click="changeActiveBreadCrumb(index)">
                         <span class="cursor-element">{{ breadcrumb.label }}</span>
                         <span v-if="(index + 1) < breadcrumbs.length" style="padding: 10px">></span>
@@ -190,7 +251,7 @@ const FavoriteIcon = async (userID, deckID) => {
                             <label>Add to my Favorite</label>
                         </Button>
 
-                        <Button @click="favoriteFn(deckID)" severity="secondary" raised  v-if="isFav">
+                        <Button @click="favoriteFn(deckID)" severity="secondary" raised v-if="isFav">
                             <img draggable="false" width="23" height="23" fill="none"
                                 src="../../assets/img/icon/favorite_red.png" />
                             <label>Favorited</label>
@@ -202,7 +263,8 @@ const FavoriteIcon = async (userID, deckID) => {
                         </p>
                     </div>
                     <div class="deck-tags">
-                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t" @click="searchPage(`#${t}`)"></Tag>
+                        <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"
+                            @click="searchPage(`#${t}`)"></Tag>
                     </div>
                 </div>
             </div>
@@ -221,7 +283,10 @@ const FavoriteIcon = async (userID, deckID) => {
                     </Button>
                 </div>
                 <div class="pdf-place">
-                    <PdfObject class="pdf-view" :url="deckDetails.pdf" />
+                    <!-- <PdfObject class="pdf-view" :url="deckDetails.pdf + '#toolbar=0'" :options="pdfOptions" /> -->
+                    <VuePdfApp style="height: 100vh;" :pdf="deckDetails.pdf" :config="pdfOptions"></VuePdfApp>
+
+                    <!-- <PDFJS></PDFJS> -->
                 </div>
             </div>
         </div>
