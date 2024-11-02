@@ -426,5 +426,8 @@ const FavoriteIcon = async (userID, deckID) => {
     display: none;
 }
 
+:deep(.pdf-app .toolbar ){
+    z-index: auto;
+}
 /* END PDF CSS */
 </style>
