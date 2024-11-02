@@ -145,18 +145,24 @@ export const CategoryFirestore = {
     };
 
     try {
-      const deleted = await FirebaseStorage.deleteFile(folder, fileNameID);
-      if (deleted.deleted) {
-        await deleteDoc(
-          doc(getFirestore(), useAppStore().getCategoriesCollection, id)
-        ).then((response) => {
-          result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_DELETED;
-        });
-      } else {
-        result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_IMAGE_NOT_FOUND;
+      const q = query(collection(getFirestore(), useAppStore().getDecksCollection), where('category_id', '==', id))
+      const deck = await getDocs(q);
+      if (deck.docs.length > 0) { // If category has deck. dont allow to delete
+        result.message = "This Category is using in Deck";
         result.status = 'error'
+      } else {
+        const deleted = await FirebaseStorage.deleteFile(folder, fileNameID);
+        if (deleted.deleted) {
+          await deleteDoc(
+            doc(getFirestore(), useAppStore().getCategoriesCollection, id)
+          ).then((response) => {
+            result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_DELETED;
+          });
+        } else {
+          result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_IMAGE_NOT_FOUND;
+          result.status = 'error'
+        }
       }
-
     } catch (error) {
       result.status = "error";
       result.message = error.message;
