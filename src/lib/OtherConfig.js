@@ -6,6 +6,7 @@ import _ from 'lodash';
 const folderLocation = "home_slider/images";
 
 export const OtherConfigFirestore = {
+    /* HOME SLIDER */
     getHomeSliders: async () => {
         const db = collection(getFirestore(), useAppStore().getHomeSliderCollection);
         const items = await getDocs(query(db, orderBy('order')))
@@ -25,11 +26,11 @@ export const OtherConfigFirestore = {
                 const formData = {
                     image: downloadedURL,
                     image_name: sliderForm.image.image_name,
-                    image_name_id: sliderForm.image_name_id,
+                    image_name_id: sliderForm.image.image_name_id,
                     banner_title: sliderForm.banner_title,
                     banner_description: sliderForm.banner_description,
                     background_color: sliderForm.background_color,
-                    deck_id: sliderForm.deck_id,
+                    view_deck_url: sliderForm.view_deck_url,
                     order: sliderForm.order,
                     created: sliderForm.created,
                     created_by: sliderForm.created_by,
@@ -63,12 +64,22 @@ export const OtherConfigFirestore = {
             const db = collection(getFirestore(), useAppStore().getHomeSliderCollection);
             const docRef = doc(db, sliderForm.id);
             if (!_.isEmpty(sliderForm.image)) {
+                const checkCurrentFile = await FirebaseStorage.checkFileExists(folderLocation, sliderForm.image_name_id);
+                if (checkCurrentFile) {
+                    // Delete the old image and replace it with the new one
+                    const deleteOldFile = await FirebaseStorage.deleteFile(folderLocation, sliderForm.image_name_id);
+                    if (!deleteOldFile) { // Error happens in replacing old image
+                        result.status = "error";
+                        result.message = useAppStore().getMessageMaster.DATA("").SLIDER_REPLACE_OLD_IMAGE_ERROR;
+                        return result;
+                    }
+                }
                 downloadedURL = await FirebaseStorage.uploadFile(sliderForm.image.image_name_id, sliderForm.image.image_data, folderLocation);
             }
             const formData = {
                 image: downloadedURL ? downloadedURL : sliderForm.image_link,
-                image_name: sliderForm.image_name,
-                image_name_id: sliderForm.image_name_id || "",
+                image_name: sliderForm.image.image_name,
+                image_name_id: sliderForm.image.image_name_id || "",
                 banner_title: sliderForm.banner_title,
                 banner_description: sliderForm.banner_description,
                 background_color: sliderForm.background_color,
@@ -119,4 +130,67 @@ export const OtherConfigFirestore = {
 
         return result;
     },
+
+    /* EMAIL CONTACT */
+    getEmailContacts: async () => {
+        const db = collection(getFirestore(), useAppStore().getEmailContactCollection);
+        const emailContacts = await getDocs(db);
+
+        return emailContacts.docs;
+    },
+
+    addEmailContacts: async (emailContactForm) => {
+        const db = collection(getFirestore(), useAppStore().getEmailContactCollection);
+        const result = {
+            status: 'success',
+            message: '',
+            data: {}
+        };
+        try {
+            let findEmailContact = await getDocs(query(db, where('email', '==', emailContactForm.email)));
+            if (findEmailContact.docs.length === 0) {
+                await addDoc(db, emailContactForm).then(async (response) => {
+                    result.message = useAppStore().getMessageMaster.DATA(
+                        emailContactForm.email
+                    ).EMAIL_CONTACT_CREATED;
+                });
+            } else {
+                result.message = useAppStore().getMessageMaster.DATA(emailContactForm.email).EMAIL_CONTACT_EXISTED;
+                result.status = 'warn';
+            }
+        } catch (error) {
+            result.status = 'error';
+            result.message = error.message;
+            console.log(error);
+        }
+        return result
+    },
+    updateEmailContacts: async (id, emailContactForm) => {
+        const db = collection(getFirestore(), useAppStore().getEmailContactCollection);
+        const result = {
+            status: 'success',
+            message: '',
+            data: {}
+        };
+        try {
+            const docRef = getDoc(doc(db, id));
+            if ((await docRef).exists()) {
+                await updateDoc(doc(db, id), emailContactForm).then((response) => {
+                    result.message = useAppStore().getMessageMaster.DATA(
+                        emailContactForm.email
+                    ).EMAIL_CONTACT_UPDATED;
+                });
+            } else {
+                result.message = useAppStore().getMessageMaster.DATA(
+                    emailContactForm.email
+                ).EMAIL_CONTACT_NOT_EXISTED;
+                result.status = "warning";
+            }
+        } catch (error) {
+            result.status = 'error';
+            result.message = error.message;
+            console.log(error);
+        }
+        return result;
+    }
 };
