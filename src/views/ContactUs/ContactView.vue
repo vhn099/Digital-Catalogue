@@ -109,11 +109,11 @@ async function submitForm() {
 
 <template>
   <DockItem></DockItem>
-  <div class="flex min-height-750">
+  <div class="flex">
     <div class="col-1">
 
     </div>
-    <div class="col-11">
+    <div class="col-11 no-padding">
       <div class="flex">
         <div class="col-8">
           <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="messagePageHeader"/>
@@ -170,6 +170,7 @@ async function submitForm() {
             </div>
           </div>
           <div v-if="isSuccess">
+            <div class="add-heigh"></div>
             <MessagePage :iconName="messagePageIcon" :iconStyle="messagePageIconCSS" :pageBody="messagePageBody" />
           </div>
 
@@ -211,5 +212,9 @@ async function submitForm() {
     color: red;
     font-size: 12px;
     margin-bottom: 4px;
+}
+
+.add-heigh {
+  height: 150px;
 }
 </style>
