@@ -15,6 +15,7 @@ import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
 import { FavoriteFirestore } from '@/lib/Favorite';
 import { getAuth } from 'firebase/auth';
+import Textarea from 'primevue/textarea';
 
 const deckDetails = ref({});
 const email = ref('');
@@ -26,52 +27,52 @@ const pdfOptions1 = {
 }
 
 const pdfOptions = {
-  sidebar: {
-    viewThumbnail: true,
-    viewOutline: false,
-    viewAttachments: false,
-  },
-  secondaryToolbar: {
-    secondaryPresentationMode: true,
-    secondaryOpenFile: false,
-    secondaryPrint: false,
-    secondaryDownload: false,
-    secondaryViewBookmark: false,
-    firstPage: true,
-    lastPage: true,
-    pageRotateCw: true,
-    pageRotateCcw: true,
-    cursorSelectTool: true,
-    cursorHandTool: true,
-    scrollVertical: true,
-    scrollHorizontal: true,
-    scrollWrapped: true,
-    spreadNone: true,
-    spreadOdd: true,
-    spreadEven: true,
-    documentProperties: false,
-  },
-  toolbar: {
-    toolbarViewerLeft: {
-      findbar: true,
-      previous: true,
-      next: true,
-      pageNumber: true,
+    sidebar: {
+        viewThumbnail: true,
+        viewOutline: false,
+        viewAttachments: false,
     },
-    toolbarViewerRight: {
-      presentationMode: true,
-      openFile: false,
-      print: false,
-      download: false,
-      viewBookmark: false,
+    secondaryToolbar: {
+        secondaryPresentationMode: true,
+        secondaryOpenFile: false,
+        secondaryPrint: false,
+        secondaryDownload: false,
+        secondaryViewBookmark: false,
+        firstPage: true,
+        lastPage: true,
+        pageRotateCw: true,
+        pageRotateCcw: true,
+        cursorSelectTool: true,
+        cursorHandTool: true,
+        scrollVertical: true,
+        scrollHorizontal: true,
+        scrollWrapped: true,
+        spreadNone: true,
+        spreadOdd: true,
+        spreadEven: true,
+        documentProperties: false,
     },
-    toolbarViewerMiddle: {
-      zoomOut: true,
-      zoomIn: true,
-      scaleSelectContainer: true,
+    toolbar: {
+        toolbarViewerLeft: {
+            findbar: true,
+            previous: true,
+            next: true,
+            pageNumber: true,
+        },
+        toolbarViewerRight: {
+            presentationMode: true,
+            openFile: false,
+            print: false,
+            download: false,
+            viewBookmark: false,
+        },
+        toolbarViewerMiddle: {
+            zoomOut: true,
+            zoomIn: true,
+            scaleSelectContainer: true,
+        },
     },
-  },
-  errorWrapper: true,
+    errorWrapper: true,
 };
 
 onMounted(async () => {
@@ -258,9 +259,7 @@ const FavoriteIcon = async (userID, deckID) => {
                         </Button>
                     </div>
                     <div class="deck-description">
-                        <p>
-                            {{ deckDetails.detail_description }}
-                        </p>
+                        <Textarea class="detail-description-text" :fluid="true" :value="deckDetails.detail_description" readonly autoResize/>    
                     </div>
                     <div class="deck-tags">
                         <Tag v-for="t in deckDetails.tag" severity="secondary" :value="'#' + t"
@@ -351,6 +350,7 @@ const FavoriteIcon = async (userID, deckID) => {
     }
 }
 
+/* DECK DETAIL CSS START */
 .deck-description {
     padding: 30px 0 50px 0;
 }
@@ -389,6 +389,13 @@ const FavoriteIcon = async (userID, deckID) => {
     cursor: pointer;
 }
 
+.detail-description-text {
+    background-color: #F5F5F5;
+    border: none;
+    box-shadow: none;
+}
+/* DECK DETAIL CSS END */
+
 /* BREADCRUMB CSS START */
 .breadcrumb {
     display: flex;
@@ -426,8 +433,9 @@ const FavoriteIcon = async (userID, deckID) => {
     display: none;
 }
 
-:deep(.pdf-app .toolbar ){
+:deep(.pdf-app .toolbar) {
     z-index: auto;
 }
+
 /* END PDF CSS */
 </style>
