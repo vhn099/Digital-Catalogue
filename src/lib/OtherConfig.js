@@ -72,7 +72,7 @@ export const OtherConfigFirestore = {
                 banner_title: sliderForm.banner_title,
                 banner_description: sliderForm.banner_description,
                 background_color: sliderForm.background_color,
-                deck_id: sliderForm.deck_id,
+                view_deck_url: sliderForm.view_deck_url,
                 order: sliderForm.order,
                 updated: sliderForm.updated,
                 updated_by: sliderForm.updated_by

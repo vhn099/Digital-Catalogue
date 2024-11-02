@@ -15,6 +15,9 @@ import { onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import Tag from 'primevue/tag';
+import * as xlsx from 'xlsx';
+import * as fileSaver from 'file-saver';
+
 const visible = ref(false);
 const formFields = reactive({
     email: '',
@@ -130,8 +133,27 @@ const getEmails = async () => {
     });
     return emailList;
 };
+const saveAsExcelFile = (buffer, fileName) => {
+    import('file-saver').then((module) => {
+        if (module && module.default) {
+            let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+            let EXCEL_EXTENSION = '.xlsx';
+            const data = new Blob([buffer], {
+                type: EXCEL_TYPE
+            });
+
+            module.default.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+        }
+    });
+};
 const exportMyList = (event) => {
-    datatable.value.exportCSV();
+    const worksheet = xlsx.utils.json_to_sheet(users.value);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    const excelBuffer = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array'
+    });
+    saveAsExcelFile(excelBuffer, 'emails_received');
 }
 
 const viewRow = (data) => {
@@ -235,15 +257,14 @@ watch(visible, () => {
                     tableStyle="width: 100%"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" ref="datatable" :filters="filters"
-                    :paginator="true"
-                    export-filename="email_received"
-                    >
+                    :paginator="true" export-filename="email_received">
                     <template #header>
                         <div class="header-table">
                             <span class="table-title">Received Messages</span>
                             <div class="table-actions gap-2">
                                 <div>
-                                    <Button type="button" label="Export" icon="pi pi-external-link" @click="exportMyList($event)" />
+                                    <Button type="button" label="Export" icon="pi pi-external-link"
+                                        @click="exportMyList($event)" />
                                 </div>
                                 <div>
                                     <IconField>

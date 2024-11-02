@@ -44,11 +44,11 @@ const datatable = ref();
         :paginator="true">
         <template #header>
             <div class="header-table">
-                <span class="table-title">Manage Home Slider</span>
+                <span class="table-title">Manage Email Contacts</span>
                 <div class="table-actions gap-2">
-                    <div>
+                    <!-- <div>
                         <Button type="button" label="Add" icon="pi pi-plus" />
-                    </div>
+                    </div> -->
                     <div>
                         <IconField>
                             <InputIcon>
@@ -67,15 +67,13 @@ const datatable = ref();
                 <p>{{ slotProps.data[column.field] }}</p>
             </template>
         </Column>
-        <Column header="Actions">
+        <!-- <Column header="Actions">
             <template #body="{ data }">
                 <div class="actions">
-                    <!-- <Button icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded
-                                    severity="warn" /> -->
                     <Button icon="pi pi-pencil" aria-label="Update" rounded />
                 </div>
             </template>
-        </Column>
+        </Column> -->
     </DataTable>
 </template>
 
