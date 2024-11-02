@@ -134,15 +134,6 @@ const getSeverity = (status) => {
 
         case 'Active':
             return 'success';
-
-        case 'new':
-            return 'info';
-
-        case 'negotiation':
-            return 'warn';
-
-        case 'renewal':
-            return null;
     }
 };
 

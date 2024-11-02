@@ -17,6 +17,7 @@ import {
 
 import { useAppStore } from "@/stores";
 import { FirebaseStorage } from "./Storage";
+import { FavoriteFirestore } from "./Favorite";
 
 export const DeckFirestore = {
   // get deck base on ID
@@ -262,6 +263,8 @@ export const DeckFirestore = {
       ).then((response) => {
         result.message = useAppStore().getMessageMaster.DATA("").DECK_DELETED;
       });
+      //Delete Favorite
+      FavoriteFirestore.deleteFav('',deckData.id,true);
     } catch (error) {
       result.status = "error";
       result.message = error.message;

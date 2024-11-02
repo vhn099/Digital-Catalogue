@@ -1,6 +1,6 @@
 <script setup>
 
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/main";
 import Button from "primevue/button";
 import Column from "primevue/column";
@@ -65,18 +65,6 @@ const tableColumns = [
             // width: "25%"
         }
     },
-    // {
-    //     field: 'receiver',
-    //     label: 'Receiver',
-    //     styles: {
-    //         // width: "10%",
-    //         whiteSpace: "nowrap",
-    //         textOverflow: "ellipsis",
-    //         wordWrap: "break-word",
-    //         // overFlow: "hidden",
-    //         overflow: "hidden"
-    //     }
-    // },
     {
         field: 'status',
         label: 'Status',
@@ -113,7 +101,8 @@ const closeDrawer = () => {
 
 const getEmails = async () => {
     const emailList = [];
-    const querySnapshot = await getDocs(collection(db, 'mail'));
+    const docQuery = query(collection(db, 'mail'), orderBy("delivery.startTime", "desc"));
+    const querySnapshot = await getDocs(docQuery);
     querySnapshot.forEach(mail => {
         const data = mail.data();
         const object = {

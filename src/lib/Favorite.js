@@ -50,10 +50,10 @@ export const FavoriteFirestore = {
       return false;
     }
   },
-  async deleteFav(userID, deckID) {
+  async deleteFav(userID, deckID, deckDeleted) {
     const listID = [];
     const db = collection(getFirestore(), useAppStore().getFavoriteCollection);
-    const favQuery = query(db, where('userID', "==", userID), where('deckID', "==", deckID));
+    const favQuery = query(db, deckDeleted ? '' : where('userID', "==", userID), where('deckID', "==", deckID));
     const favDoc = await getDocs(favQuery);
     favDoc.forEach(async fav => {
       await this.delete(fav.id);
