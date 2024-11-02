@@ -53,3 +53,7 @@ body,html {
 .min-height-750 {
   min-height: 750px;
 }
+
+.no-padding {
+  padding: 0 !important;
+}
