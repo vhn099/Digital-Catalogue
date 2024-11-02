@@ -11,6 +11,7 @@ import router from '@/router';
 import { db, auth } from '@/main';
 import { query, collection, getDocs, where } from "firebase/firestore";
 import Checkbox from 'primevue/checkbox';
+import RecaptCha from '../recaptcha-config.json';
 
 // Reset Link sent
 import MessagePage from '@/components/MessagePage.vue';
@@ -35,7 +36,7 @@ const isSendLink = ref(false);
 const isDisabled = ref(false);
 
 /* STATIC VARIABLE */
-const siteKey = '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu';
+const siteKey = RecaptCha.SITE_KEY;
 const messagePageIcon = "pi pi-check-circle";
 const messagePageIconCSS = {
     fontSize: "62px",

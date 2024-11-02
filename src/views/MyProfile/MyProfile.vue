@@ -18,6 +18,8 @@ import { COMMON_FUNCTIONS } from '@/lib/Common';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { Timestamp } from 'firebase/firestore';
+import RecaptCha from '../recaptcha-config.json';
+
 const messagePageIcon = "pi pi-check-circle";
 const messagePageBody = 'login';
 const messagePageIconCSS = {
@@ -36,7 +38,7 @@ const lastName = ref('');
 const email = ref('');
 const isResetPassWord = ref(false);
 const isSendLink = ref(false);
-const siteKey = '6LfGN2MqAAAAAIChGWGYeHE7UpbxJXEKv1jYw3eu';
+const siteKey = RecaptCha.SITE_KEY;
 let userID = "";
 /* REF DEFINITION END */
 
