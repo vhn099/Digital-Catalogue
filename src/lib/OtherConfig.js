@@ -68,7 +68,7 @@ export const OtherConfigFirestore = {
                 if (checkCurrentFile) {
                     // Delete the old image and replace it with the new one
                     const deleteOldFile = await FirebaseStorage.deleteFile(folderLocation, sliderForm.image_name_id);
-                    if (!deleteOldFile) { // Error happens in replacing old image
+                    if (!deleteOldFile.deleted) { // Error happens in replacing old image
                         result.status = "error";
                         result.message = useAppStore().getMessageMaster.DATA("").SLIDER_REPLACE_OLD_IMAGE_ERROR;
                         return result;

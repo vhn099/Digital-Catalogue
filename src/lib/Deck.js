@@ -90,7 +90,7 @@ export const DeckFirestore = {
     if (tag_filter) {
       docQuery = query(docQuery, where("tag", "array-contains-any", tag_filter.split(',')));
     }
-    if (category_filter) {
+    if (category_filter.length > 0) {
       docQuery = query(docQuery, where("category_id", "in", category_filter));
     }
     if (lastDeck) {
@@ -104,6 +104,21 @@ export const DeckFirestore = {
   },
 
   // Process file handler for deck highlight images and deck sub images and deck pdf file
+  async removeOldFile(folder, fileName) {
+    const existedPdfFile = await FirebaseStorage.checkFileExists(folder, fileName);
+    let result = {
+      success: true,
+      message: ''
+    };
+    if (existedPdfFile) {
+      const deleted = await FirebaseStorage.deleteFile(folder, fileName);
+      if (!deleted.deleted) {
+        result.success = false;
+        result.message = deleted.message;
+      }
+    }
+    return result;
+  },
   async fileHandlerInDeck(deckForm) {
     let pdfFile = {
       downloadURL: '',
@@ -116,11 +131,51 @@ export const DeckFirestore = {
       fileNameID: '',
     };
     let subImages = [];
+
+    // There is deleted old files in sub images (pdf file and highlight is not done yet)
+    if (deckForm.deleted_sub_images) {
+      if (deckForm.deleted_sub_images.length > 0) {
+        for (let i = 0 ; i < deckForm.deleted_sub_images.length; i++) {
+          const result = await FirebaseStorage.deleteFile("deck/images", deckForm.deleted_sub_images[i].name_id);
+          if (!result.deleted) {
+            return {
+              success: false,
+              message: result.message
+            }
+          }
+        }
+      }
+    }
+
     // There is changes like add new images or replace the old ones with new ones. this logic will catch it and process it
     if (deckForm.images.length != 0) {
       for (let i = 0; i < deckForm.images.length; i++) {
         const folder = deckForm.images[i].type === "pdfFile" ? "deck/pdf" : "deck/images";
         let downloadURL = "";
+        let resultCheckingFile = {}
+
+        if (deckForm.images[i].type === 'pdfFile') { // If user action is to replace the pdf file with new ones then we must remove the old file then add the new one.
+          if (deckForm.pdf_name_id) {
+            resultCheckingFile = await this.removeOldFile(folder, deckForm.pdf_name_id);
+            if (!resultCheckingFile.success) {
+              return {
+                success: false,
+                message: resultCheckingFile.message
+              }
+            }
+          }
+        } else if (deckForm.images[i].type === 'highlight') { // If user action is to replace the highlight file with new ones then we must remove the old file then add the new one.
+          if (deckForm.deck_highlight_name_id) {
+            resultCheckingFile = await this.removeOldFile(folder, deckForm.deck_highlight_name_id);
+            if (!resultCheckingFile.success) {
+              return {
+                success: false,
+                message: resultCheckingFile.message
+              }
+            }
+          }
+        }
+
         if (deckForm.images[i].isNew) {
           downloadURL = await FirebaseStorage.uploadFile(deckForm.images[i].file_name_id, deckForm.images[i].file_data, folder);
         } else {
@@ -129,7 +184,7 @@ export const DeckFirestore = {
         if (deckForm.images[i].type === 'pdfFile') {
           pdfFile.downloadURL = downloadURL;
           pdfFile.fileName = deckForm.images[i].file_name;
-          pdfFile.fileNameID = deckForm.images[i].file_name_id
+          pdfFile.fileNameID = deckForm.images[i].file_name_id;
         } else if (deckForm.images[i].type === 'highlight') {
           highlight.downloadURL = downloadURL;
           highlight.fileName = deckForm.images[i].file_name;
@@ -143,19 +198,12 @@ export const DeckFirestore = {
         }
       }
     }
-    // There is deleted old files in sub images (pdf file and highlight is not done yet)
-    if (deckForm.deleted_sub_images) {
-      if (deckForm.deleted_sub_images.length > 0) {
-        deckForm.deleted_sub_images.forEach(async image => {
-          await FirebaseStorage.deleteFile("deck/images", image.name_id);
-        });
-      }
-    }
-
     return {
       pdfFile: pdfFile,
       highlight: highlight,
-      subImages: subImages
+      subImages: subImages,
+      success: true,
+      message: ''
     }
   },
 
@@ -167,9 +215,12 @@ export const DeckFirestore = {
     };
 
     try {
-      // Set user with custom sys_id in firestore
       const fileHandlerResult = await this.fileHandlerInDeck(deckForm);
-
+      if (!fileHandlerResult.success) {
+        result.status = "error";
+        result.message = fileHandlerResult.message;
+        return result;
+      }
 
       const colRef = collection(
         getFirestore(),
@@ -177,21 +228,25 @@ export const DeckFirestore = {
       );
       const dataObj = {
         title: deckForm.title || "",
-          detail_description: deckForm.detail_description || "",
-          category_id: deckForm.category_id || "",
-          /* DECK HIGHLIGHT */
-          deck_highlight: fileHandlerResult.highlight.downloadURL ? fileHandlerResult.highlight.downloadURL : deckForm.deck_highlight,
-          deck_highlight_name: fileHandlerResult.highlight.fileName ? fileHandlerResult.highlight.fileName : deckForm.deck_highlight_name,
-          deck_highlight_name_id: fileHandlerResult.highlight.fileNameID ? fileHandlerResult.highlight.fileNameID : deckForm.deck_highlight_name_id,
-          /* DECK SUBIMAGES */
-          deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
-          pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
-          tag: deckForm.tag || [],
-          catalogue_edition: deckForm.catalogue_edition,
-          created: deckForm.created,
-          created_by: deckForm.created_by,
-          updated: deckForm.updated,
-          updated_by: deckForm.updated_by,
+        detail_description: deckForm.detail_description || "",
+        category_id: deckForm.category_id || "",
+        /* DECK HIGHLIGHT */
+        deck_highlight: fileHandlerResult.highlight.downloadURL ? fileHandlerResult.highlight.downloadURL : deckForm.deck_highlight,
+        deck_highlight_name: fileHandlerResult.highlight.fileName ? fileHandlerResult.highlight.fileName : deckForm.deck_highlight_name,
+        deck_highlight_name_id: fileHandlerResult.highlight.fileNameID ? fileHandlerResult.highlight.fileNameID : deckForm.deck_highlight_name_id,
+        /* DECK SUBIMAGES */
+        deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
+        /* DECK PDF FILE */
+        pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
+        pdf_name: fileHandlerResult.pdfFile.fileName || deckForm.pdf_name,
+        pdf_name_id: fileHandlerResult.pdfFile.fileNameID || deckForm.pdf_name_id,
+
+        tag: deckForm.tag || [],
+        catalogue_edition: deckForm.catalogue_edition,
+        created: deckForm.created,
+        created_by: deckForm.created_by,
+        updated: deckForm.updated,
+        updated_by: deckForm.updated_by,
       };
 
       await addDoc(colRef, dataObj).then(async (response) => {
@@ -219,7 +274,11 @@ export const DeckFirestore = {
       const docRef = getDoc(doc(db, deckForm.id));
       if ((await docRef).exists()) {
         const fileHandlerResult = await this.fileHandlerInDeck(deckForm);
-
+        if (!fileHandlerResult.success) {
+          result.status = "error";
+          result.message = fileHandlerResult.message;
+          return result;
+        }
         await updateDoc(doc(db, deckForm.id), {
           title: deckForm.title || "",
           detail_description: deckForm.detail_description || "",
@@ -230,7 +289,11 @@ export const DeckFirestore = {
           deck_highlight_name_id: fileHandlerResult.highlight.fileNameID ? fileHandlerResult.highlight.fileNameID : deckForm.deck_highlight_name_id,
           /* DECK SUBIMAGES */
           deck_images: fileHandlerResult.subImages.length === 0 ? deckForm.deck_images : fileHandlerResult.subImages,
+          /* DECK PDF FILE */
           pdf: fileHandlerResult.pdfFile.downloadURL || deckForm.pdf,
+          pdf_name: fileHandlerResult.pdfFile.fileName || deckForm.pdf_name,
+          pdf_name_id: fileHandlerResult.pdfFile.fileNameID || deckForm.pdf_name_id,
+
           tag: deckForm.tag || [],
           catalogue_edition: deckForm.catalogue_edition,
           updated: deckForm.updated,
@@ -265,10 +328,17 @@ export const DeckFirestore = {
     try {
       const deckImages = [];
       const imageFolder = "deck/images";
+      const pdfFolder = "deck/pdf";
+
       deckImages.push({
         folder: imageFolder,
         name: deckData.deck_highlight_name_id
       });
+      deckImages.push({
+        folder: pdfFolder,
+        name: deckData.pdf_name_id
+      });
+
       deckData.deck_images.forEach(image => {
         deckImages.push({
           folder: imageFolder,
@@ -276,9 +346,13 @@ export const DeckFirestore = {
         });
       });
 
-      console.log(deckImages, "DECK IMAGES");
       deckImages.forEach(async image => {
-        await FirebaseStorage.deleteFile(image.folder, image.name);
+        const deleted = await FirebaseStorage.deleteFile(image.folder, image.name);
+        if (!deleted.deleted) {
+          result.status = "error";
+          result.message = deleted.message;
+          return result;
+        }
       });
       await deleteDoc(
         doc(getFirestore(), useAppStore().getDecksCollection, deckData.id)
@@ -286,7 +360,7 @@ export const DeckFirestore = {
         result.message = useAppStore().getMessageMaster.DATA("").DECK_DELETED;
       });
       //Delete Favorite
-      FavoriteFirestore.deleteFav('',deckData.id,true);
+      FavoriteFirestore.deleteFav('', deckData.id, true);
     } catch (error) {
       result.status = "error";
       result.message = error.message;

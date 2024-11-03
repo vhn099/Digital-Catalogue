@@ -20,6 +20,7 @@ import { useAppStore } from "@/stores";
 export const FavoriteFirestore = {
   async favoriteFn(userID, deckID) {
     const isFavorite = await this.isFavorite(userID, deckID);
+    const favCollection = collection(getFirestore(), useAppStore().getFavoriteCollection);
     if (isFavorite == true) {
       await this.deleteFav(userID, deckID);
     }
@@ -29,8 +30,20 @@ export const FavoriteFirestore = {
         deckID: deckID,
         created: Timestamp.now().toDate(),
       }
+      await addDoc(favCollection, favRecord);
+    }
 
-      await addDoc(collection(getFirestore(), useAppStore().getFavoriteCollection), favRecord);
+    /* RE-CALCULATE FAVORITE OF A DECK */
+    const favQuery = query(favCollection, where("deckID", "==", deckID));
+    const favDocs = await getCountFromServer(favQuery);
+    const deckCollection = collection(getFirestore(), useAppStore().getDecksCollection);
+    const deckRef = getDoc(doc(deckCollection, deckID));
+    if ((await deckRef).exists()) {
+      await updateDoc(doc(deckCollection, deckID), {
+        favorite_count: favDocs.data().count
+      }).catch(error => {
+        console.log(error);
+      });
     }
 
   },
