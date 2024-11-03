@@ -88,7 +88,7 @@ const getDecks = async (orderBy, filter, lastDeck) => {
       deck_highlight: data.deck_highlight,
       // deck_images: data.deck_images,
       // pdf: data.pdf,
-      fav_count: await FavoriteFirestore.countFavoriteDecks(deck.id),
+      // fav_count: await FavoriteFirestore.countFavoriteDecks(deck.id),
       tag: data.tag,
       catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
       // created: data.created ? data.created.toDate().toLocaleString() : '',
