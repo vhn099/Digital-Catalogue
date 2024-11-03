@@ -110,12 +110,12 @@ async function submitForm() {
 <template>
   <DockItem></DockItem>
   <div class="flex">
-    <div class="col-1">
+    <div class="sm:col-2 md:col-2 lg:col-1 xl:col-1">
 
     </div>
-    <div class="col-11 no-padding">
+    <div class="sm:col-10 md:col-10 lg:col-11 xl:col-11 no-padding">
       <div class="flex">
-        <div class="col-8">
+        <div class="sm:col-12 md:col-12 lg:col-12 xl:col-8">
           <SectionItem :icon="sectionIcon" :icon_text="sectionText" :title="messagePageHeader"/>
           <div class="flex flex-column" v-if="!isSuccess">
             <span>Please fill in a form and we get back to you</span>
@@ -176,7 +176,7 @@ async function submitForm() {
 
         </div>
 
-        <div class="col-4 contract-image">
+        <div class="sm:flex-none md:flex-none lg:flex-none xl:col-4 contract-image">
 
         </div>
       </div>
@@ -202,11 +202,18 @@ async function submitForm() {
   background-position: top;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .contract-image {
     display: none;
   }
 }
+
+@media (max-width: 992px) {
+  .contract-image {
+    display: none;
+  }
+} */
+
 .error-messages {
     margin-bottom: 16px;
     color: red;
