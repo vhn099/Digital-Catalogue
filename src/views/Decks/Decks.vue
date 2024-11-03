@@ -72,9 +72,9 @@ const getCategories = async () => {
 
   return categoryList;
 };
-const getDecks = async (cateID, lastDeck) => {
+const getDecks = async (orderBy, filter, lastDeck) => {
   const deckList = [];
-  const decksSnapshot = await DeckFirestore.getLimitDecks(cateID, limit, lastDeck);
+  const decksSnapshot = await DeckFirestore.getLimitDecks(orderBy, filter, limit, lastDeck);
   last_deck.value = decksSnapshot[decksSnapshot.length - 1];
   for (const deck of decksSnapshot) {
     const data = deck.data();
@@ -107,112 +107,108 @@ const onLoadEvents = async () => {
   // const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = useAppStore().getDeckCategory;
   orderedBy.value = { name: 'Latest Update', code: 'catalogue_edition-desc' };
-  selectedCategories.value = [cateIDParm.value];
+  if (cateIDParm.value) {
+    selectedCategories.value = [cateIDParm.value];
+  } else {
+    const categoryOptions = _.map(categories.value, 'key');
+    selectedCategories.value = categoryOptions;
+  }
   tagInputed.value = '';
 
-  all_decks.value = await getDecks(cateIDParm.value);
+  all_decks.value = await getDecks(orderedBy.value.code, {tag: tagInputed.value, category: selectedCategories.value});
   loadDataForDecks();
 
   spinner.value = false;
 }
 
 function loadDataForDecks() {
-  top_decks.value = [];
-  normal_decks.value = [];
-  for (let i = 0; i < all_decks.value.length; i++) {
-    if (i < 2) {
-      top_decks.value.push(all_decks.value[i]);
-    } else {
-      normal_decks.value.push(all_decks.value[i]);
-    }
-  }
+  top_decks.value = _.slice(all_decks.value, 0, 2);
+  normal_decks.value = _.slice(all_decks.value, 2);
 }
 
 const nextDecks = async (lastDeck) => {
   // spinner.value = true;
 
-  const decks = await getDecks(cateIDParm.value, lastDeck);
-  for (let i = 0; i < decks.length; i++) {
-    all_decks.value.push(decks[i]);
-  }
-
-  if (orderedBy.value) { // is sorting
-    sortAllDeck();
-  }
-  filterOnDecks();
-
-  // spinner.value = false;
-};
-
-function sortData() {
-  // spinner.value = true;
-
-  sortAllDeck();
+  const nextDecks = await getDecks(orderedBy.value.code, {tag: tagInputed.value, category: selectedCategories.value}, lastDeck);
+  all_decks.value = _.concat(all_decks.value, nextDecks);
   loadDataForDecks();
 
   // spinner.value = false;
 };
 
-function sortAllDeck() {
-  let selectedValue = orderedBy.value.code;
-  selectedValue = selectedValue.split('-');
-  all_decks.value = _.orderBy(all_decks.value, selectedValue[0], selectedValue[1]);
-}
-
-function addFilter() {
+async function sortData() {
   // spinner.value = true;
 
-  filterOnDecks();
+  let selectedValue = orderedBy.value.code;
+  all_decks.value = await getDecks(selectedValue, {tag: tagInputed.value, category: selectedCategories.value});
+  loadDataForDecks();
 
   // spinner.value = false;
 };
 
-function filterOnDecks() {
-  const tagFilter = tagInputed.value ? tagInputed.value.split(',') : [];
+// function sortAllDeck() {
+//   let selectedValue = orderedBy.value.code;
+//   selectedValue = selectedValue.split('-');
+//   all_decks.value = _.orderBy(all_decks.value, selectedValue[0], selectedValue[1]);
+// }
+
+async function addFilter() {
+  // spinner.value = true;
+
+  const tagFilter = tagInputed.value;
   const cateFilter = (selectedCategories.value.length == 1 && selectedCategories.value[0]) || selectedCategories.value.length > 1 ? selectedCategories.value : [];
-  const filteredDecks = _.filter(all_decks.value, (deck) => {
-    // Check if tagFilter is not empty
-    const matchesTagFilter = tagFilter.length > 0
-      ? _.some(deck.tag, (val) => _.includes(tagFilter, val))
-      : true; // If tagFilter is empty, ignore this filter
+  all_decks.value = await getDecks(orderedBy.value.code, {tag: tagFilter, category: cateFilter});
+  loadDataForDecks();
 
-    // Check if cateFilter is not empty
-    const matchesCateFilter = cateFilter.length > 0
-      ? _.includes(cateFilter, deck.category_id)
-      : true; // If cateFilter is empty, ignore this filter
+  // spinner.value = false;
+};
+
+// function filterOnDecks() {
+//   const tagFilter = tagInputed.value ? tagInputed.value.split(',') : [];
+//   const cateFilter = (selectedCategories.value.length == 1 && selectedCategories.value[0]) || selectedCategories.value.length > 1 ? selectedCategories.value : [];
+//   const filteredDecks = _.filter(all_decks.value, (deck) => {
+//     // Check if tagFilter is not empty
+//     const matchesTagFilter = tagFilter.length > 0
+//       ? _.some(deck.tag, (val) => _.includes(tagFilter, val))
+//       : true; // If tagFilter is empty, ignore this filter
+
+//     // Check if cateFilter is not empty
+//     const matchesCateFilter = cateFilter.length > 0
+//       ? _.includes(cateFilter, deck.category_id)
+//       : true; // If cateFilter is empty, ignore this filter
 
 
-    if (tagFilter.length > 0 && cateFilter.length > 0) {
-      return matchesTagFilter && matchesCateFilter;
-    }
-    if (tagFilter.length > 0) {
-      return matchesTagFilter;
-    }
-    if (cateFilter.length > 0) {
-      return matchesCateFilter;
-    }
-  });
+//     if (tagFilter.length > 0 && cateFilter.length > 0) {
+//       return matchesTagFilter && matchesCateFilter;
+//     }
+//     if (tagFilter.length > 0) {
+//       return matchesTagFilter;
+//     }
+//     if (cateFilter.length > 0) {
+//       return matchesCateFilter;
+//     }
+//   });
 
-  if ((tagFilter.length > 0 || cateFilter.length > 0) || filteredDecks.length > 0) {
-    top_decks.value = [];
-    normal_decks.value = [];
-    for (let i = 0; i < filteredDecks.length; i++) {
-      if (i < 2) {
-        top_decks.value.push(filteredDecks[i]);
-      } else {
-        normal_decks.value.push(filteredDecks[i]);
-      }
-    }
-  } else {
-    loadDataForDecks();
-  }
-}
+//   if ((tagFilter.length > 0 || cateFilter.length > 0) || filteredDecks.length > 0) {
+//     top_decks.value = [];
+//     normal_decks.value = [];
+//     for (let i = 0; i < filteredDecks.length; i++) {
+//       if (i < 2) {
+//         top_decks.value.push(filteredDecks[i]);
+//       } else {
+//         normal_decks.value.push(filteredDecks[i]);
+//       }
+//     }
+//   } else {
+//     loadDataForDecks();
+//   }
+// }
 
-function clearFilter() {
+async function clearFilter() {
   tagInputed.value = '';
-  if (!cateIDParm.value) {
-    selectedCategories.value = [];
-  }
+  const categoryOptions = _.map(categories.value, 'key');
+  selectedCategories.value = categoryOptions;
+  all_decks.value = await getDecks(orderedBy.value.code, {tag: tagInputed.value, category: selectedCategories.value});
   loadDataForDecks();
 };
 

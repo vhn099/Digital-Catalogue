@@ -434,7 +434,7 @@ const editRow = (data) => {
     formFields.pdf = data.pdf;
     formFields.tag = data.tag;
     formFields.deck_images = data.deck_images;
-    formFields.catalogue_edition = formatDate(data.catalogue_edition);
+    formFields.catalogue_edition = new Date(data.catalogue_edition);
 
     deckHighlightPreview.value = data.deck_highlight;
     deck_images.value = []; // Reset data of deck sub images when users click edit
@@ -506,7 +506,7 @@ watch(visible, () => {
                     <div class="flex flex-col">
                         <label class="form-label" for="title">Title <span class="required-icon">*</span></label>
                         <InputText :fluid="true" placeholder="Title" id="title" v-model="formFields.title"
-                            :invalid="v$.title.$errors.length > 0" />
+                            maxlength="100" :invalid="v$.title.$errors.length > 0" />
                         <small class="error-messages" v-if="v$.title.$errors.length > 0">{{
                             v$.title.$errors[0].$message }}</small>
                     </div>
@@ -516,7 +516,7 @@ watch(visible, () => {
                         <label class="form-label" for="detail_description">Detail Description <span
                                 class="required-icon">*</span></label>
                         <Textarea :fluid="true" placeholder="Detail Description" id="detail_description"
-                            v-model="formFields.detail_description"
+                            v-model="formFields.detail_description" maxlength="1500"
                             :invalid="v$.detail_description.$errors.length > 0" />
                         <small class="error-messages" v-if="v$.detail_description.$errors.length > 0">{{
                             v$.detail_description.$errors[0].$message }}</small>

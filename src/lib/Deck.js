@@ -48,33 +48,55 @@ export const DeckFirestore = {
     return snapshot.docs;
   },
 
-  async getLimitDecks(cateID, lim, lastDeck) {
+  // async getLimitDecks(cateID, lim, lastDeck) {
+  //   const db = collection(getFirestore(), useAppStore().getDecksCollection);
+  //   let docQuery = "";
+  //   if (lastDeck) { // get next {limit} doc
+  //     docQuery = cateID
+  //       ? query(
+  //         db,
+  //         orderBy("catalogue_edition", "desc"),
+  //         where("category_id", "==", cateID),
+  //         startAfter(lastDeck),
+  //         limit(lim)
+  //       )
+  //       : query(
+  //         db,
+  //         orderBy("catalogue_edition", "desc"),
+  //         startAfter(lastDeck),
+  //         limit(lim)
+  //       );
+  //   } else { // get first {limit} doc
+  //     docQuery = cateID
+  //       ? query(
+  //         db,
+  //         orderBy("catalogue_edition", "desc"),
+  //         where("category_id", "==", cateID),
+  //         limit(lim)
+  //       )
+  //       : query(db, orderBy("catalogue_edition", "desc"), limit(lim));
+  //   }
+  //   let snapshot = await getDocs(docQuery);
+
+  //   return snapshot.docs;
+  // },
+
+  async getLimitDecks(order, filter, lim, lastDeck) {
+    const order_by = order.split('-');
+    const tag_filter = filter.tag;
+    const category_filter = filter.category;
     const db = collection(getFirestore(), useAppStore().getDecksCollection);
-    let docQuery = "";
-    if (lastDeck) { // get next {limit} doc
-      docQuery = cateID
-        ? query(
-          db,
-          orderBy("catalogue_edition", "desc"),
-          where("category_id", "==", cateID),
-          startAfter(lastDeck),
-          limit(lim)
-        )
-        : query(
-          db,
-          orderBy("catalogue_edition", "desc"),
-          startAfter(lastDeck),
-          limit(lim)
-        );
-    } else { // get first {limit} doc
-      docQuery = cateID
-        ? query(
-          db,
-          orderBy("catalogue_edition", "desc"),
-          where("category_id", "==", cateID),
-          limit(lim)
-        )
-        : query(db, orderBy("catalogue_edition", "desc"), limit(lim));
+    let docQuery = query(db, orderBy(order_by[0], order_by[1]));
+    if (tag_filter) {
+      docQuery = query(docQuery, where("tag", "array-contains-any", tag_filter.split(',')));
+    }
+    if (category_filter) {
+      docQuery = query(docQuery, where("category_id", "in", category_filter));
+    }
+    if (lastDeck) {
+      docQuery = query(docQuery, startAfter(lastDeck), limit(lim));
+    } else {
+      docQuery = query(docQuery, limit(lim));
     }
     let snapshot = await getDocs(docQuery);
 
