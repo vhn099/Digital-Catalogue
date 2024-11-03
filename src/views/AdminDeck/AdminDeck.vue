@@ -39,6 +39,8 @@ const formFields = reactive({
     deck_highlight_name_id: '',
     deck_images: [],
     pdf: '',
+    pdf_name: '',
+    pdf_name_id: '',
     tag: [],
     catalogue_edition: '',
 });
@@ -244,6 +246,8 @@ const resetFormData = () => {
     formFields.deck_highlight_name = "";
     formFields.deck_highlight_name_id = "";
     formFields.catalogue_edition = "";
+    formFields.pdf_name = "";
+    formFields.pdf_name_id = "";
 
     deck_images.value = [];
     deckHighlightPreview.value = null;
@@ -298,7 +302,7 @@ const getDeckFormData = () => {
         deckForm.images.push({
             file_data: image,
             file_name: image.name,
-            file_name_id: `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${image.name}`,
+            file_name_id: image.name_id ? image.name_id : `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${image.name}`,
             type: 'subImages',
             isNew: image.isNew
         });
@@ -329,6 +333,8 @@ const getDecks = async () => {
             deck_highlight_name_id: data.deck_highlight_name_id,
             deck_images: data.deck_images,
             pdf: data.pdf,
+            pdf_name: data.pdf_name,
+            pdf_name_id: data.pdf_name_id,
             tag: data.tag,
             catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
             created: data.created ? data.created.toDate().toLocaleString() : '',
@@ -354,6 +360,78 @@ const getCategories = async () => {
     });
 
     return categoryList;
+};
+
+const deleteRow = (data) => {
+    confirm.require({
+        message: 'Do you want to delete this deck ?',
+        header: 'ATTENTION',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: async () => {
+            spinner.value = true;
+            let result = await DeckFirestore.deleteDeck(data);
+            toast.add({
+                summary: 'System Message',
+                severity: result.status,
+                detail: result.message,
+                life: 3000 // 3s
+            });
+            if (result.status === 'success') {
+                visible.value = false;
+                decks.value = await getDecks();
+            }
+            spinner.value = false;
+        },
+        reject: () => {
+
+        }
+    });
+};
+
+const editRow = (data) => {
+    formFields.id = data.id;
+    formFields.title = data.title;
+    formFields.detail_description = data.detail_description;
+    formFields.category_id = {
+        id: data.category_id,
+        name: data.category_name,
+    };
+    formFields.deck_highlight = data.deck_highlight;
+    formFields.deck_highlight_name = data.deck_highlight_name;
+    formFields.deck_highlight_name_id = data.deck_highlight_name_id;
+    formFields.pdf = data.pdf;
+    formFields.pdf_name = data.pdf_name;
+    formFields.pdf_name_id = data.pdf_name_id;
+    formFields.tag = data.tag;
+    formFields.deck_images = data.deck_images;
+    formFields.catalogue_edition = new Date(data.catalogue_edition);
+
+    deckHighlightPreview.value = data.deck_highlight;
+    deck_images.value = []; // Reset data of deck sub images when users click edit
+    if (!_.isEmpty(data.deck_images)) {
+        data.deck_images.forEach(async image => {
+            const object = {
+                name: image.name,
+                name_id: image.name_id,
+                objectURL: image.url,
+                isNew: false,
+            };
+            deck_images.value.push(object);
+        });
+    }
+    pdfFile.value = data.pdf;
+
+    visible.value = true;
+    edit.value = true;
 };
 
 const submitForm = async () => {
@@ -390,72 +468,7 @@ const submitForm = async () => {
     }
     spinner.value = false;
 };
-const deleteRow = (data) => {
-    confirm.require({
-        message: 'Do you want to delete this deck ?',
-        header: 'ATTENTION',
-        rejectLabel: 'Cancel',
-        rejectProps: {
-            label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
-        },
-        acceptProps: {
-            label: 'Delete',
-            severity: 'danger'
-        },
-        accept: async () => {
-            let result = await DeckFirestore.deleteDeck(data);
-            toast.add({
-                summary: 'System Message',
-                severity: result.status,
-                detail: result.message,
-                life: 3000 // 3s
-            });
-            if (result.status === 'success') {
-                visible.value = false;
-                decks.value = await getDecks();
-            }
-        },
-        reject: () => {
 
-        }
-    });
-};
-const editRow = (data) => {
-    formFields.id = data.id;
-    formFields.title = data.title;
-    formFields.detail_description = data.detail_description;
-    formFields.category_id = {
-        id: data.category_id,
-        name: data.category_name,
-    };
-    formFields.deck_highlight = data.deck_highlight;
-    formFields.deck_highlight_name = data.deck_highlight_name;
-    formFields.pdf = data.pdf;
-    formFields.tag = data.tag;
-    formFields.deck_images = data.deck_images;
-    formFields.catalogue_edition = new Date(data.catalogue_edition);
-
-    deckHighlightPreview.value = data.deck_highlight;
-    deck_images.value = []; // Reset data of deck sub images when users click edit
-    if (!_.isEmpty(data.deck_images)) {
-        data.deck_images.forEach(async image => {
-            const object = {
-                name: image.name,
-                name_id: image.name_id,
-                objectURL: image.url,
-                isNew: false,
-            };
-            deck_images.value.push(object);
-        });
-    }
-    pdfFile.value = data.pdf;
-
-    visible.value = true;
-    edit.value = true;
-};
-// IMAGE PREVIEWER
 const onImageSelected = (event) => {
     const file = event.files[0];
     const reader = new FileReader();
@@ -467,7 +480,6 @@ const onImageSelected = (event) => {
     reader.readAsDataURL(file);
 };
 
-// ON PDF SELECTED
 const onFileSelected = (event) => {
     pdfFile.value = event.files[0].name;
 };
@@ -475,6 +487,7 @@ const onFileSelected = (event) => {
 const formatDate = (value) => {
     return value ? moment(value).format('MMM/YYYY') : '';
 };
+
 const exportMyList = (event) => {
     ExportData.exportMyListAsExcel(decks.value, "decks");
 };

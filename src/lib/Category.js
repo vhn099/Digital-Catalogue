@@ -100,7 +100,7 @@ export const CategoryFirestore = {
         if(checkCurrentFile) {
           // Each category must have image when they are created successful which means when users update images will remove the old image and replace it with new image
           const deleteOldFile = await FirebaseStorage.deleteFile(folder, categoryForm.image_name_id);
-          if (!deleteOldFile) { // Error happens in replacing old image
+          if (!deleteOldFile.deleted) { // Error happens in replacing old image
             result.status = "error";
             result.message = useAppStore().getMessageMaster.DATA("").CATEGORY_REPLACE_OLD_IMAGE_ERROR;
             return result;

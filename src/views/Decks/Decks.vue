@@ -36,7 +36,7 @@ const orderBy = ref([
   { name: 'A-z', code: 'title-asc' },
   { name: 'z-A', code: 'title-desc' },
   { name: 'Latest Update', code: 'catalogue_edition-desc' },
-  { name: 'Most Favorited', code: 'fav_count-desc' },
+  { name: 'Most Favorited', code: 'favorite_count-desc' },
 ]);
 const tagInputed = ref('');
 const selectedCategories = ref();
@@ -137,13 +137,13 @@ const nextDecks = async (lastDeck) => {
 };
 
 async function sortData() {
-  // spinner.value = true;
+  spinner.value = true;
 
   let selectedValue = orderedBy.value.code;
   all_decks.value = await getDecks(selectedValue, {tag: tagInputed.value, category: selectedCategories.value});
   loadDataForDecks();
 
-  // spinner.value = false;
+  spinner.value = false;
 };
 
 // function sortAllDeck() {
@@ -153,14 +153,19 @@ async function sortData() {
 // }
 
 async function addFilter() {
-  // spinner.value = true;
+  spinner.value = true;
 
   const tagFilter = tagInputed.value;
   const cateFilter = (selectedCategories.value.length == 1 && selectedCategories.value[0]) || selectedCategories.value.length > 1 ? selectedCategories.value : [];
-  all_decks.value = await getDecks(orderedBy.value.code, {tag: tagFilter, category: cateFilter});
+  if (cateFilter.length === 0 ) { // If users don't choose any category then there will be no decks show on the page.
+    all_decks.value = [];
+    last_deck.value = null;
+  } else {
+    all_decks.value = await getDecks(orderedBy.value.code, {tag: tagFilter, category: cateFilter});
+  }
   loadDataForDecks();
 
-  // spinner.value = false;
+  spinner.value = false;
 };
 
 // function filterOnDecks() {
@@ -256,7 +261,7 @@ watch(() => router.currentRoute.value.params, async () => {
 
       <div class="block-search">
         <!-- <a style="padding-right: 10px;" class="close" href="" @click="clearFilter">Clear</a> -->
-        <Button label="Clear" @click="clearFilter" />
+        <Button severity="warn" label="Clear" @click="clearFilter" />
         <Button label="Save" @click="addFilter" style="margin-left: 5px;" />
       </div>
     </div>
