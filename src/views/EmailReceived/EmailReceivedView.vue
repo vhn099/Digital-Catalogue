@@ -15,8 +15,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import Tag from 'primevue/tag';
-import * as xlsx from 'xlsx';
-import * as fileSaver from 'file-saver';
+import { ExportData } from "@/lib/Export";
 
 const visible = ref(false);
 const formFields = reactive({
@@ -86,9 +85,6 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-onMounted(async () => {
-    users.value = await getEmails();
-});
 
 /* FUNCTIONS */
 const resetFormData = () => {
@@ -122,27 +118,8 @@ const getEmails = async () => {
     });
     return emailList;
 };
-const saveAsExcelFile = (buffer, fileName) => {
-    import('file-saver').then((module) => {
-        if (module && module.default) {
-            let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-            let EXCEL_EXTENSION = '.xlsx';
-            const data = new Blob([buffer], {
-                type: EXCEL_TYPE
-            });
-
-            module.default.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-        }
-    });
-};
 const exportMyList = (event) => {
-    const worksheet = xlsx.utils.json_to_sheet(users.value);
-    const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-    const excelBuffer = xlsx.write(workbook, {
-        bookType: 'xlsx',
-        type: 'array'
-    });
-    saveAsExcelFile(excelBuffer, 'emails_received');
+    ExportData.exportMyListAsExcel(users.value, "email_received");
 }
 
 const viewRow = (data) => {
@@ -157,14 +134,17 @@ const viewRow = (data) => {
     visible.value = true;
     view.value = true;
 };
+/* FUNCTIONS */
+
+/* VUE EVENTS */
+onMounted(async () => {
+    users.value = await getEmails();
+});
 watch(visible, () => {
     if (!visible.value) {
         resetFormData();
     }
 });
-
-/* FUNCTIONS */
-
 </script>
 <template>
     <Toast />
@@ -252,7 +232,7 @@ watch(visible, () => {
                             <span class="table-title">Received Messages</span>
                             <div class="table-actions gap-2">
                                 <div>
-                                    <Button type="button" label="Export" icon="pi pi-external-link"
+                                    <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link"
                                         @click="exportMyList($event)" />
                                 </div>
                                 <div>

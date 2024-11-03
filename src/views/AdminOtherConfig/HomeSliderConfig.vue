@@ -22,6 +22,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import _ from 'lodash';
+import { ExportData } from '@/lib/Export';
 
 const tableColumns = [
     {
@@ -169,7 +170,6 @@ const deleteRow = (data) => {
         }
     });
 };
-
 const resetFormData = () => {
     formFields.id = '';
     formFields.background_color = "";
@@ -270,6 +270,9 @@ const onFileSelected = (event) => {
 
     reader.readAsDataURL(file);
 };
+const exportMyList = (event) => {
+    ExportData.exportMyListAsExcel(homeSliders.value, "home_slider");
+};
 /* FUNCTIONS END */
 
 onMounted(async () => {
@@ -295,7 +298,7 @@ const emits = defineEmits(['setLoading']);
             <form>
                 <div class="flex flex-col" v-if="edit">
                     <label class="form-label" for="id">ID</label>
-                    <InputText readonly :fluid="true" id="id" v-model="formFields.id" maxLength="150"/>
+                    <InputText readonly :fluid="true" id="id" v-model="formFields.id" maxLength="150" />
                 </div>
 
                 <div class="flex flex-col">
@@ -310,8 +313,8 @@ const emits = defineEmits(['setLoading']);
 
                 <div class="flex flex-col">
                     <label class="form-label" for="banner_title">Line 1<span class="required-icon">*</span></label>
-                    <InputText :fluid="true" placeholder="Line 1" id="banner_title"
-                        v-model="formFields.banner_title" :invalid="v$.banner_title.$errors.length > 0" maxLength="150"/>
+                    <InputText :fluid="true" placeholder="Line 1" id="banner_title" v-model="formFields.banner_title"
+                        :invalid="v$.banner_title.$errors.length > 0" maxLength="150" />
                     <small class="error-messages" v-if="v$.banner_title.$errors.length > 0">{{
                         v$.banner_title.$errors[0].$message }}</small>
                 </div>
@@ -320,7 +323,8 @@ const emits = defineEmits(['setLoading']);
                     <label class="form-label" for="banner_description">Line 2<span
                             class="required-icon">*</span></label>
                     <InputText :fluid="true" placeholder="Line 2" id="banner_description"
-                        v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0" maxLength="150"/>
+                        v-model="formFields.banner_description" :invalid="v$.banner_description.$errors.length > 0"
+                        maxLength="150" />
                     <small class="error-messages" v-if="v$.banner_description.$errors.length > 0">{{
                         v$.banner_description.$errors[0].$message }}</small>
                 </div>
@@ -328,14 +332,14 @@ const emits = defineEmits(['setLoading']);
                 <div class="flex flex-col">
                     <label class="form-label" for="view_deck_url">View Deck URL</label>
                     <!-- <Select id="deck_id" v-model="selectedDeck" :options="decks" showClear optionLabel="name" optionValue="id"/> -->
-                    <InputText :fluid="true" v-model="formFields.view_deck_url" maxLength="150"/>
+                    <InputText :fluid="true" v-model="formFields.view_deck_url" maxLength="150" />
                 </div>
 
                 <div class="flex flex-col">
                     <label class="form-label" for="background_color">Background Color</label>
                     <div class="flex items-center">
                         <!-- <ColorPicker id="background_color" v-model="formFields.background_color"/> -->
-                        <InputText :fluid="true" v-model="formFields.background_color" maxLength="150"/>
+                        <InputText :fluid="true" v-model="formFields.background_color" maxLength="150" />
                     </div>
                 </div>
 
@@ -362,6 +366,9 @@ const emits = defineEmits(['setLoading']);
             <div class="header-table">
                 <span class="table-title">Manage Home Slider</span>
                 <div class="table-actions gap-2">
+                    <div>
+                        <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link" @click="exportMyList($event)" />
+                    </div>
                     <div>
                         <Button type="button" label="Add" icon="pi pi-plus" @click="openModal" />
                     </div>

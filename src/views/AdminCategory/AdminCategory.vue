@@ -18,6 +18,7 @@ import { CategoryFirestore } from "@/lib/Category";
 import { FirebaseStorage } from "@/lib/Storage";
 import FileUpload from "primevue/fileupload";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import { ExportData } from "@/lib/Export";
 
 const formFields = reactive({
     id: '',
@@ -173,8 +174,8 @@ const submitForm = async () => {
 
         imageFile.forEach(file => {
             categoryImage.file_data = file,
-            categoryImage.file_name = file.name,
-            categoryImage.file_name_id = `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${file.name}`;
+                categoryImage.file_name = file.name,
+                categoryImage.file_name_id = `RandomID-${Math.floor(Math.random() * 100)}_${new Date().toTimeString()}_${file.name}`;
         });
         const categoryFormData = getCategoryFormData();
         if (edit.value) {
@@ -244,6 +245,10 @@ const onFileSelected = (event) => {
 
     reader.readAsDataURL(file);
 };
+const exportMyList = (event) => {
+    ExportData.exportMyListAsExcel(categories.value, "categories");
+};
+
 /* FUNCTIONS */
 
 
@@ -258,7 +263,7 @@ watch(visible, () => {
 });
 </script>
 <template>
-    <LoadingSpinner v-if="spinner"/>
+    <LoadingSpinner v-if="spinner" />
     <Toast />
     <div class="">
         <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Category"'
@@ -317,6 +322,10 @@ watch(visible, () => {
                         <div class="header-table">
                             <span class="table-title">Manage Categories</span>
                             <div class="table-actions gap-2">
+                                <div>
+                                    <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link"
+                                        @click="exportMyList($event)" />
+                                </div>
                                 <div>
                                     <Button type="button" label="Add" icon="pi pi-plus" @click="openDrawer" />
                                 </div>
