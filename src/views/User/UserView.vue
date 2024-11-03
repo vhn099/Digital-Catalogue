@@ -21,6 +21,7 @@ import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import ConfirmDialog from "primevue/confirmdialog";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import { ExportData } from "@/lib/Export";
 
 const formFields = reactive({
     id: '',
@@ -76,14 +77,16 @@ const tableColumns = [
         field: 'isAdmin',
         label: 'Admin',
         styles: {
-
+            textAlign: 'center',
+            fontWeight: 'bold'
         }
     },
     {
         field: 'disabled',
         label: "Deactivated",
         styles: {
-
+            textAlign: 'center',
+            fontWeight: 'bold'
         }
     },
     {
@@ -250,7 +253,9 @@ const editRow = (data) => {
     isAdmin.value = data.isAdmin === 'YES' ? true : false;
     isDisabled.value = data.disabled === 'YES' ? true : false;
 };
-/* FUNCTIONS */
+const exportMyList = (event) => {
+    ExportData.exportMyListAsExcel(users.value, "users");
+};
 
 watch(visible, () => {
     if (!visible.value) {
@@ -354,6 +359,10 @@ onMounted(async () => {
                         <div class="header-table">
                             <span class="table-title">Manage Users</span>
                             <div class="table-actions gap-2">
+                                <div>
+                                    <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link"
+                                        @click="exportMyList($event)" />
+                                </div>
                                 <div>
                                     <Button type="button" label="Add" icon="pi pi-plus" @click="openDrawer" />
                                 </div>

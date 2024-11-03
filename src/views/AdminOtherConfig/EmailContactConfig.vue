@@ -15,6 +15,7 @@ import Button from 'primevue/button';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { OtherConfigFirestore } from '@/lib/OtherConfig';
+import { ExportData } from '@/lib/Export';
 
 const tableColumns = [
     {
@@ -175,6 +176,9 @@ const submitForm = async () => {
 
     }
 };
+const exportMyList = (event) => {
+    ExportData.exportMyListAsExcel(emailContacts.value, "contact_emails");
+};
 
 /* VUE EVENTS */
 onMounted(async () => {
@@ -228,6 +232,9 @@ const emits = defineEmits(['setLoading']);
             <div class="header-table">
                 <span class="table-title">Manage Email Contacts</span>
                 <div class="table-actions gap-2">
+                    <div>
+                        <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link" @click="exportMyList($event)" />
+                    </div>
                     <div>
                         <Button type="button" label="Add" icon="pi pi-plus" @click="openDialog"/>
                     </div>

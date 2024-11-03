@@ -11,7 +11,12 @@
                         <span class="table-title">Manage User Favorite</span>
                         <div class="table-actions gap-2">
                             <div>
-                                <Button type="button" label="Switch view" icon="pi pi-arrow-right-arrow-left" @click="switchView"/>
+                                <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link"
+                                    @click="exportMyList($event)" />
+                            </div>
+                            <div>
+                                <Button type="button" label="Switch view" icon="pi pi-arrow-right-arrow-left"
+                                    @click="switchView" />
                             </div>
                             <div>
                                 <IconField>
@@ -57,7 +62,7 @@
                 <template #groupfooter="slotProps">
                     <div class="flex justify-end font-bold w-full">Total: {{ isUser ?
                         calculateUserTotal(slotProps.data.representative.name) :
-                        calculateDeckTotal(slotProps.data.representative.name)}}</div>
+                        calculateDeckTotal(slotProps.data.representative.name) }}</div>
                 </template>
             </DataTable>
             <!-- <Toast /> -->
@@ -83,6 +88,7 @@ import { UserFirestore } from "@/lib/User";
 import { FavoriteFirestore } from "@/lib/Favorite";
 import ProfileIcon from '@/assets/img/icon/profile.png';
 import Button from 'primevue/button';
+import { ExportData } from '@/lib/Export';
 
 onMounted(() => {
     getAllFavorites_Deck();
@@ -146,6 +152,7 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
+/* FUNCTIONS DEFINITION START */
 const getAllFavorites_User = async () => {
     const favSnapshot = await FavoriteFirestore.getFavorites();
     const promises = favSnapshot.map(async (fav) => {
@@ -195,6 +202,10 @@ const getAllFavorites_Deck = async () => {
     const results = await Promise.all(promises);
     fav_deck.value = results;
 };
+const exportMyList = (event) => {
+    ExportData.exportMyListAsExcel(fav_user.value, "favorites");
+};
+
 </script>
 <style scoped>
 .table-section {

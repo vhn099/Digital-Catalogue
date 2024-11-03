@@ -27,6 +27,7 @@ import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 import DatePicker from "primevue/datepicker";
 import moment from "moment";
+import { ExportData } from "@/lib/Export";
 
 const formFields = reactive({
     id: '',
@@ -474,6 +475,9 @@ const onFileSelected = (event) => {
 const formatDate = (value) => {
     return value ? moment(value).format('MMM/YYYY') : '';
 };
+const exportMyList = (event) => {
+    ExportData.exportMyListAsExcel(decks.value, "decks");
+};
 /* FUNCTIONS */
 
 
@@ -489,7 +493,7 @@ watch(visible, () => {
 });
 </script>
 <template>
-    <LoadingSpinner v-if="spinner"/>
+    <LoadingSpinner v-if="spinner" />
     <Toast />
     <ConfirmDialog />
     <div class="">
@@ -563,12 +567,6 @@ watch(visible, () => {
                         <label class="form-label" for="deck_images">Deck Images (1200x800px) <span
                                 class="required-icon">*</span></label>
                         <Toast />
-                        <!-- <FileUpload name="deck_images[]" @upload="onAdvancedUpload($event)"
-                            ref="deck_images" :multiple="true" accept="image/*" :maxFileSize="1000000">
-                            <template #empty>
-                                <span>Drag and drop files to here to upload.</span>
-                            </template>
-                        </FileUpload> -->
                         <FileUpload ref="multiple_file_upload" :multiple="true" accept="image/*" :maxFileSize="1000000"
                             @select="onSelectedFiles" @clear="onClearFiles">
                             <template #header="{ chooseCallback, clearCallback, files }">
@@ -628,7 +626,8 @@ watch(visible, () => {
                     <!-- Tag -->
                     <div class="flex flex-col">
                         <label class="form-label" for="tag">Tags <span class="required-icon">*</span></label>
-                        <InputChips v-model="formFields.tag" placeholder="Input Tag and ENTER to seperate" :invalid="v$.tag.$errors.length > 0" removable>
+                        <InputChips v-model="formFields.tag" placeholder="Input Tag and ENTER to seperate"
+                            :invalid="v$.tag.$errors.length > 0" removable>
                         </InputChips>
                         <small class="error-messages" v-if="v$.tag.$errors.length > 0">{{
                             v$.tag.$errors[0].$message }}</small>
@@ -636,8 +635,10 @@ watch(visible, () => {
 
                     <!-- Catalogue Edition -->
                     <div class="flex flex-col">
-                        <label class="form-label" for="catalogue_edition">Catalogue Edition <span class="required-icon">*</span></label>
-                        <DatePicker v-model="formFields.catalogue_edition" id="catalogue_edition" view="month" dateFormat="M/yy" />
+                        <label class="form-label" for="catalogue_edition">Catalogue Edition <span
+                                class="required-icon">*</span></label>
+                        <DatePicker v-model="formFields.catalogue_edition" id="catalogue_edition" view="month"
+                            dateFormat="M/yy" />
                         <small class="error-messages" v-if="v$.catalogue_edition.$errors.length > 0">{{
                             v$.catalogue_edition.$errors[0].$message }}</small>
                     </div>
@@ -662,6 +663,10 @@ watch(visible, () => {
                         <div class="header-table">
                             <span class="table-title">Manage Decks</span>
                             <div class="table-actions gap-2">
+                                <div>
+                                    <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link"
+                                        @click="exportMyList($event)" />
+                                </div>
                                 <div>
                                     <Button type="button" label="Add" icon="pi pi-plus" @click="openDrawer" />
                                 </div>
