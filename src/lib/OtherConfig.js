@@ -63,7 +63,8 @@ export const OtherConfigFirestore = {
             let downloadedURL = "";
             const db = collection(getFirestore(), useAppStore().getHomeSliderCollection);
             const docRef = doc(db, sliderForm.id);
-            if (!_.isEmpty(sliderForm.image)) {
+            const notChoosingImage = _.isEmpty(sliderForm.image);
+            if (!notChoosingImage) {
                 const checkCurrentFile = await FirebaseStorage.checkFileExists(folderLocation, sliderForm.image_name_id);
                 if (checkCurrentFile) {
                     // Delete the old image and replace it with the new one
@@ -78,8 +79,8 @@ export const OtherConfigFirestore = {
             }
             const formData = {
                 image: downloadedURL ? downloadedURL : sliderForm.image_link,
-                image_name: sliderForm.image.image_name,
-                image_name_id: sliderForm.image.image_name_id || "",
+                image_name: notChoosingImage ? sliderForm.image_name : sliderForm.image.image_name,
+                image_name_id: notChoosingImage ? sliderForm.image_name_id : sliderForm.image.image_name_id,
                 banner_title: sliderForm.banner_title,
                 banner_description: sliderForm.banner_description,
                 background_color: sliderForm.background_color,
