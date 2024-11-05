@@ -14,11 +14,10 @@ import Popover from 'primevue/popover';
 import Checkbox from 'primevue/checkbox';
 import Divider from 'primevue/divider';
 
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch,  } from 'vue';
 import { getAuth } from 'firebase/auth';
 import { DeckFirestore } from '@/lib/Deck';
 import { CategoryFirestore } from '@/lib/Category';
-import { FavoriteFirestore } from '@/lib/Favorite';
 import router from '@/router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import _ from 'lodash';
@@ -40,12 +39,8 @@ const orderBy = ref([
 ]);
 const tagInputed = ref('');
 const selectedCategories = ref();
+const selectedCategoriesUsedForLogicHandler = ref(); // There is a case when users choose a category but not save that category but sort the list the list is sorted based on the category chose in the filter.
 const categories = ref();
-const favRecord = ref({
-  created: '',
-  userID: '',
-  deckID: '',
-});
 const email = ref('');
 const spinner = ref(false);
 
@@ -107,15 +102,21 @@ const onLoadEvents = async () => {
   // const { params } = router.currentRoute.value; // open from Category
   cateIDParm.value = useAppStore().getDeckCategory;
   orderedBy.value = { name: 'Latest Update', code: 'catalogue_edition-desc' };
-  if (cateIDParm.value) {
-    selectedCategories.value = [cateIDParm.value];
-  } else {
-    const categoryOptions = _.map(categories.value, 'key');
-    selectedCategories.value = categoryOptions;
-  }
+
+  // Old logic related to cateIDParam
+  // if (cateIDParm.value) {
+  //   selectedCategories.value = [cateIDParm.value];
+  // } else {
+  //   const categoryOptions = _.map(categories.value, 'key');
+  //   selectedCategories.value = categoryOptions;
+  //   selectedCategoriesUsedForLogicHandler.value = categoryOptions;
+  // }
+  const categoryOptions = _.map(categories.value, 'key');
+  selectedCategories.value = categoryOptions;
+  selectedCategoriesUsedForLogicHandler.value = categoryOptions;
   tagInputed.value = '';
 
-  all_decks.value = await getDecks(orderedBy.value.code, {tag: tagInputed.value, category: selectedCategories.value});
+  all_decks.value = await getDecks(orderedBy.value.code, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value });
   loadDataForDecks();
 
   spinner.value = false;
@@ -127,20 +128,24 @@ function loadDataForDecks() {
 }
 
 const nextDecks = async (lastDeck) => {
-  // spinner.value = true;
+  spinner.value = true;
 
-  const nextDecks = await getDecks(orderedBy.value.code, {tag: tagInputed.value, category: selectedCategories.value}, lastDeck);
+  const nextDecks = await getDecks(orderedBy.value.code, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value }, lastDeck);
   all_decks.value = _.concat(all_decks.value, nextDecks);
   loadDataForDecks();
 
-  // spinner.value = false;
+  spinner.value = false;
 };
 
 async function sortData() {
   spinner.value = true;
 
   let selectedValue = orderedBy.value.code;
-  all_decks.value = await getDecks(selectedValue, {tag: tagInputed.value, category: selectedCategories.value});
+
+  if (selectedCategoriesUsedForLogicHandler.value.length > 0) {
+    all_decks.value = await getDecks(selectedValue, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value });
+  }
+
   loadDataForDecks();
 
   spinner.value = false;
@@ -157,11 +162,12 @@ async function addFilter() {
 
   const tagFilter = tagInputed.value;
   const cateFilter = (selectedCategories.value.length == 1 && selectedCategories.value[0]) || selectedCategories.value.length > 1 ? selectedCategories.value : [];
-  if (cateFilter.length === 0 ) { // If users don't choose any category then there will be no decks show on the page.
+  selectedCategoriesUsedForLogicHandler.value = selectedCategories.value;
+  if (cateFilter.length === 0) { // If users don't choose any category then there will be no decks show on the page.
     all_decks.value = [];
     last_deck.value = null;
   } else {
-    all_decks.value = await getDecks(orderedBy.value.code, {tag: tagFilter, category: cateFilter});
+    all_decks.value = await getDecks(orderedBy.value.code, { tag: tagFilter, category: cateFilter });
   }
   loadDataForDecks();
 
@@ -213,7 +219,8 @@ async function clearFilter() {
   tagInputed.value = '';
   const categoryOptions = _.map(categories.value, 'key');
   selectedCategories.value = categoryOptions;
-  all_decks.value = await getDecks(orderedBy.value.code, {tag: tagInputed.value, category: selectedCategories.value});
+  selectedCategoriesUsedForLogicHandler.value = categoryOptions;
+  all_decks.value = await getDecks(orderedBy.value.code, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value });
   loadDataForDecks();
 };
 
@@ -252,7 +259,7 @@ watch(() => router.currentRoute.value.params, async () => {
         <span class="filter-text">Category</span>
         <div class="checkbox-area">
           <div v-for="category of categories" :key="category.key" class="checkbox-item gap-2">
-            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key"/>
+            <Checkbox v-model="selectedCategories" :inputId="category.key" name="category" :value="category.key" />
             <label :for="category.key">{{ category.name }}</label>
           </div>
         </div>

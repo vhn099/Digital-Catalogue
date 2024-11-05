@@ -11,13 +11,12 @@ import AdminCategory from '@/views/AdminCategory/AdminCategory.vue'
 import AdminDeck from '@/views/AdminDeck/AdminDeck.vue'
 import AdminOtherConfig from '@/views/AdminOtherConfig/OtherConfig.vue'
 import AdminEmailReceived from '@/views/EmailReceived/EmailReceivedView.vue'
-import { getAuth } from 'firebase/auth'
 import DeckDetail from '@/views/DeckDetail/DeckDetail.vue'
 import MyProfile from '@/views/MyProfile/MyProfile.vue'
 import MyFavorite from '@/views/MyFavorite/MyFavorite.vue'
-import { nextTick } from 'vue'
 import AdminFavorite from '@/views/AdminFavorite/AdminFavorite.vue'
 import { COMMON_FUNCTIONS } from '@/lib/Common'
+import _ from 'lodash'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -201,7 +200,8 @@ router.beforeEach(async (to, from, next) => {
   const requireAuth = to.matched.some(record => record.meta.requireAuth);
   const requireAdmin = to.matched.some(record => record.meta.adminSite);
 
-  if (currentUser && disabled) {
+  // User is logged in but is disabled
+  if (!_.isEmpty(currentUser.userData) && disabled) {
     if (to.name !== 'signin') {
       next('/sign-in');
     } else {
@@ -210,11 +210,11 @@ router.beforeEach(async (to, from, next) => {
     return;
   }
 
-  if (requireAuth && !currentUser) { // User is not authen will be redirected to sign in page
+  if (requireAuth && _.isEmpty(currentUser.userData)) { // User is not authen will be redirected to sign in page
     next('/sign-in');
   } else if (requireAuth && requireAdmin && !isAdmin) { // If user doesn't have roles for admin sites redirecting back to home
     next('/home');
-  } else if (currentUser && !requireAuth && !disabled) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
+  } else if (!_.isEmpty(currentUser.userData) && !requireAuth && !disabled) { // Redirect users back to /home if they tries to access to sign-in page when they are authenticated
     next('/home');
   } else {
     next();
