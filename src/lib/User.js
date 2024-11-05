@@ -1,7 +1,7 @@
 import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, where } from "firebase/firestore";
 
 import { useAppStore } from "@/stores";
-import { getAuth } from "firebase/auth";
+import { getAuth, updateCurrentUser, updateProfile } from "firebase/auth";
 import axios from "axios";
 import { COMMON_VARIABLE } from "./Common";
 
@@ -42,13 +42,17 @@ export const UserFirestore = {
             status: 'success',
             message: '',
             userData: {},
-            expires: ""
+            expires: "",
+            disabled: false,
         };
+        
         const db = collection(getFirestore(), useAppStore().getUsersCollection);
         const currentUser = getAuth().currentUser;
+        
         if (!currentUser) {
             result.status = 'error';
             result.message = useAppStore().getMessageMaster.AUTH.NOT_LOGGED_IN;
+            console.log(result);
         } else {
             const email = currentUser.email;
             const userQuery = query(db, where('email', "==", email));
@@ -191,14 +195,18 @@ export const UserFirestore = {
         try {
             const docRef = getDoc(doc(db, userForm.id));
             if ((await docRef).exists()) {
-                console.log(userForm);
                 await updateDoc(doc(db, userForm.id), {
                     firstname: userForm.firstname || "",
                     lastname: userForm.lastname || "",
                     updated: userForm.updated,
                     updated_by: userForm.updated_by
-                }).then(response => {
-                    
+                }).then(async response => {
+                    const fullName = userForm.firstname + " " + userForm.lastname;
+                    await updateProfile(getAuth().currentUser, {
+                        displayName: fullName
+                    }).catch(error => {
+                        console.log(error);
+                    });
                     result.message = useAppStore().getMessageMaster.DATA(userForm.email).USER_UPDATE;
                 });
             } else {

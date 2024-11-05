@@ -62,6 +62,7 @@ exports.createUsers = onRequest(async (request, response) => {
 
                         await getAuth().createUser({
                             email: userForm.email,
+                            displayName: userForm.firstname + " " + userForm.lastname,
                             emailVerified: false,
                             password: password,
                             disabled: false

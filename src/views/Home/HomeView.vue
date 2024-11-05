@@ -58,7 +58,10 @@ const getDecks = async () => {
 
 /* VUE EVENTS */
 onMounted(async () => {
-  email.value = getAuth().currentUser.email;
+  if (getAuth().currentUser) {
+    email.value = getAuth().currentUser.email;
+  }
+  
   const decks = await getDecks();
   for (let i = 0; i < decks.length; i++) {
     if (i < 2) {

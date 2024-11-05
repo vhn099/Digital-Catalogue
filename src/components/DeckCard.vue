@@ -2,7 +2,7 @@
     <div class="col">
         <div class="my-card-deck" :style="backgroundImage(data.deck_highlight)" :key="data.id">
             <div class="deck-date">
-                <Chip :label="moment(data.catalogue_edition).format('MMM YYYY')" />
+                <Chip :label="moment(new Date(data.catalogue_edition)).format('MMM YYYY')" />
             </div>
             <div class="deck-info">
                 <div class="deck-info-desc">
