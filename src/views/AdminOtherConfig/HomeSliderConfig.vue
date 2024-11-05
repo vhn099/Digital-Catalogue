@@ -205,7 +205,6 @@ const submitForm = async () => {
         emits('setLoading', true);
         let result = {};
         const formData = getSliderFormData();
-        console.log(formData, "FORM DATA");
         if (edit.value) {
             result = await OtherConfigFirestore.updateSlider(formData);
         } else {
