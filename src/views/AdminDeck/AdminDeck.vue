@@ -11,7 +11,7 @@ import InputText from "primevue/inputtext";
 import Toast from "primevue/toast";
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
-import { computed, onMounted, reactive, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onMounted, reactive, ref, useTemplateRef, watch } from "vue";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import { CategoryFirestore } from "@/lib/Category";
@@ -418,7 +418,7 @@ const deleteRow = (data) => {
     });
 };
 
-const editRow = (data) => {
+const editRow = async (data) => {
     formFields.id = data.id;
     formFields.title = data.title;
     formFields.detail_description = data.detail_description;
@@ -453,6 +453,12 @@ const editRow = (data) => {
 
     visible.value = true;
     edit.value = true;
+
+    // Trigger event key press for textarea to run autoResize function
+    await nextTick();
+    const textarea = document.getElementById("detail_description");
+    const event = new Event('input');
+    textarea.dispatchEvent(event);
 };
 
 const submitForm = async () => {
@@ -555,7 +561,7 @@ watch(visible, () => {
                                 class="required-icon">*</span></label>
                         <Textarea :fluid="true" placeholder="Detail Description" id="detail_description"
                             v-model="formFields.detail_description" maxlength="1500"
-                            :invalid="v$.detail_description.$errors.length > 0" />
+                            :invalid="v$.detail_description.$errors.length > 0" autoResize focus/>
                         <small class="error-messages" v-if="v$.detail_description.$errors.length > 0">{{
                             v$.detail_description.$errors[0].$message }}</small>
                     </div>
