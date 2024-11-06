@@ -5,7 +5,7 @@
                 tableStyle="min-width: 50rem" expandableRowGroups rowGroupMode="subheader"
                 groupRowsBy="representative.name" @rowgroup-expand="onRowGroupExpand"
                 @rowgroup-collapse="onRowGroupCollapse" sortMode="single" sortField="representative.name" :sortOrder="1"
-                paginator :rows="50" :rowsPerPageOptions="[5, 20, 50, 100]">
+                paginator :rows="50" :rowsPerPageOptions="[5, 20, 50, 100]" :globalFilterFields="['detail_description']">
                 <template #header>
                     <div class="header-table">
                         <span class="table-title">Manage User Favorite</span>
@@ -18,14 +18,14 @@
                                 <Button type="button" label="Switch view" icon="pi pi-arrow-right-arrow-left"
                                     @click="switchView" />
                             </div>
-                            <div>
+                            <!-- <div>
                                 <IconField>
                                     <InputIcon>
                                         <i class="pi pi-search" />
                                     </InputIcon>
                                     <InputText v-model="filters['global'].value" placeholder="Search..." />
                                 </IconField>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </template>
@@ -63,7 +63,7 @@
                 </Column>
                 <Column field="date" header="Date" style="width: 20%"></Column>
                 <template #groupfooter="slotProps">
-                    <div class="flex justify-end font-bold w-full">Total: {{ isUser ?
+                    <div class="font-bold" style="text-align: right;">Total: {{ isUser ?
                         calculateUserTotal(slotProps.data.representative.name) :
                         calculateDeckTotal(slotProps.data.representative.name) }}</div>
                 </template>
