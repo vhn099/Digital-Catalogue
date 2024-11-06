@@ -92,15 +92,29 @@ const tableColumns = [
     {
         field: 'title',
         label: 'Title',
-        styles: {
-
+        styles: {},
+        rowStyle: {
+            width: "300px",
+            maxHeight: "90px",
+            overflow: "hidden",
+            display: "-webkit-box",
+            webkitLineClamp: 3,
+            webkitBoxOrient: "vertical",
         }
     },
     {
         field: 'detail_description',
         label: 'Detail Description',
         styles: {
-
+            
+        },
+        rowStyle: {
+            width: "300px",
+            maxHeight: "90px",
+            overflow: "hidden",
+            display: "-webkit-box",
+            webkitLineClamp: 3,
+            webkitBoxOrient: "vertical",
         }
     },
     // {
@@ -113,16 +127,16 @@ const tableColumns = [
     {
         field: 'category_name',
         label: 'Category',
-        styles: {
-
-        }
+        styles: {},
+        rowStyle: {}
     },
     {
         field: 'deck_highlight',
         label: 'Deck Highlight',
         styles: {
 
-        }
+        },
+        rowStyle: {}
     },
     // {
     //     field: 'deck_images',
@@ -136,49 +150,56 @@ const tableColumns = [
         label: 'PDF',
         styles: {
 
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'tag',
         label: 'Tags',
         styles: {
 
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'catalogue_edition',
         label: 'Catalogue Edition',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'created',
         label: 'Created On',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'created_by',
         label: 'Created By',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'updated',
         label: 'Updated On',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'updated_by',
         label: 'Updated By',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     }
 ]
 const toast = useToast();
@@ -696,7 +717,7 @@ watch(visible, () => {
                         </div>
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
-                        :style="{ ...column.styles }">
+                        :style="{ ...column.styles }" :bodyStyle="{ ...column.bodyStyle }">
                         <template #body="slotProps">
                             <img draggable="false" :src="slotProps.data[column.field]"
                                 v-if="column.field === 'deck_highlight'" width="64" />
@@ -706,7 +727,7 @@ watch(visible, () => {
                             <p v-else-if="column.field === 'catalogue_edition'">
                                 {{ formatDate(slotProps.data[column.field]) }}
                             </p>
-                            <p v-else>{{ slotProps.data[column.field] }}</p>
+                            <p v-else :style="{ ...column.rowStyle }">{{ slotProps.data[column.field] }}</p>
                         </template>
                     </Column>
                     <Column header="Actions">

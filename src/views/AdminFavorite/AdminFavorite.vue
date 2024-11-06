@@ -52,6 +52,9 @@
                 <Column :field='isUser ? "category" : "email"' :header='isUser ? "Category" : "Email"'
                     style="width: 20%"></Column>
                 <Column field="detail_description" header="Detail Description" style="width: 20%" v-if="isUser">
+                    <template #body="slotProps">
+                        <p style="width: 500px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{{ slotProps.data.detail_description }}</p>
+                    </template>
                 </Column>
                 <Column field="status" header="User Status" style="width: 20%" v-if="!isUser">
                     <template #body="slotProps">

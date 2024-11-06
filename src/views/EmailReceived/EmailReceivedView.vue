@@ -35,7 +35,8 @@ const tableColumns = [
         label: 'Created On',
         styles: {
             width: "15%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'email',
@@ -43,28 +44,38 @@ const tableColumns = [
         styles: {
             width: "20%",
             wordWrap: "break-word",
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'first_name',
         label: 'First Name',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'last_name',
         label: 'Last Name',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
     {
         field: 'message',
         label: 'Message',
         styles: {
-            maxWidth: "671px",
             // width: "25%"
+        },
+        rowStyle: {
+            width: "500px",
+            maxHeight: "90px",
+            overflow: "hidden",
+            display: "-webkit-box",
+            webkitLineClamp: 3,
+            webkitBoxOrient: "vertical",
         }
     },
     {
@@ -72,7 +83,8 @@ const tableColumns = [
         label: 'Status',
         styles: {
             width: "10%"
-        }
+        },
+        rowStyle: {}
     },
 
 ]
@@ -249,6 +261,9 @@ watch(visible, () => {
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
                         :style="{ ...column.styles }">
+                        <template #body="slotProps">
+                            <p :style="{ ...column.rowStyle }">{{ slotProps.data[column.field] }}</p>
+                        </template>
                     </Column>
                     <Column header="Actions" style="width: 5%;">
                         <template #body="{ data }">
@@ -335,7 +350,7 @@ watch(visible, () => {
     justify-content: center;
 }
 
-:deep(.p-datatable-tbody tr) {
+/* :deep(.p-datatable-tbody tr) {
     height: 90px !important;
 }
 
@@ -345,5 +360,5 @@ watch(visible, () => {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
+} */
 </style>
