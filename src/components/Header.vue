@@ -39,6 +39,7 @@ import { onMounted, ref, watch } from "vue";
 import router from '@/router';
 import { UserFirestore } from '@/lib/User';
 import { COMMON_FUNCTIONS } from '@/lib/Common';
+import { useAppStore } from '@/stores';
 
 /* REF DEFINITIONS START */
 const currentUser = ref({});
@@ -126,6 +127,7 @@ const items = ref([
 
 /* FUNCTION START */
 const routing = (routeName) => {
+    useAppStore().setDeckCategory("");
     router.push({
         name: routeName
     })

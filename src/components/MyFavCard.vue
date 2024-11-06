@@ -50,7 +50,7 @@ const favoriteFN = () => {
 const deckDetailRouting = (deckID) => {
     router.push({
         name: 'deckdetail',
-        params: { id: deckID }
+        params: { deckID: deckID }
     });
 }
 const searchPage = (value) => {
