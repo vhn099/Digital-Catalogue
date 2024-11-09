@@ -16,6 +16,7 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { OtherConfigFirestore } from '@/lib/OtherConfig';
 import { ExportData } from '@/lib/Export';
+import { useConfirm } from 'primevue/useconfirm';
 
 const tableColumns = [
     {
@@ -62,6 +63,7 @@ const tableColumns = [
     }
 ];
 const toast = useToast();
+const confirm = useConfirm();
 
 /* REF DEFINITION START */
 const formFields = reactive({
@@ -73,7 +75,7 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const datatable = ref();
-const emailContacts = ref();
+const emailContacts = ref([]);
 const visible = ref(false);
 const edit = ref(false);
 
@@ -179,6 +181,51 @@ const submitForm = async () => {
 const exportMyList = (event) => {
     ExportData.exportMyListAsExcel(emailContacts.value, "contact_emails");
 };
+const deleteRow = async (data) => {
+    confirm.require({
+        message: 'Do you want to delete this contact email ?',
+        header: 'ATTENTION',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: async () => {
+            const contactEmailID = data.id;
+            const contactEmail = data.email;
+            if (emailContacts.value.length > 1) {
+                emits('setLoading', true);
+                let result = await OtherConfigFirestore.deleteEmailContacts(contactEmailID, contactEmail);
+                emits('setLoading', false);
+                toast.add({
+                    summary: 'System Message',
+                    severity: result.status,
+                    detail: result.message,
+                    life: 3000 // 3s
+                });
+                if (result.status === 'success') {
+                    visible.value = false;
+                    emailContacts.value = await getEmailContacts();
+                }
+            } else {
+                toast.add({
+                    summary: 'System Message',
+                    severity: "error",
+                    detail: "There must atleast one email contact exists in the system.",
+                    life: 3000 // 3s
+                });
+            }
+        },
+        reject: () => {
+
+        }
+    });
+};
 
 /* VUE EVENTS */
 onMounted(async () => {
@@ -194,7 +241,6 @@ const emits = defineEmits(['setLoading']);
 </script>
 
 <template>
-    <Toast />
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New User"'
         :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-container">
@@ -202,8 +248,8 @@ const emits = defineEmits(['setLoading']);
 
                 <div class="flex flex-col">
                     <label class="form-label" for="email">Email <span class="required-icon">*</span></label>
-                    <InputText :readonly="edit" :fluid="true" placeholder="Email" id="email"
-                        v-model="formFields.email" :invalid="v$.email.$errors.length > 0" maxlength="150" />
+                    <InputText :readonly="edit" :fluid="true" placeholder="Email" id="email" v-model="formFields.email"
+                        :invalid="v$.email.$errors.length > 0" maxlength="150" />
                     <small class="error-messages" v-if="v$.email.$errors.length > 0">{{
                         v$.email.$errors[0].$message }}</small>
                 </div>
@@ -233,10 +279,11 @@ const emits = defineEmits(['setLoading']);
                 <span class="table-title">Manage Email Contacts</span>
                 <div class="table-actions gap-2">
                     <div>
-                        <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link" @click="exportMyList($event)" />
+                        <Button severity="secondary" type="button" label="Export" icon="pi pi-external-link"
+                            @click="exportMyList($event)" />
                     </div>
                     <div>
-                        <Button type="button" label="Add" icon="pi pi-plus" @click="openDialog"/>
+                        <Button type="button" label="Add" icon="pi pi-plus" @click="openDialog" />
                     </div>
                     <div>
                         <IconField>
@@ -259,7 +306,8 @@ const emits = defineEmits(['setLoading']);
         <Column header="Actions">
             <template #body="{ data }">
                 <div class="actions">
-                    <Button icon="pi pi-pencil" aria-label="Update" rounded @click="editRow(data)"/>
+                    <Button v-if="emailContacts.length > 1" icon="pi pi-trash" aria-label="Delete" @click="deleteRow(data)" rounded severity="warn" />
+                    <Button icon="pi pi-pencil" aria-label="Update" rounded @click="editRow(data)" />
                 </div>
             </template>
         </Column>
@@ -326,5 +374,6 @@ const emits = defineEmits(['setLoading']);
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 /* FORM CSS END */
 </style>

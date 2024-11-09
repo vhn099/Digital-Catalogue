@@ -8,7 +8,6 @@ import { getAuth } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
-import ConfirmDialog from 'primevue/confirmdialog';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
 import FileUpload from 'primevue/fileupload';
@@ -16,8 +15,6 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
-import Select from 'primevue/select';
-import Toast from 'primevue/toast';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
@@ -289,8 +286,6 @@ const emits = defineEmits(['setLoading']);
 </script>
 
 <template>
-    <Toast />
-    <ConfirmDialog />
     <Dialog v-model:visible="visible" modal :header='formFields.id ? formFields.id : "New Slider"'
         :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-container">

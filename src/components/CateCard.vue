@@ -1,5 +1,5 @@
 <template>
-    <div class="cate-card-box" :key="data.id" @click="deckRouting(data.id)">
+    <div class="cate-card-box" :key="data.id" @click="deckRouting(data.id)" id="cate-box">
         <div class="cate-card-image">
 
             <img draggable="false" width="110" height="110" fill="none" :src="data.image" />
