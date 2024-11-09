@@ -121,7 +121,7 @@ const getEmails = async () => {
             first_name: data.message.firstName || '',
             last_name: data.message.lastName || '',
             subject: data.message.subject || '',
-            message: data.message.html || '',
+            message: data.message.html.replaceAll('<br/>', '\n') || '',
             receiver: data.to || '',
             status: data.delivery.state || '',
             created: data.delivery.startTime ? data.delivery.startTime.toDate().toLocaleString() : '',
@@ -142,7 +142,7 @@ const viewRow = (data) => {
     formFields.subject = data.subject;
     formFields.created = data.created;
     formFields.status = data.status;
-    formFields.message = data.message;
+    formFields.message = data.message.replaceAll('<br/>', '\n');
     visible.value = true;
     view.value = true;
 };
