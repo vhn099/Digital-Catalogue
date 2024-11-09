@@ -65,7 +65,11 @@ const messagePageBody = 'contact';
 function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark');
 }
-
+function setMessage() {
+ const strMessage = 'Email - ' + formFields.userEmail + '\n' + 'Message - ' + message.value;
+ const htmlMessage = strMessage.replaceAll('\n','<br/>');
+ return htmlMessage;
+}
 async function submitForm() {
   const isValid = await v$.value.$validate();
   if (isValid) {
@@ -81,8 +85,8 @@ async function submitForm() {
     };
     await fetchEmails();
     bodyReq.value.to = emails.value;
-    bodyReq.value.message.subject = 'Feedback email';
-    bodyReq.value.message.html = message;
+    bodyReq.value.message.subject = 'Innovation Portal Message from ' + firstName.value + ' ' + lastName.value;
+    bodyReq.value.message.html = this.setMessage();
     bodyReq.value.message.firstName = firstName;
     bodyReq.value.message.lastName = lastName;
     bodyReq.value.message.email = formFields.userEmail;
