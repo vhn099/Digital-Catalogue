@@ -1,5 +1,5 @@
 import { useAppStore } from "@/stores";
-import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { FirebaseStorage } from "./Storage";
 import _ from 'lodash';
 
