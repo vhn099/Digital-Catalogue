@@ -26,7 +26,7 @@ const getCategories = async () => {
     const data = category.data();
     const object = {
       id: category.id,
-      name: data.name,
+      name: data.name ? data.name.replaceAll(" ", "\n") : "",
       image: data.image,
       created: data.created ? data.created.toDate().toLocaleString() : '',
       created_by: data.created_by || '',

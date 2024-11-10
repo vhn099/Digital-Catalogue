@@ -85,7 +85,7 @@ async function getCategories() {
     const data = category.data();
     const object = {
       id: category.id,
-      name: data.name,
+      name: data.name ? data.name.replaceAll(" ", "\n") : "",
       icon: data.image,
     };
 
@@ -112,16 +112,19 @@ onMounted(async () => {
   await nextTick();
   
   const cardItems = document.getElementsByClassName("card");
-  let largestWidth = 0;
+  let largestWidth = 124;
+  let largestHeight = 124;
   for (let i = 0; i < cardItems.length; i++) {
-    // const computedWidth = cardItems[i].offsetWidth; 
-    // cardItems[i].style.width = `${Math.max(computedWidth, 128)}px`;
     if (cardItems[i].offsetWidth > largestWidth) {
       largestWidth = cardItems[i].offsetWidth;
+    }
+    if (cardItems[i].offsetHeight > largestHeight) {
+      largestHeight = cardItems[i].offsetHeight;
     }
   }
   for (let i = 0; i < cardItems.length; i++) {
     cardItems[i].style.width = `${largestWidth}px`;
+    cardItems[i].style.height = `${largestHeight + 15}px`;
   }
   setStep();
   resetTranslate();
@@ -141,7 +144,7 @@ onMounted(async () => {
               <img draggable="false" width="52" height="52" fill="none" :src="card.icon" />
             </div>
             <div class="cate-name">
-              {{ card.name }}
+              <pre style="font-family: inherit;">{{ card.name }}</pre>
             </div>
           </div>
         </div>
@@ -180,7 +183,7 @@ onMounted(async () => {
 
 .card {
   /* width: 124px; */
-  height: 124px;
+  /* height: 160px; */
   display: inline-flex;
   box-shadow: 0px 4px 4px 0px #00000040;
   margin: 10px;
@@ -201,7 +204,7 @@ onMounted(async () => {
 .cate-item {
   width: 100%;
   height: 100%;
-  padding: 20px 10px 10px 10px;
+  padding: 5px 10px 15px 10px;
 }
 
 .cate-logo {

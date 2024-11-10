@@ -6,7 +6,7 @@
 
         </div>
         <div class="cate-card-name">
-            <p>{{ data.name }}</p>
+            <pre style="font-family: inherit; word-wrap: break-word; white-space: break-spaces; overflow: hidden;">{{ data.name }}</pre>
         </div>
     </div>
 
@@ -72,10 +72,9 @@ const deckRouting = (id) => {
     height: auto;
     width: 70%;
     overflow: hidden;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    /* word-wrap: break-word;
+    overflow-wrap: break-word; */
     text-align: center;
-    /* white-space: normal !important; */
     font-size: 20px;
     font-weight: 600;
 }
