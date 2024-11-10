@@ -69,12 +69,13 @@ const deckRouting = (id) => {
 }
 
 .cate-card-name {
-    height: 50%;
+    height: auto;
     width: 70%;
+    overflow: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;
     text-align: center;
-    white-space: normal !important;
+    /* white-space: normal !important; */
     font-size: 20px;
     font-weight: 600;
 }

@@ -107,8 +107,6 @@ const categoryRouting = (id) => {
 }
 /* FUNCTION END */
 
-// computed({})
-
 onMounted(async () => {
   cards.value = await getCategories();
   await nextTick();
@@ -181,6 +179,7 @@ onMounted(async () => {
 }
 
 .card {
+  /* width: 124px; */
   height: 124px;
   display: inline-flex;
   box-shadow: 0px 4px 4px 0px #00000040;
