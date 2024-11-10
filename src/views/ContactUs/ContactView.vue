@@ -86,7 +86,7 @@ async function submitForm() {
     await fetchEmails();
     bodyReq.value.to = emails.value;
     bodyReq.value.message.subject = 'Innovation Portal Message from ' + firstName.value + ' ' + lastName.value;
-    bodyReq.value.message.html = this.setMessage();
+    bodyReq.value.message.html = setMessage();
     bodyReq.value.message.firstName = firstName;
     bodyReq.value.message.lastName = lastName;
     bodyReq.value.message.email = formFields.userEmail;
