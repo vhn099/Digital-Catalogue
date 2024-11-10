@@ -49,7 +49,8 @@ export const useAppStore = defineStore("storeId", {
           EMAIL_CONTACT_CREATED: `Created contact email ${data} successfully.`,
           EMAIL_CONTACT_EXISTED: `Contact email ${data} has already existed.`,
           EMAIL_CONTACT_UPDATED: `Updated contact email ${data} successfully.`,
-          EMAIL_CONTACT_NOT_EXISTED: `Contact email ${data} is not existed`,
+          EMAIL_CONTACT_DELETED: `Deleted contact email ${data} successfully.`,
+          EMAIL_CONTACT_NOT_EXISTED: `Contact email ${data} is not existed.`,
         }
       },
       ADMIN_SITE: {

@@ -1,14 +1,16 @@
 <script setup>
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import Tab from 'primevue/tab';
-import TabList from 'primevue/tablist';
-import TabPanel from 'primevue/tabpanel';
-import TabPanels from 'primevue/tabpanels';
-import Tabs from 'primevue/tabs';
+// import Tab from 'primevue/tab';
+// import TabList from 'primevue/tablist';
+// import TabPanel from 'primevue/tabpanel';
+// import TabPanels from 'primevue/tabpanels';
+// import Tabs from 'primevue/tabs';
 import { defineAsyncComponent, markRaw, ref } from 'vue';
 import HomeSliderConfig from './HomeSliderConfig.vue';
 import EmailContactConfig from './EmailContactConfig.vue';
 import Divider from 'primevue/divider';
+import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 
 /* REF DEFINITION START */
@@ -43,6 +45,8 @@ const setLoading = (value) => {
 
 <template>
     <LoadingSpinner v-if="spinner"/>
+    <Toast />
+    <ConfirmDialog />
     <div class="config-container">
         <!-- <Tabs value="0">
             <TabList>

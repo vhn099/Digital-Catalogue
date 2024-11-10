@@ -107,11 +107,22 @@ const categoryRouting = (id) => {
 }
 /* FUNCTION END */
 
-// computed({})
-
 onMounted(async () => {
   cards.value = await getCategories();
   await nextTick();
+  
+  const cardItems = document.getElementsByClassName("card");
+  let largestWidth = 0;
+  for (let i = 0; i < cardItems.length; i++) {
+    // const computedWidth = cardItems[i].offsetWidth; 
+    // cardItems[i].style.width = `${Math.max(computedWidth, 128)}px`;
+    if (cardItems[i].offsetWidth > largestWidth) {
+      largestWidth = cardItems[i].offsetWidth;
+    }
+  }
+  for (let i = 0; i < cardItems.length; i++) {
+    cardItems[i].style.width = `${largestWidth}px`;
+  }
   setStep();
   resetTranslate();
 });
@@ -168,7 +179,7 @@ onMounted(async () => {
 }
 
 .card {
-  width: 124px;
+  /* width: 124px; */
   height: 124px;
   display: inline-flex;
   box-shadow: 0px 4px 4px 0px #00000040;

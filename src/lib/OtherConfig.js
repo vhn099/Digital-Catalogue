@@ -193,5 +193,25 @@ export const OtherConfigFirestore = {
             console.log(error);
         }
         return result;
-    }
+    },
+    deleteEmailContacts: async (id, email) => {
+        const result = {
+            status: "success",
+            message: "",
+            data: {},
+        };
+
+        try {
+            await deleteDoc(
+                doc(getFirestore(), useAppStore().getEmailContactCollection, id)
+            ).then((response) => {
+                result.message = useAppStore().getMessageMaster.DATA(email).EMAIL_CONTACT_DELETED;
+            });
+        } catch (error) {
+            result.status = "error";
+            result.message = error.message;
+        }
+
+        return result;
+    },
 };
