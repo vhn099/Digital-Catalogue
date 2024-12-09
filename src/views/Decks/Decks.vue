@@ -103,17 +103,14 @@ const onLoadEvents = async () => {
   cateIDParm.value = useAppStore().getDeckCategory;
   orderedBy.value = { name: 'Latest Update', code: 'catalogue_edition-desc' };
 
-  // Old logic related to cateIDParam
-  // if (cateIDParm.value) {
-  //   selectedCategories.value = [cateIDParm.value];
-  // } else {
-  //   const categoryOptions = _.map(categories.value, 'key');
-  //   selectedCategories.value = categoryOptions;
-  //   selectedCategoriesUsedForLogicHandler.value = categoryOptions;
-  // }
-  const categoryOptions = _.map(categories.value, 'key');
-  selectedCategories.value = categoryOptions;
-  selectedCategoriesUsedForLogicHandler.value = categoryOptions;
+  if (cateIDParm.value) {
+    selectedCategoriesUsedForLogicHandler.value = [cateIDParm.value];
+    selectedCategories.value = [cateIDParm.value];
+  } else {
+    const categoryOptions = _.map(categories.value, 'key');
+    selectedCategories.value = categoryOptions;
+    selectedCategoriesUsedForLogicHandler.value = categoryOptions;
+  }
   tagInputed.value = '';
 
   all_decks.value = await getDecks(orderedBy.value.code, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value });
