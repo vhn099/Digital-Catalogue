@@ -573,7 +573,7 @@ watch(visible, () => {
                         <img draggable="false" v-if="deckHighlightPreview" :src="deckHighlightPreview" alt="Image"
                             width="150" height="150" />
                         <FileUpload @select="onImageSelected" ref="deck_highlight" mode="basic" name="deck_highlight[]"
-                            :maxFileSize="1000000" accept="image/*" />
+                            :maxFileSize="5242880" accept="image/*" />
                         <small class="error-messages" v-if="imageHighlight$.$errors.length > 0">{{
                             imageHighlight$.$errors[0].$message }}</small>
                     </div>
@@ -607,7 +607,7 @@ watch(visible, () => {
                         <label class="form-label" for="deck_images">Deck Images (1200x800px) <span
                                 class="required-icon">*</span></label>
                         <Toast />
-                        <FileUpload ref="multiple_file_upload" :multiple="true" accept="image/*" :maxFileSize="1000000"
+                        <FileUpload ref="multiple_file_upload" :multiple="true" accept="image/*" :maxFileSize="5242880"
                             @select="onSelectedFiles" @clear="onClearFiles">
                             <template #header="{ chooseCallback, clearCallback, files }">
                                 <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
@@ -657,7 +657,7 @@ watch(visible, () => {
                     <div class="flex flex-col">
                         <label class="form-label" for="pdf">PDF Link <span class="required-icon">*</span></label>
                         <InputText readonly v-model="pdfFile" />
-                        <FileUpload @select="onFileSelected" ref="pdf" mode="basic" name="pdf[]" :maxFileSize="1000000"
+                        <FileUpload @select="onFileSelected" ref="pdf" mode="basic" name="pdf[]" :maxFileSize="26214400"
                             accept="application/pdf" />
                         <small class="error-messages" v-if="pdfFile$.$errors.length > 0">{{
                             pdfFile$.$errors[0].$message }}</small>

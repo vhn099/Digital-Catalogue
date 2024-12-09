@@ -299,7 +299,7 @@ const emits = defineEmits(['setLoading']);
                     <label class="form-label" for="banner_title">Image<span class="required-icon">*</span></label>
                     <img draggable="false" v-if="imagePreviewer" :src="imagePreviewer" alt="Image" width="64"
                         height="64" style="object-fit: contain;" />
-                    <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="1000000"
+                    <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]" :maxFileSize="5242880"
                         accept="image/*" />
                     <small class="error-messages" v-if="imageV$.imagePreviewer.$errors.length > 0">{{
                         imageV$.imagePreviewer.$errors[0].$message }}</small>

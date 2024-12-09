@@ -287,7 +287,7 @@ watch(visible, () => {
                         <label class="form-label" for="image">Image <span class="required-icon">*</span></label>
                         <img draggable="false" v-if="imagePreview" :src="imagePreview" alt="Image" width="64" />
                         <FileUpload @select="onFileSelected" ref="image" mode="basic" name="image[]"
-                            :maxFileSize="1000000" accept="image/*" />
+                            :maxFileSize="5242880" accept="image/*" />
                         <small class="error-messages" v-if="imageRule$.imagePreview.$errors.length > 0">{{
                             imageRule$.imagePreview.$errors[0].$message }}</small>
                     </div>
