@@ -217,10 +217,13 @@ async function addFilter() {
 
 async function clearFilter() {
   tagInputed.value = '';
-  const categoryOptions = _.map(categories.value, 'key');
+  // const categoryOptions = _.map(categories.value, 'key');
+  const categoryOptions = [];
   selectedCategories.value = categoryOptions;
   selectedCategoriesUsedForLogicHandler.value = categoryOptions;
-  all_decks.value = await getDecks(orderedBy.value.code, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value });
+  // all_decks.value = await getDecks(orderedBy.value.code, { tag: tagInputed.value, category: selectedCategoriesUsedForLogicHandler.value });
+  all_decks.value = [];
+  last_deck.value = null;
   loadDataForDecks();
 };
 
