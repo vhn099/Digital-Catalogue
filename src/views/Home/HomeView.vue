@@ -10,6 +10,9 @@ import SupplyChainIcon from '@/assets/img/icon/supply-chain.png';
 import MegaphoneIcon from '@/assets/img/icon/megaphone.png';
 import { DeckFirestore } from '@/lib/Deck';
 import { getAuth } from 'firebase/auth';
+import moment from 'moment';
+import { useAppStore } from '@/stores';
+import { CommonLib } from '@/lib/CommonLib';
 
 const top_decks = ref([]);
 const normal_decks = ref([]);
@@ -26,6 +29,7 @@ const categoryPageHeader = "Discover Decks by Category";
 const deckSectionIcon = MegaphoneIcon;
 const deckSectionText = "Deck";
 const deckPageHeader = "Latest Decks";
+const dateFormat = useAppStore().getDateFormats.DECK;
 
 /* FUNCTIONS DEFINITION START */
 const getDecks = async () => {
@@ -33,6 +37,12 @@ const getDecks = async () => {
   const decksSnapshot = await DeckFirestore.getTopDecks();
   for (const deck of decksSnapshot) {
     const data = deck.data();
+    let convertedCatalogueEdition = "";
+    const momentDate = moment(new Date(data.catalogue_edition.toDate())); // Have to use toDate because this field is timestamp in Firebase if we use new Date(data.catalogue_edition) for this it will not work as an normal date.
+    if (momentDate.isValid()) {
+      const formattedDate = momentDate.format(dateFormat);
+      convertedCatalogueEdition = CommonLib.getOnlyMonthAndYearForShortDate(formattedDate, 1, 0, "/", false);
+    }
     // const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
     const object = {
       id: deck.id,
@@ -44,7 +54,7 @@ const getDecks = async () => {
       // deck_images: data.deck_images,
       // pdf: data.pdf,
       tag: data.tag,
-      catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
+      catalogue_edition: convertedCatalogueEdition,
       // created: data.created ? data.created.toDate().toLocaleString() : '',
       // created_by: data.created_by || '',
       // updated: data.updated ? data.updated.toDate().toLocaleString() : '',
