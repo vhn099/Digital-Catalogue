@@ -28,6 +28,8 @@ import { useConfirm } from "primevue/useconfirm";
 import DatePicker from "primevue/datepicker";
 import moment from "moment";
 import { ExportData } from "@/lib/Export";
+import { CommonLib } from "@/lib/CommonLib";
+import { useAppStore } from "@/stores";
 
 const formFields = reactive({
     id: '',
@@ -44,6 +46,9 @@ const formFields = reactive({
     tag: [],
     catalogue_edition: '',
 });
+
+/* STATIC VALUES */
+const dateFormat = useAppStore().dateFormats.ADMIN_DECK;
 
 /* COMPUTED VALUES */
 const rules = computed(() => {
@@ -512,7 +517,13 @@ const onFileSelected = (event) => {
 };
 
 const formatDate = (value) => {
-    return value ? moment(value).format('MMM/YYYY') : '';
+    const momentDate = moment(new Date(value)); // When load this timestamp data to table it already converted to a date string.
+    if (momentDate.isValid()) {
+        const formattedDate = momentDate.format(dateFormat);
+        return CommonLib.getOnlyMonthAndYearForShortDate(formattedDate, 1, 0, "/", true);
+    }
+    
+    return "";
 };
 
 const exportMyList = (event) => {
