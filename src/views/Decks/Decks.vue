@@ -22,6 +22,8 @@ import router from '@/router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import _ from 'lodash';
 import { useAppStore } from '@/stores';
+import moment from 'moment';
+import { CommonLib } from '@/lib/CommonLib';
 
 /* REF DEFINITION START */
 const op = ref();
@@ -49,6 +51,7 @@ const deckSectionPageHeader = "Lastest Decks";
 const sectionIcon = Presentation;
 const sectionText = "Decks";
 const limit = 14;
+const dateFormat = useAppStore().getDateFormats.DECK;
 
 /* FUNCTION DEFINTION START */
 const toggle = (event) => {
@@ -74,6 +77,12 @@ const getDecks = async (orderBy, filter, lastDeck) => {
   for (const deck of decksSnapshot) {
     const data = deck.data();
     // const categoryName = await CategoryFirestore.getCategoryName(data.category_id);
+    let convertedCatalogueEdition = "";
+    const momentDate = moment(new Date(data.catalogue_edition.toDate())); // Have to use toDate because this field is timestamp in Firebase if we use new Date(data.catalogue_edition) for this it will not work as an normal date.
+    if (momentDate.isValid()) {
+      const formattedDate = momentDate.format(dateFormat);
+      convertedCatalogueEdition = CommonLib.getOnlyMonthAndYearForShortDate(formattedDate, 1, 0, "/", false);
+    }
     const object = {
       id: deck.id,
       title: data.title,
@@ -85,7 +94,7 @@ const getDecks = async (orderBy, filter, lastDeck) => {
       // pdf: data.pdf,
       // fav_count: await FavoriteFirestore.countFavoriteDecks(deck.id),
       tag: data.tag,
-      catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
+      catalogue_edition: convertedCatalogueEdition,
       // created: data.created ? data.created.toDate().toLocaleString() : '',
       // created_by: data.created_by || '',
       // updated: data.updated ? data.updated.toDate().toLocaleString() : '',
