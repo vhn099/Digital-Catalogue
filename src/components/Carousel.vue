@@ -37,16 +37,30 @@ const position = ref('bottom');
 const sliders = ref();
 const inside = ref(true);
 
+// Control view deck URL set Home Slider manage because users can put different URL in this and we need to restrict this
+const arrayDomain = [
+    "http://localhost:3000/",
+    "https://digital-catalogue-15dcb.web.app/",
+    "https://admgroupinnovationportal.com/"
+];
+
 /* FUNCTIONS START */
 const viewDeck = (url) => {
     if (url) {
-        const currentDomain = window.location.origin + "/";
-        const arrayURLs = url.split(currentDomain);
-        const route = arrayURLs[1];
-        if (route) { // If url is directed to other pages like: https://domain.com/deck/:deckID. If our domain like this it will runs into error https://domain.com
-            router.push({
-                path: route
-            });
+        let domainIndex = -1;
+        arrayDomain.forEach((element, index) => {
+            if (url.indexOf(element) !== -1) {
+                domainIndex = index;
+            }
+        });
+        if (domainIndex !== -1) {
+            const arrayURLs = url.split(arrayDomain[domainIndex]);
+            const route = arrayURLs[1];
+            if (route) { // If url is directed to other pages like: https://domain.com/deck/:deckID. If our domain like this it will runs into error https://domain.com
+                router.push({
+                    path: route
+                });
+            }
         }
     }
 };
