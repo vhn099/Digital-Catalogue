@@ -1,46 +1,89 @@
-const monthShortNameArray = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
-];
-const monthFullNameArray = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-];
+const monthArrayObject = [
+    {
+        month: 0,
+        short_name: "Jan",
+        full_name: "January"
+    },
+    {
+        month: 1,
+        short_name: "Feb",
+        full_name: "February"
+    },
+    {
+        month: 2,
+        short_name: "Mar",
+        full_name: "March"
+    },
+    {
+        month: 3,
+        short_name: "Apr",
+        full_name: "April"
+    },
+    {
+        month: 4,
+        short_name: "May",
+        full_name: "May"
+    },
+    {
+        month: 5,
+        short_name: "Jun",
+        full_name: "June"
+    },
+    {
+        month: 6,
+        short_name: "Jul",
+        full_name: "July"
+    },
+    {
+        month: 7,
+        short_name: "Aug",
+        full_name: "August"
+    },
+    {
+        month: 8,
+        short_name: "Sep",
+        full_name: "September"
+    },
+    {
+        month: 9,
+        short_name: "Oct",
+        full_name: "October"
+    },
+    {
+        month: 10,
+        short_name: "Nov",
+        full_name: "November"
+    },
+    {
+        month: 11,
+        short_name: "Dec",
+        full_name: "December"
+    },
+]
 
 export const CommonLib = {
     // Date handlers
     /**
-     * date: Transfer the date you want to get only month and year for the first param ||
-     * monthPosition: the position of month in the string date ||
-     * yearPosition: the position of the year in the string date ||
-     * separator: which is - or / used in a date string, Exp: 01/01/0001 => / is the separator of this string ||
-     * keepSeparator: if you want to keep separator in the result string of this function just transfer true to this function. Results can be like this: Jan/2024 and with false value it will be like this: Jan 2024
+     * Only handle string with this kind of format: 202401 => YYYYMM
      */
-    getOnlyMonthAndYearForShortDate(date, monthPosition, yearPosition, separator, keepSeparator = false) {
-        const splittedDate = date.split(separator);
-        if (keepSeparator) {
-            return `${monthShortNameArray[parseInt(splittedDate[monthPosition]) - 1]}${separator}${splittedDate[yearPosition]}`;
+    getOnlyMonthAndYearForDeckCatalogueEdition(dateString) {
+        const dateStringLength = dateString.length;
+        const month =  dateString[dateStringLength - 2] + "" + dateString[dateStringLength - 1]; // Get last to digit of the string. Example: 202401 => return 01
+        let year = "";
+        for (let i = 0; i < dateStringLength - 2; i++) {
+            year += dateString[i];
         }
-        return `${monthShortNameArray[parseInt(splittedDate[monthPosition]) - 1]} ${splittedDate[yearPosition]}`;
+        const monthDataObj = monthArrayObject[parseInt(month) - 1];
+        if (monthDataObj) {
+            const dateValue = new Date();
+            dateValue.setMonth(monthDataObj.month);
+            dateValue.setFullYear(year);
+            dateValue.setDate(15);
+            return {
+                date_string: `${monthDataObj.short_name}/${year}`,
+                date_value: dateValue
+            }; 
+        }
+        return "";
     },
 };

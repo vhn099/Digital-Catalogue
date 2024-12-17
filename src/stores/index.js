@@ -9,10 +9,6 @@ export const useAppStore = defineStore("storeId", {
       home_slider: "home_slider",
       contact_emails: "contact_emails"
     },
-    dateFormats: {
-      ADMIN_DECK: "YYYY/MM/DD",
-      DECK: "YYYY/MM/DD"
-    },
     MessageMaster: {
       AUTH: {
         NOT_LOGGED_IN: "User is not logged in to the system",
@@ -97,11 +93,6 @@ export const useAppStore = defineStore("storeId", {
     getDeckCategory: (state) => {
       return state.DATA.DECK_CATEGORY;
     },
-
-    // DATE FORMATS
-    getDateFormats: (state) => {
-      return state.dateFormats;
-    }
   },
   actions: {
     setmail(email) {

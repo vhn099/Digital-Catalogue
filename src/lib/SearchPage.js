@@ -1,7 +1,6 @@
 import { useAppStore } from "@/stores";
 import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
 import _ from 'lodash';
-import moment from "moment";
 import { CommonLib } from "./CommonLib";
 
 export const SearchPageFirestore = {
@@ -14,7 +13,6 @@ export const SearchPageFirestore = {
             let myQuery = query(db);
             let snapshot = await getDocs(myQuery);
             let result = snapshot.docs;
-            const dateFormat = useAppStore().getDateFormats.DECK;
             if (!isTag) {
                 result = _.filter(result, (item) => {
                     const dataItem = item.data();
@@ -33,13 +31,8 @@ export const SearchPageFirestore = {
             }
             result = _.map(result, (item) => {
                 const data = item.data();
-                let convertedCatalogueEdition = "";
-                const momentDate = moment(new Date(data.catalogue_edition.toDate()));
-                if (momentDate.isValid()) {
-                    const formattedDate = momentDate.format(dateFormat);
-                    convertedCatalogueEdition = CommonLib.getOnlyMonthAndYearForShortDate(formattedDate, 1, 0, "/", false);
-                }
-                data.catalogue_edition = convertedCatalogueEdition;
+                const convertedDate = CommonLib.getOnlyMonthAndYearForDeckCatalogueEdition(data.catalogue_edition.toString());
+                data.catalogue_edition = convertedDate ? convertedDate.date_string.replace("/", " ") : "";
                 return {
                     id: item.id,
                     ...data,

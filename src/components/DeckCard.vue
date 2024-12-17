@@ -33,12 +33,11 @@ import Chip from 'primevue/chip';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import router from '@/router';
-import { ref, defineEmits, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import FavoriteBlackIcon from '@/assets/img/icon/favorite_black.png';
 import FavoriteRedIcon from '@/assets/img/icon/favorite_red.png';
 import { FavoriteFirestore } from '@/lib/Favorite';
-import moment from 'moment';
 
 const props = defineProps({
     data: {
