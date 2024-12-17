@@ -26,10 +26,8 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 import DatePicker from "primevue/datepicker";
-import moment from "moment";
 import { ExportData } from "@/lib/Export";
 import { CommonLib } from "@/lib/CommonLib";
-import { useAppStore } from "@/stores";
 
 const formFields = reactive({
     id: '',
@@ -46,9 +44,6 @@ const formFields = reactive({
     tag: [],
     catalogue_edition: '',
 });
-
-/* STATIC VALUES */
-const dateFormat = useAppStore().dateFormats.ADMIN_DECK;
 
 /* COMPUTED VALUES */
 const rules = computed(() => {
@@ -362,7 +357,7 @@ const getDecks = async () => {
             pdf_name: data.pdf_name,
             pdf_name_id: data.pdf_name_id,
             tag: data.tag,
-            catalogue_edition: data.catalogue_edition ? data.catalogue_edition.toDate().toLocaleString() : '',
+            catalogue_edition: data.catalogue_edition.toString(),
             created: data.created ? data.created.toDate().toLocaleString() : '',
             created_by: data.created_by || '',
             updated: data.updated ? data.updated.toDate().toLocaleString() : '',
@@ -439,7 +434,11 @@ const editRow = async (data) => {
     formFields.pdf_name_id = data.pdf_name_id;
     formFields.tag = data.tag;
     formFields.deck_images = data.deck_images;
-    formFields.catalogue_edition = new Date(data.catalogue_edition);
+    if (data.catalogue_edition) {
+        formFields.catalogue_edition = CommonLib.getOnlyMonthAndYearForDeckCatalogueEdition(data.catalogue_edition).date_value;
+    } else {
+        formFields.catalogue_edition = new Date();
+    }
 
     deckHighlightPreview.value = data.deck_highlight;
     deck_images.value = []; // Reset data of deck sub images when users click edit
@@ -474,16 +473,23 @@ const submitForm = async () => {
     const pdfFileValid = await pdfFile$.value.$validate();
 
     if (isValid && imageHighlightValid && subImagesValid && pdfFileValid) {
-
         const deckFormData = getDeckFormData();
         let categoryID = deckFormData.category_id.id;
         let result = {};
         deckFormData.category_id = categoryID;
+        const catalogueEditionDate = new Date(deckFormData.catalogue_edition);
+        let monthData = catalogueEditionDate.getMonth() + 1; // 0 = January, 1 = Feb, etc.
+        if (monthData < 10) {
+            monthData = "0" + (catalogueEditionDate.getMonth() + 1);
+        }
+        deckFormData.catalogue_edition = parseInt(catalogueEditionDate.getFullYear().toString() + monthData); // Save catalouge edition with format: YYYYMM
+
         if (edit.value) {
             result = await DeckFirestore.updateDeck(deckFormData);
         } else {
             result = await DeckFirestore.createDeck(deckFormData);
         }
+    
         toast.add({
             summary: 'System Message',
             severity: result.status,
@@ -517,12 +523,10 @@ const onFileSelected = (event) => {
 };
 
 const formatDate = (value) => {
-    const momentDate = moment(new Date(value)); // When load this timestamp data to table it already converted to a date string.
-    if (momentDate.isValid()) {
-        const formattedDate = momentDate.format(dateFormat);
-        return CommonLib.getOnlyMonthAndYearForShortDate(formattedDate, 1, 0, "/", true);
+    const dateValue = CommonLib.getOnlyMonthAndYearForDeckCatalogueEdition(value);
+    if (dateValue) {
+        return dateValue.date_string;
     }
-    
     return "";
 };
 
