@@ -100,7 +100,8 @@ const tableColumns = [
             display: "-webkit-box",
             webkitLineClamp: 3,
             webkitBoxOrient: "vertical",
-        }
+        },
+        sortable: true
     },
     {
         field: 'detail_description',
@@ -115,7 +116,8 @@ const tableColumns = [
             display: "-webkit-box",
             webkitLineClamp: 3,
             webkitBoxOrient: "vertical",
-        }
+        },
+        sortable: true
     },
     // {
     //     field: 'category_id',
@@ -128,7 +130,8 @@ const tableColumns = [
         field: 'category_name',
         label: 'Category',
         styles: {},
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     },
     {
         field: 'deck_highlight',
@@ -136,7 +139,8 @@ const tableColumns = [
         styles: {
 
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: false
     },
     // {
     //     field: 'deck_images',
@@ -151,7 +155,8 @@ const tableColumns = [
         styles: {
 
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: false
     },
     {
         field: 'tag',
@@ -159,7 +164,8 @@ const tableColumns = [
         styles: {
 
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     },
     {
         field: 'catalogue_edition',
@@ -167,7 +173,8 @@ const tableColumns = [
         styles: {
             width: "10%"
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     },
     {
         field: 'created',
@@ -175,7 +182,8 @@ const tableColumns = [
         styles: {
             width: "10%"
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     },
     {
         field: 'created_by',
@@ -183,7 +191,8 @@ const tableColumns = [
         styles: {
             width: "10%"
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     },
     {
         field: 'updated',
@@ -191,7 +200,8 @@ const tableColumns = [
         styles: {
             width: "10%"
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     },
     {
         field: 'updated_by',
@@ -199,7 +209,8 @@ const tableColumns = [
         styles: {
             width: "10%"
         },
-        rowStyle: {}
+        rowStyle: {},
+        sortable: true
     }
 ]
 const toast = useToast();
@@ -713,7 +724,7 @@ watch(visible, () => {
                     tableStyle="width: 100%"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" ref="datatable" :filters="filters"
-                    :paginator="true">
+                    :paginator="true" sortField="catalogue_edition" :sortOrder="-1">
                     <template #header>
                         <div class="header-table">
                             <span class="table-title">Manage Decks</span>
@@ -738,7 +749,7 @@ watch(visible, () => {
                         </div>
                     </template>
                     <Column v-for="column in tableColumns" :field="column.field" :header="column.label"
-                        :style="{ ...column.styles }" :bodyStyle="{ ...column.bodyStyle }">
+                        :style="{ ...column.styles }" :bodyStyle="{ ...column.bodyStyle }" :sortable="column.sortable">
                         <template #body="slotProps">
                             <img draggable="false" :src="slotProps.data[column.field]"
                                 v-if="column.field === 'deck_highlight'" width="64" />

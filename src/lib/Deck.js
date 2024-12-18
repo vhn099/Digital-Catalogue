@@ -34,7 +34,7 @@ export const DeckFirestore = {
 
   async getDecks() {
     const db = collection(getFirestore(), useAppStore().getDecksCollection);
-    const docQuery = query(db, orderBy("updated", "desc"));
+    const docQuery = query(db, orderBy("catalogue_edition", "desc"));
     let snapshot = await getDocs(docQuery);
 
     return snapshot.docs;
