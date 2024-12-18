@@ -42,6 +42,7 @@ const items = ref([
         label: 'Home',
         icon: HomeIcon,
         eventHandler: () => {
+            useAppStore().setDeckCategory("");
             router.push({
                 name: 'home'
             });
@@ -51,6 +52,7 @@ const items = ref([
         label: 'Category',
         icon: SupplyChainIcon,
         eventHandler: () => {
+            useAppStore().setDeckCategory("");
             router.push({
                 name: 'category'
             });
@@ -70,6 +72,7 @@ const items = ref([
         label: 'Contact Us',
         icon: SupportIcon,
         eventHandler: () => {
+            useAppStore().setDeckCategory("");
             router.push({
                 name: 'contactus'
             });

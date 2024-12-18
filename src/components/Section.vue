@@ -31,16 +31,13 @@ defineProps({
 });
 
 const back = () => {
+    useAppStore().setDeckCategory("");
     router.back();
 };
 
 onMounted(() => {
     const { params } = router.currentRoute.value;
     const cateID = useAppStore().getDeckCategory;
-
-    if (_.isEmpty(params)) {
-        showBack.value = false;
-    }
     if (cateID || params.deckID) {
         showBack.value = true;
     }
@@ -48,6 +45,7 @@ onMounted(() => {
 
 watch(() => router.currentRoute.value.params, () => {
     const { params } = router.currentRoute.value;
+    
     if (_.isEmpty(params)) {
         showBack.value = false;
     }
