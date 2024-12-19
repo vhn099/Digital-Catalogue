@@ -66,7 +66,7 @@ function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark');
 }
 function setMessage() {
- const strMessage = 'Email - ' + formFields.userEmail + '\n' + 'Message - ' + message.value;
+ const strMessage = 'Email - ' + formFields.userEmail.toLowerCase() + '\n' + 'Message - ' + message.value;
  const htmlMessage = strMessage.replaceAll('\n','<br/>');
  return htmlMessage;
 }
@@ -89,7 +89,7 @@ async function submitForm() {
     bodyReq.value.message.html = setMessage();
     bodyReq.value.message.firstName = firstName;
     bodyReq.value.message.lastName = lastName;
-    bodyReq.value.message.email = formFields.userEmail;
+    bodyReq.value.message.email = formFields.userEmail.toLowerCase();
 
     try {
       await addDoc(collection(db, 'mail'), bodyReq.value);

@@ -97,7 +97,8 @@ async function sendLink() {
             document.getElementById("error_recaptcha1").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
             return;
         }
-        const emailExists = await CheckValitedEmail(formForgotPW.emailInput);
+        const email = formForgotPW.emailInput.toLowerCase();
+        const emailExists = await CheckValitedEmail(email);
         const currentDomain = window.location.origin;
 
         if (emailExists) {
@@ -106,7 +107,7 @@ async function sendLink() {
                     url: `${currentDomain}/sign-in`, // Make sure this domain flexible on local and firebase hosting.
                     handleCodeInApp: true,
                 };
-                const x = await sendPasswordResetEmail(auth, formForgotPW.emailInput, actionCodeSettings);
+                const x = await sendPasswordResetEmail(auth, email, actionCodeSettings);
             } catch (error) {
                 console.log('Error: ' + error.message);
             }
@@ -114,7 +115,7 @@ async function sendLink() {
             isSendLink.value = true;
             isSignIn.value = false;
             isForgotPassword.value = false;
-            useAppStore().setmail(formForgotPW.emailInput);
+            useAppStore().setmail(formForgotPW.emailInput.toLowerCase());
         }
         else {
             document.getElementById("invalidEmail").innerHTML = 'Email is not existed';
