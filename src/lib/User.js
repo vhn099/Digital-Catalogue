@@ -146,7 +146,7 @@ export const UserFirestore = {
             let findUser = await getDocs(query(db, where('email', '==', userForm.username)));
             if (findUser.docs.length === 0) {
                 const userData = {
-                    email: userForm.username,
+                    email: userForm.username.toLowerCase(),
                     firstname: userForm.firstname || '',
                     lastname: userForm.lastname || '',
                     isAdmin: userForm.isAdmin || false,
