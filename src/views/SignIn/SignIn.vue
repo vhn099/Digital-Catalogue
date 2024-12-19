@@ -188,7 +188,7 @@ const handleSubmit = async () => {
             document.getElementById("error_recaptcha").innerHTML = '<p class = "show_error">Please complete the reCAPTCHA</p>';
             return;
         }
-        const username = formFields.username;
+        const username = formFields.username.toLowerCase();
         const password = formFields.password;
         const rememberMe = formFields.rememberMe;
         let expire = 3; // expires in 3 days
